@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/usuarios">
+
+    <fragment
+        android:id="@+id/usuarios"
+        android:name="com.example.validacion.UsuariosFragment"
+        android:label="fragment_usuarios"
+        tools:layout="@layout/fragment_usuarios" >
+        <action
+            android:id="@+id/action_usuarios_to_coches"
+            app:destination="@id/coches" />
+    </fragment>
+    <activity
+        android:id="@+id/coches"
+        android:name="com.example.validacion.Activity_Binding"
+        android:label="activity_coches"
+        tools:layout="@layout/activity_binding" />
+</navigation>
