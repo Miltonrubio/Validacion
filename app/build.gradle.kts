@@ -49,8 +49,11 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.android.support:support-annotations:28.0.0")
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
 
+
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.google.firebase:firebase-messaging:23.2.1")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 
     implementation ("androidx.cardview:cardview:1.0.0")
     implementation ("androidx.navigation:navigation-fragment-ktx:2.3.5")
@@ -58,7 +61,13 @@ dependencies {
 
     implementation ("androidx.recyclerview:recyclerview-selection:1.1.0")
 
+
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-analytics")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
+
+// apply( plugin = "com.google.gms.google-services")

@@ -1,9 +1,12 @@
 package com.example.validacion;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -19,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +31,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -73,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("rememberMe", rememberMe);
         editor.apply();
     }
+
+
+
     public void IniciarSession(View view) {IniciarSession();}
 
     private void IniciarSession() {
@@ -87,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
             guardarCredenciales(valorusername,valorpassword,rememberMe);
         }
     }
+
+
+
+
     private void Login(String Username, String Password) {
 
         StringRequest requestLogin = new StringRequest(Request.Method.POST, UrlApiRH, new Response.Listener<String>() {
@@ -144,4 +157,35 @@ public class MainActivity extends AppCompatActivity {
         };
         rq.add(requestLogin);
     }
+
+
+
+/*
+    private void registrarDispositivo(){
+        MyFirebaseMesaaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>()){
+            if (!task.isSuccesful()){
+                log.w(ContentValues.TAG,
+                        "Fetching FCM Registation Token failed",
+                        task.getException());
+                return;
+            }
+
+
+            String  token = task.getResult();
+            String TokenGuardado= getSharedPreferences("SP_FILE, 0")
+                    .getString("DEVICEID, null");
+
+            if(token != null){
+                if (TokenGuardado ==null|| !TokenGuardado.equals(TokenGuardado)){
+                    DeviceManager.postRegistrarDispositivoEnServidor(token)
+                }
+            }
+
+        }
+    }
+*/
+
+
+
 }

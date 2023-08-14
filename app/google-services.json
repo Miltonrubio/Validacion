@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "80676315706",
+    "project_id": "android-52b41",
+    "storage_bucket": "android-52b41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80676315706:android:edf0c39486a63fd4010b03",
+        "android_client_info": {
+          "package_name": "com.a.a"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "80676315706-cj8r8ujpbtg59cfruvjka6lekqa2sth9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIueCgJ8ojlolWra1lr3mjxhe2bwUbJ9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80676315706-cj8r8ujpbtg59cfruvjka6lekqa2sth9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80676315706:android:6fab04e956c8a16c010b03",
+        "android_client_info": {
+          "package_name": "com.bitala.coches"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "80676315706-cj8r8ujpbtg59cfruvjka6lekqa2sth9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIueCgJ8ojlolWra1lr3mjxhe2bwUbJ9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80676315706-cj8r8ujpbtg59cfruvjka6lekqa2sth9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

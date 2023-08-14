@@ -47,15 +47,20 @@ public class Activity_Binding extends AppCompatActivity {
     }
 
     private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentManager fragmentManager = getSupportFragmentManager();
 
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.replace(R.id.frame_layoutCoches, fragment);
+            fragmentTransaction.replace(R.id.frame_layoutCoches, fragment);
 
-        fragmentTransaction.commit();
+            fragmentTransaction.commit();
     }
 
+    public  void EnviarAApi(View view){
+        Intent intent = new Intent(Activity_Binding.this, ActivityApi.class);
+        startActivity(intent);
+    }
+/*
     public void cerrarSesion() {
 
         SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
@@ -73,4 +78,8 @@ public class Activity_Binding extends AppCompatActivity {
 
 
     }
+
+
+
+ */
 }

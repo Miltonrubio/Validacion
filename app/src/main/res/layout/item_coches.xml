@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="@color/white"
     android:padding="16dp">
 
     <!-- Mitad izquierda: ImageView -->
@@ -29,8 +30,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="MARCA"
-                android:gravity="end"
-                android:textColor="#1A237E"
+                android:gravity="center"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -46,11 +47,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="MODELO"
-                android:gravity="end"
+                android:gravity="center"
                 android:textColor="#1A237E"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+
+
+
 </LinearLayout>

@@ -17,8 +17,8 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.util.ArrayList;
 
+/*
 public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> {
-
 
     private ArrayList<Coches> dataset;
 
@@ -76,6 +76,8 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.Imagen);
 */
+
+    /*
     }
 
     @Override
@@ -105,3 +107,4 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> {
         notifyDataSetChanged();
     }
 }
+*/
