@@ -16,5 +16,9 @@ public class MyFirebaseMesaagingService extends  FirebaseMessagingService{
         super.onMessageReceived(message);
     }
 
+/*
+public void onNewToken(NonNull String token){
+
+}*/
 
 }
