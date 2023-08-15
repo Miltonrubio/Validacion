@@ -16,17 +16,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default.notificacion.icon"
-            android:resource="@drawable/baseline_notifications_active_24"/>
-        <meta-data
-            android:name="com.google.firebase.messaging.default.notificacion.color"
-            android:resource="@color/azulito"/>
-
-
-
-
         <activity
             android:name=".ActivityApi"
             android:exported="false" />
@@ -43,8 +32,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".MyFirebaseMesaagingService"
+        <service android:name=".MyFirebaseService"
             android:exported="false"
+            android:stopWithTask="false"
             tools:ignore="MissingClass">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

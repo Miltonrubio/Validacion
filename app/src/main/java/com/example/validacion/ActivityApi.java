@@ -1,5 +1,6 @@
 package com.example.validacion;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,99 +31,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class ActivityApi extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private Adapt adapter;
-    private List<JSONObject> dataList = new ArrayList<>();
+    Button btn_get_token;
 
-
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_api);
 
-/*
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new Adapt(dataList);
-        recyclerView.setAdapter(adapter);
+
+        /*
+        btn_get_token=findViewById(R.id.btn_get_token);
+
+        btn_get_token.setOnClickListener((view) -> {
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String token) {
+                            Log.d(Utils.TAG, token);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "No se recibio el token", Toast.LENGTH_LONG).show();
+                    });
+        });
 */
-     //   EnviarWS();
     }
-
-    /*
-        private void LeerWs() {
-
-            String url = "https://jsonplaceholder.typicode.com/todos/1";
-
-            StringRequest postrequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-
-                        etmarca.setText(jsonObject.getString("userId"));
-                        etmodelo.setText(jsonObject.getString("title"));
-                        etanio.setText(jsonObject.getString("completed"));
-
-
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            });
-
-            Volley.newRequestQueue(this).add(postrequest);
-
-        }
-    */
-
-    /*
-    private void EnviarWS() {
-        String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
-
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        dataList.add(jsonObject); // Agrega cada objeto JSON a la lista
-                    }
-
-                    adapter.notifyDataSetChanged(); // Notifica al adaptador sobre los nuevos datos
-
-                } catch (JSONException e) {
-                    Log.e("Error", "JSONException: " + e.getMessage());
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Error", "VolleyError: " + error.getMessage());
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "2");
-
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(this).add(postrequest);
-    }*/
-
 }

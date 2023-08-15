@@ -160,32 +160,4 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-/*
-    private void registrarDispositivo(){
-        MyFirebaseMesaaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>()){
-            if (!task.isSuccesful()){
-                log.w(ContentValues.TAG,
-                        "Fetching FCM Registation Token failed",
-                        task.getException());
-                return;
-            }
-
-
-            String  token = task.getResult();
-            String TokenGuardado= getSharedPreferences("SP_FILE, 0")
-                    .getString("DEVICEID, null");
-
-            if(token != null){
-                if (TokenGuardado ==null|| !TokenGuardado.equals(TokenGuardado)){
-                    DeviceManager.postRegistrarDispositivoEnServidor(token)
-                }
-            }
-
-        }
-    }
-*/
-
-
-
 }

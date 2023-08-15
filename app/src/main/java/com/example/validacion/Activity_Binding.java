@@ -12,14 +12,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.validacion.databinding.ActivityBindingBinding;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class Activity_Binding extends AppCompatActivity {
 
 
     ActivityBindingBinding binding;
-
 
 
     @Override
@@ -44,42 +46,37 @@ public class Activity_Binding extends AppCompatActivity {
             }
             return true;
         });
+
+        tomarToken();
+
     }
+
+    private void tomarToken() {
+
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String token) {
+                        Log.d(Utils.TAG, token);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "No se recibio el token", Toast.LENGTH_LONG).show();
+                });
+    }
+
+
+
+
 
     private void replaceFragment(Fragment fragment) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            fragmentTransaction.replace(R.id.frame_layoutCoches, fragment);
+        fragmentTransaction.replace(R.id.frame_layoutCoches, fragment);
 
-            fragmentTransaction.commit();
-    }
-
-    public  void EnviarAApi(View view){
-        Intent intent = new Intent(Activity_Binding.this, ActivityApi.class);
-        startActivity(intent);
-    }
-/*
-    public void cerrarSesion() {
-
-        SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove("email");
-        editor.remove("password");
-        editor.putBoolean("rememberMe", false);
-        editor.apply();
-        Log.d("CERRAR_SESION", "Credenciales borradas");
-        Log.d("CERRAR_SESION", "rememberMe actualizado a false");
-
-        Intent intent = new Intent(Activity_Binding.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-
-
+        fragmentTransaction.commit();
     }
 
 
-
- */
 }

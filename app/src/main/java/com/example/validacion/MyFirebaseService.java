@@ -1,5 +1,8 @@
 package com.example.validacion;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -26,8 +29,12 @@ public class MyFirebaseService extends FirebaseMessagingService {
         String title=message.getNotification().getTitle();
         String content = message.getNotification().getBody();
         String data = new Gson().toJson(message.getData());
+        Utils.showNotifications(this, title, content);
 
-
-
+        Log.d(Utils.TAG, data);
     }
+
+
+
+
 }

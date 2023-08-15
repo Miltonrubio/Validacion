@@ -9,10 +9,8 @@ public class MyFirebaseMesaagingService extends  FirebaseMessagingService{
 
     public static final String TAG="MyFirebaseMessagingService";
 
-
-    public void onMessageReceived(@NonNull RemoteMessage message){
-
-
+    @Override
+    public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
     }
 
