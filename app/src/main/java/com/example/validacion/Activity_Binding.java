@@ -47,22 +47,8 @@ public class Activity_Binding extends AppCompatActivity {
             return true;
         });
 
-        tomarToken();
-
     }
 
-    private void tomarToken() {
-
-        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
-                    @Override
-                    public void onSuccess(String token) {
-                        Log.d(Utils.TAG, token);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "No se recibio el token", Toast.LENGTH_LONG).show();
-                });
-    }
 
 
 

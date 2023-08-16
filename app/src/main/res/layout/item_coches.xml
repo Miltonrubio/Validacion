@@ -1,60 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@color/white"
+    android:background="#1A237E"
+    android:padding="2.5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:elevation="4dp"
     android:padding="16dp">
 
-    <!-- Mitad izquierda: ImageView -->
+    <!-- ImageView -->
     <ImageView
         android:id="@+id/imageViewCoches"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <!-- TextViews -->
+    <TextView
+        android:id="@+id/textMarca"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:hint="MARCA"
+        android:textColor="@color/black"
+        android:textSize="26sp"
+        android:textStyle="bold" />
 
-    <!-- Mitad derecha: TextViews -->
-    <LinearLayout
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/textModelo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp">
-
-            <TextView
-                android:id="@+id/textMarca"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="MARCA"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp">
-
-            <TextView
-                android:id="@+id/textModelo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="MODELO"
-                android:gravity="center"
-                android:textColor="#1A237E"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-
-
+        android:hint="MODELO"
+        android:textColor="#1A237E"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 </LinearLayout>
+    </FrameLayout>

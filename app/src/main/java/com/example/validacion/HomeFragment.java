@@ -48,7 +48,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
     private List<JSONObject> dataList = new ArrayList<>();
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
