@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.validacion.databinding.ActivityBindingBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class Activity_Binding extends AppCompatActivity {
@@ -28,6 +29,9 @@ public class Activity_Binding extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binding);
+
+
+
 
         binding = ActivityBindingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

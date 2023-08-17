@@ -3,14 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="Coches"
-
         android:id="@+id/menu_home"
         android:icon="@drawable/baseline_car_repair_24"
+        android:orderInCategory="1"
+        android:iconTint="@color/azulito"
+
 
         />
     <item android:title="Usuario"
-
         android:id="@+id/menu_usuario"
         android:icon="@drawable/baseline_person_24"
+        android:orderInCategory="2"
+        android:iconTint="@color/azulito"
         />
+
+
+
+
+
 </menu>

@@ -14,12 +14,11 @@
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:onClick="CerrarSesion"
-        android:src="@drawable/baseline_person_24" />
+   <Button
+       android:layout_width="100sp"
+       android:layout_height="100dp"
+       android:id="@+id/guardarCredencialesButton"
+       android:text="Cerrar Sesion"
+       />
 
 </FrameLayout>

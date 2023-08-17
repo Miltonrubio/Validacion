@@ -30,7 +30,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/menu" />
+
+        android:background="@drawable/menu"
+        app:itemIconTint="@color/azulito"
+        app:itemBackground="@drawable/selected_item_background"
+        app:menu="@menu/menu"
+        app:labelVisibilityMode="auto"
+        app:itemTextAppearanceActive="@style/CustomBottomNavigationLabel"
+
+        app:itemRippleColor="@color/azulitoSuave"
+        android:outlineSpotShadowColor="@color/azulitoSuave"
+        android:outlineAmbientShadowColor="@color/azulitoSuave"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

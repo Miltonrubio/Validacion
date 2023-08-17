@@ -4,15 +4,49 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+   >
 
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/logo"
+        android:layout_gravity="center"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="26sp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Taller"
+            android:textColor="@color/azulito"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:layout_marginEnd="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Georgio"
+            android:textColor="@color/gris"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:layout_marginStart="5dp"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="125sp"
+        android:layout_marginBottom="10sp"
         >
 
         <TextView
@@ -20,9 +54,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:text="Bienvenido"
-            android:textColor="@color/black"
-            android:textSize="30dp"
+            android:textColor="@color/azulito"
+            android:textSize="36dp"
             android:textStyle="bold"
             android:gravity="left"
             android:layout_margin="10dp"
@@ -43,6 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="CORREO"
+            android:textColorHint="@color/azulito"
             android:inputType="textEmailAddress"
             android:textColor="#1A237E"
             android:textSize="16sp"
@@ -64,6 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="CONTRASEÑA"
+            android:textColorHint="@color/azulito"
             android:inputType="textPassword"
             android:textColor="#1A237E"
             android:textSize="16sp"
@@ -73,15 +110,17 @@
 
 
     <Button
+        android:layout_marginTop="15dp"
         android:id="@+id/btnLogear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/azulito"
         android:paddingTop="15dp"
+        android:paddingBottom="15dp"
         android:clickable="true"
         android:onClick="IniciarSession"
-        android:text="Login"
-        android:textSize="16sp"
+        android:text="Iniciar Sesiòn"
+        android:textSize="20dp"
         android:textStyle="bold"
         android:textColor="@android:color/white" />
 
@@ -102,7 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Recordar datos"
-        android:textColor="#1A237E"
+        android:textColor="@color/azulito"
         android:textSize="16sp"
         android:textStyle="bold" />
 

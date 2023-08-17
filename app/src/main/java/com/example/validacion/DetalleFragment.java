@@ -3,6 +3,7 @@ package com.example.validacion;
 import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
@@ -85,7 +86,6 @@ public class DetalleFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detalle, container, false);
         // Mostrar los datos en las vistas correspondientes
         TextView textMarca = rootView.findViewById(R.id.tv1);
-        TextView textModelo = rootView.findViewById(R.id.tv2);
         TextView textmotivo = rootView.findViewById(R.id.tv3);
         TextView textfecha = rootView.findViewById(R.id.tv4);
         TextView texthora = rootView.findViewById(R.id.tv5);
@@ -145,12 +145,26 @@ public class DetalleFragment extends Fragment {
 
 
 
-            textMarca.setText(marca);
-            textModelo.setText(modelo);
+            textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
             textmotivo.setText(motivo);
             textfecha.setText(fecha);
             texthora.setText(hora);
+
+
+            if(status.equals("pendiente")) {
+                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
+            }else if(status.equals("programada")){
+                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
+            }else if(status.equals("preparado")){
+                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
+            }else {
+                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.azulito));
+            }
+
+
             textstatus.setText("Estatus: "+status);
+
+
             textmecanico.setText("Id de mecanico: "+ mecanico);
 
             if (!TextUtils.isEmpty(foto)) {

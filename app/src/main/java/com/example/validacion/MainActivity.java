@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -42,14 +43,14 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MainActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "PreferenciaInicial";
+
+    String idUsuario;
     private static final String EVENT_KEY = "Evento Realizado";
     String personalToken;
 
 
-    String url = "http://192.168.1.124/android/guardar.php";
+    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
-
-    String UrlApiRH = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
     private RequestQueue rq;
     Context context;
 
@@ -116,13 +117,10 @@ public class MainActivity extends AppCompatActivity {
         boolean rememberMe = checkBoxRememberMe.isChecked();
 
 
-
-
         if (valorusername.isEmpty() || valorpassword.isEmpty()) {
             Toast.makeText(context, "LLENE TODOS LOS CAMPOS", Toast.LENGTH_SHORT).show();
         } else {
             Login(valorusername, valorpassword);
-            RegistrarToken(valorusername,valorpassword);
             guardarCredenciales(valorusername, valorpassword, rememberMe);
         }
     }
@@ -130,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void Login(String Username, String Password) {
 
-        StringRequest requestLogin = new StringRequest(Request.Method.POST, UrlApiRH, new Response.Listener<String>() {
+        StringRequest requestLogin = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -147,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
+                                idUsuario = jsonObject.getString("idusuario");
                             }
 
 
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, Activity_Binding.class);
                             startActivity(intent);
                             finish();
-
+                            RegistrarToken(idUsuario);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -201,36 +200,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void RegistrarToken(String idUsuario) {
 
-    public  void RegistrarToken (String email, String password){
+        String str_token = personalToken;
 
-           String str_token=personalToken;
+        StringRequest request2 = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            public void onResponse(String response) {
 
-            StringRequest request2= new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                public void onResponse(String response) {
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
+                Toast.makeText(MainActivity.this, "Token actualizado", Toast.LENGTH_LONG).show();
             }
-            ){
-                protected Map<String, String>getParams() throws AuthFailureError {
-
-                    Map<String,String> params = new HashMap<String, String>();
-                    params.put("Token", str_token);
-                    params.put("Password", password);
-                    params.put("Email", email);
-
-                    return params;
-                }
-            };
-
-            RequestQueue requestQueue= Volley.newRequestQueue(MainActivity.this);
-            requestQueue.add(request2);
-
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
         }
+        ) {
+            protected Map<String, String> getParams() throws AuthFailureError {
 
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("token", str_token);
+                params.put("idusuario", idUsuario);
+                params.put("opcion", "4");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(request2);
 
     }
+
+
+}

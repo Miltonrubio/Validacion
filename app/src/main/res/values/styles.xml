@@ -1,0 +1,24 @@
+<resources>
+
+    <style name="Widget.Theme.Validacion.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+
+    </style>
+
+    <style name="Widget.Theme.Validacion.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="android:navigationBarColor">@color/azulitoSuave</item>
+    </style>
+
+    <style name="CustomBottomNavigationLabel">
+        <item name="android:background">@color/azulitoSuave</item>
+        <item name="android:textColor">@color/azulito</item>
+    </style>
+
+</resources>

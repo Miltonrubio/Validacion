@@ -76,6 +76,13 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
                 holder.textModelo.setText("Modelo no disponible");
             }
 
+            String placa = jsonObject.optString("placasI", "");
+            if (!modelo.equals("null")) {
+                holder.textPlaca.setText(placa);
+            } else {
+                holder.textPlaca.setText("Placa no disponible");
+            }
+
             String urlOriginal = jsonObject.getString("foto");
             String urlFormateada = "AbHidalgo/91c9318a8e649f0a357ed81bb0b867bc.jpg";
 
@@ -166,7 +173,7 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textMarca, textModelo;
+        TextView textMarca, textModelo, textPlaca;
 
         ImageView imageViewCoches;
 
@@ -174,6 +181,7 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
             super(itemView);
             textMarca = itemView.findViewById(R.id.textMarca);
             textModelo = itemView.findViewById(R.id.textModelo);
+            textPlaca= itemView.findViewById(R.id.textPlaca);
             imageViewCoches = itemView.findViewById(R.id.imageViewCoches);
         }
     }

@@ -33,7 +33,7 @@ public class Utils {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = "com.example.validacion.id";
-            NotificationChannel channel = new NotificationChannel(channelId, "EDMTDEV CHANNEL",
+            NotificationChannel channel = new NotificationChannel(channelId, "Taller Georgio",
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
             builder.setChannelId(channelId);
