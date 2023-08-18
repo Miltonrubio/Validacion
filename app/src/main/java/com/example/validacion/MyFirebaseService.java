@@ -2,6 +2,8 @@ package com.example.validacion;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -12,8 +14,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
-public class MyFirebaseService extends FirebaseMessagingService {
+import java.util.Random;
 
+public class MyFirebaseService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String token) {
@@ -26,28 +29,35 @@ public class MyFirebaseService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
 
-
         String title = message.getNotification().getTitle();
         String content = message.getNotification().getBody();
         String data = new Gson().toJson(message.getData());
 
         Log.d(Utils.TAG, data);
 
-        Utils.showNotifications(this, title, content);
+        // Validar el título y redirigir a actividades correspondientes
+        PendingIntent pendingIntent = null;
+        int notificationId = new Random().nextInt(); // Generar un ID de notificación único
+        if ("Hay un coche que necesita servicio".equals(title)) {
+            Intent intent = new Intent(this, Prueba.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            pendingIntent = PendingIntent.getActivity(
+                    this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+        } else if ("Hay un coche que necesita servicio2".equals(title)) {
+            Intent intent = new Intent(this, Prueba2.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            pendingIntent = PendingIntent.getActivity(
+                    this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+        }else{
+            Intent intent = new Intent(this, Activity_Binding.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            pendingIntent = PendingIntent.getActivity(
+                    this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+        }
 
-
-    }
-
-
-    private void openMainActivity() {
-        // Aquí abres tu MainActivity
-        Intent intent = new Intent(this, Prueba.class);
-        startActivity(intent);
-    }
-
-    private void openActivity2() {
-        // Aquí abres tu Activity2
-        Intent intent = new Intent(this, Prueba2.class);
-        startActivity(intent);
+        Utils.showNotifications(this, title, content, pendingIntent, notificationId);
     }
 }

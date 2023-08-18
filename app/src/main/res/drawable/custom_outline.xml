@@ -1,0 +1,9 @@
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:right="4dp" android:left="0dp" android:top="0dp" android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#44000000" /> <!-- Cambia el color y la opacidad de la sombra -->
+            <corners android:radius="0dp" />
+        </shape>
+    </item>
+</layer-list>

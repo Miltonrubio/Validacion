@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,7 +67,7 @@ public class UsuariosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
         // Aquí puedes encontrar tus vistas y configurar tus interacciones
-        Button guardarCredencialesButton = view.findViewById(R.id.guardarCredencialesButton);
+        ImageView guardarCredencialesButton = view.findViewById(R.id.guardarCredencialesButton);
         guardarCredencialesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

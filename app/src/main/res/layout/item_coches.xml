@@ -2,68 +2,139 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_background_with_shadow"
-    android:padding="8dp"
-    android:elevation="4dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="9dp"
     android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/rounded_background"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="9dp"
     android:elevation="4dp"
-    android:padding="16dp">
+    android:padding="8dp"
+android:background="@drawable/rounded_background"
+    >
 
-    <!-- ImageView -->
-    <ImageView
-        android:id="@+id/imageViewCoches"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="25dp"/>
-
-    <!-- TextViews -->
-    <TextView
-        android:id="@+id/textMarca"
+<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="MARCA"
+        android:background="@drawable/rounded_background"
+        android:orientation="vertical">
+    <TextView
+        android:id="@+id/textFecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:hint="Fecha"
         android:textColor="@color/azulito"
-        android:textSize="46sp"
-        android:textStyle="bold" />
+        android:textSize="15sp"
+        android:layout_marginBottom="5dp"/>
 
-    <TextView
-        android:id="@+id/textModelo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="MODELO"
-        android:textColor="@color/black"
-        android:layout_marginTop="12dp"
-        android:textSize="27sp"
-        android:textStyle="bold" />
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="110dp" />
-        <TextView
-            android:id="@+id/textPlaca"
+        <!-- Image and textMarca LinearLayout -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="PLACA"
-            android:layout_marginTop="12dp"
-            android:textColor="@color/black"
-            android:textSize="27sp"
-            android:gravity="center"
-            android:textStyle="bold" />
-        <Space
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:id="@+id/imageViewCoches"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="10dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/rounded_image_background"
+                android:padding="8dp"
+                android:scaleType="centerCrop" />
+
+            <!-- Parte derecha para textMarca y textStatus -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/textStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:hint="ESTADO"
+                    android:padding="5dp"
+                    android:textColor="@color/azulito"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/textDueño"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:hint="Dueño"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/azulito"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/textMarca"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="MARCA"
+                    android:textColor="@color/azulito"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- TextViews de Placa y Motivo -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="10dp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp"
+                android:padding="5dp">
 
+                <TextView
+                    android:id="@+id/textPlaca"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Placas"
+                    android:textColor="@color/azulito"
+                    android:textSize="17dp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:background="@drawable/textview_outline3"/>
+                />
+            </LinearLayout>
 
+            <!-- Parte derecha para textModelo -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.3"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:gravity="center_vertical"
+                >
+
+                <TextView
+                    android:id="@+id/textModelo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Motivo"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="10dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/textview_outline2"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 </FrameLayout>

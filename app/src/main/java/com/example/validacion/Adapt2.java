@@ -41,19 +41,22 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
-    private List<JSONObject> data;
+public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
+
     private Context context;
     private String UrlApiRefacciones = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     public String refacciones;
 
-    public Adapt(List<JSONObject> data, Context context) {
+
+    private List<JSONObject> filteredData;
+    private List<JSONObject> data;
+
+    public Adapt2(List<JSONObject> data, Context context) {
         this.data = data;
         this.context = context;
+        this.filteredData = new ArrayList<>(data); // Inicializa la lista filtrada con los mismos datos que la lista original
     }
-
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,10 +65,9 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
     }
 
     @SuppressLint("ResourceAsColor")
-    @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
-            JSONObject jsonObject = data.get(position);
+            JSONObject jsonObject = filteredData.get(position);
 
             String id_ref = jsonObject.optString("id_ser_refacciones", "");
             String marca = jsonObject.optString("marcaI", "");
@@ -110,9 +112,9 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
                 holder.textStatus.setText(estatus);
 
                 if (estatus.equals("pendiente")) {
-                     holder.textStatus.setBackgroundResource(R.drawable.textview_outline3); // Reemplaza con el nombre de tu drawable de fondo amarillo
+                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline3); // Reemplaza con el nombre de tu drawable de fondo amarillo
                 } else if (estatus.equals("prueba")){
-                     holder.textStatus.setBackgroundResource(R.drawable.textview_outline2); // Reemplaza con el nombre de tu drawable de fondo predeterminado
+                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline2); // Reemplaza con el nombre de tu drawable de fondo predeterminado
                 } else{
                     holder.textStatus.setBackgroundResource(R.drawable.textview_outline4); // Reemplaza con el nombre de tu drawable de fondo predeterminado
 
@@ -161,35 +163,31 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
                                 @Override
                                 public void onResponse(String response) {
                                     if (!TextUtils.isEmpty(response)) {
-                                        try {
-                                            JSONArray jsonArray = new JSONArray(response);
+                                        JSONObject jsonObject = filteredData.get(position);
 
-                                            // Crear un Bundle para enviar los datos al Fragment de Detalle
-                                            Bundle bundle = new Bundle();
-                                            bundle.putString("marca", marca);
-                                            bundle.putString("modelo", modelo);
-                                            bundle.putString("refacciones", jsonArray.toString()); // Aquí se incluye el JSONArray
-                                            bundle.putString("motivo", jsonObject.optString("motivoingreso", ""));
-                                            bundle.putString("fecha", jsonObject.optString("fecha_ingreso", ""));
-                                            bundle.putString("status", jsonObject.optString("estatus", ""));
-                                            bundle.putString("mecanico", jsonObject.optString("id_check_mecanico", ""));
-                                            bundle.putString("foto", jsonObject.optString("foto", ""));
-                                            bundle.putString("hora", jsonObject.optString("hora_ingreso", ""));
+                                        // Crear un Bundle para enviar los datos al Fragment de Detalle
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("marca", marca);
+                                        bundle.putString("modelo", modelo);
+                                        bundle.putString("refacciones", jsonObject.toString()); // Aquí se incluye el JSONArray
+                                        bundle.putString("motivo", jsonObject.optString("motivoingreso", ""));
+                                        bundle.putString("fecha", jsonObject.optString("fecha_ingreso", ""));
+                                        bundle.putString("status", jsonObject.optString("estatus", ""));
+                                        bundle.putString("mecanico", jsonObject.optString("id_check_mecanico", ""));
+                                        bundle.putString("foto", jsonObject.optString("foto", ""));
+                                        bundle.putString("hora", jsonObject.optString("hora_ingreso", ""));
 
-                                            // Instanciar el Fragment de Detalle y configurar el Bundle
-                                            DetalleFragment detalleFragment = new DetalleFragment();
-                                            detalleFragment.setArguments(bundle);
+                                        // Instanciar el Fragment de Detalle y configurar el Bundle
+                                        DetalleFragment detalleFragment = new DetalleFragment();
+                                        detalleFragment.setArguments(bundle);
 
-                                            // Abrir el Fragment de Detalle
-                                            FragmentManager fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
+                                        // Abrir el Fragment de Detalle
+                                        FragmentManager fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
 
-                                            fragmentManager.beginTransaction()
-                                                    .replace(R.id.frame_layoutCoches, detalleFragment)
-                                                    .addToBackStack(null)
-                                                    .commit();
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                        fragmentManager.beginTransaction()
+                                                .replace(R.id.frame_layoutCoches, detalleFragment)
+                                                .addToBackStack(null)
+                                                .commit();
                                     } else {
                                         Log.d("API Response", "Respuesta vacía");
                                     }
@@ -226,8 +224,9 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return filteredData.size();
     }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textMarca, textModelo, textPlaca, textDueño, textFecha, textStatus;
@@ -245,4 +244,21 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
             imageViewCoches = itemView.findViewById(R.id.imageViewCoches);
         }
     }
+
+    public void filter(String query) {
+        if (TextUtils.isEmpty(query)) {
+            filteredData = new ArrayList<>(data); // Restaura la lista filtrada a la lista original
+        } else {
+            filteredData.clear();
+            for (JSONObject item : data) {
+                String marca = item.optString("marcaI", "").toLowerCase();
+                String modelo = item.optString("modeloI", "").toLowerCase();
+                if (marca.contains(query) || modelo.contains(query)) {
+                    filteredData.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
 }

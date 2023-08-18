@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -152,13 +153,15 @@ public class DetalleFragment extends Fragment {
 
 
             if(status.equals("pendiente")) {
-                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
-            }else if(status.equals("programada")){
+                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
+            }else if(status.equals("entrega")){
+                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
+            }else if(status.equals("en espera")){
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
             }else if(status.equals("preparado")){
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
             }else {
-                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.azulito));
+                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
             }
 
 
@@ -171,11 +174,12 @@ public class DetalleFragment extends Fragment {
                 String imageUrl = "http://tallergeorgio.hopto.org:5613/verificaciones/imagenes/unidades/" + foto;
                 Glide.with(this)
                         .load(imageUrl)  // URL de la foto
+                        .error(R.drawable.default_image)  // Aquí se especifica la imagen en caso de error
                         .into(imageViewDetalles);
             }else{
-                String imageUrl = "http://tallergeorgio.hopto.org:5613/verificaciones/imagenes/unidades/AbHidalgo/3e4c701286a6847f64ae7d89423002ab.jpg";
+
                 Glide.with(this)
-                        .load(imageUrl)  // URL de la foto
+                        .load(R.drawable.default_image)  // Carga la imagen predeterminada si imageUrl está vacío
                         .into(imageViewDetalles);
             }
 
