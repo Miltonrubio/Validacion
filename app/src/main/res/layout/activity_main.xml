@@ -12,6 +12,8 @@
         android:layout_height="180dp"
         android:src="@drawable/logo"
         android:layout_gravity="center"
+        android:clickable="true"
+        android:onClick="enviarACamara"
         />
     <LinearLayout
         android:layout_width="match_parent"

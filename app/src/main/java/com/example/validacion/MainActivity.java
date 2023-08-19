@@ -231,4 +231,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+public void  enviarACamara(View view){
+    Intent intent = new Intent(MainActivity.this, Prueba.class);
+    startActivity(intent);
+}
+
 }

@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -49,15 +50,11 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         recyclerView = view.findViewById(R.id.recyclerViewFragment);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
-
+        dataList = new ArrayList<>();
         adapter2 = new Adapt2(dataList, requireContext());
-
-        EnviarWS();
         recyclerView.setAdapter(adapter2);
 
         editTextBusqueda = view.findViewById(R.id.searchEditText);
@@ -76,9 +73,9 @@ public class HomeFragment extends Fragment {
             public void afterTextChanged(Editable s) {
             }
         });
+
+        EnviarWS();
     }
-
-
 
     private void EnviarWS() {
         String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php/";
@@ -89,7 +86,6 @@ public class HomeFragment extends Fragment {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
 
-                    // Limpia la lista de datos antes de agregar nuevos elementos
                     dataList.clear();
 
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -97,7 +93,10 @@ public class HomeFragment extends Fragment {
                         dataList.add(jsonObject); // Agrega cada objeto JSON a la lista
                     }
 
-                    adapter2.notifyDataSetChanged(); // Notifica al adaptador sobre los nuevos datos
+                    adapter2.notifyDataSetChanged();
+
+                    adapter2.setFilteredData(dataList);
+                    adapter2.filter("");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -118,4 +117,5 @@ public class HomeFragment extends Fragment {
 
         Volley.newRequestQueue(requireContext()).add(postrequest);
     }
+
 }

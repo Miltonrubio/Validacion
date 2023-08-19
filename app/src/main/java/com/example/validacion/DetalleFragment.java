@@ -91,6 +91,7 @@ public class DetalleFragment extends Fragment {
         TextView textfecha = rootView.findViewById(R.id.tv4);
         TextView texthora = rootView.findViewById(R.id.tv5);
         TextView textmecanico = rootView.findViewById(R.id.tvmecanico);
+        TextView tvrefacciones = rootView.findViewById(R.id.tvrefacciones);
         TextView textstatus = rootView.findViewById(R.id.tvstatus);
         ImageView imageViewDetalles = rootView.findViewById(R.id.imageViewDetalles); // Asegúrate de tener el ID correcto para el ImageView
 
@@ -107,44 +108,28 @@ public class DetalleFragment extends Fragment {
             String mecanico = bundle.getString("mecanico", "");
             String motivo = bundle.getString("motivo", "");
             String foto = bundle.getString("foto", "");
-
-// Obtener el campo de refacciones del bundle
-            String refaccionesJson = bundle.getString("refacciones", "");
+            String refaccionesJson = bundle.getString("refacciones");
 
             if (!TextUtils.isEmpty(refaccionesJson)) {
                 try {
-                    JSONArray refaccionesArray = new JSONArray(refaccionesJson);
+                    JSONObject refaccionObj = new JSONObject(refaccionesJson);
 
-                    StringBuilder refaccionesText = new StringBuilder();
+                    String idRefaccion = refaccionObj.optString("idrefaccion");
+                    String clave = refaccionObj.optString("clave");
+                    String cantidad = refaccionObj.optString("cantidad");
+                    String descripcion = refaccionObj.optString("descripcion");
 
-                    // Iterar a través de cada objeto en el array de refacciones
-                    for (int i = 0; i < refaccionesArray.length(); i++) {
-                        JSONObject refaccionObj = refaccionesArray.getJSONObject(i);
+                    String refaccionInfo = "ID Refacción: " + idRefaccion + "\n" +
+                            "Clave: " + clave + "\n" +
+                            "Cantidad: " + cantidad + "\n" +
+                            "Descripción: " + descripcion + "\n\n";
 
-                        String idRefaccion = refaccionObj.optString("idrefaccion", "");
-                        String clave = refaccionObj.optString("clave", "");
-                        String cantidad = refaccionObj.optString("cantidad", "");
-                        String descripcion = refaccionObj.optString("descripcion", "");
-
-                        // Construir una cadena con la información de la refacción
-                        String refaccionInfo = "ID Refacción: " + idRefaccion + "\n" +
-                                "Clave: " + clave + "\n" +
-                                "Cantidad: " + cantidad + "\n" +
-                                "Descripción: " + descripcion + "\n\n";
-
-                        refaccionesText.append(refaccionInfo);
-                    }
-
-                    // Mostrar la información en la vista correspondiente
-                    TextView textRefacciones = rootView.findViewById(R.id.tvrefacciones);
-                    textRefacciones.setText(refaccionesText.toString());
+                    tvrefacciones.setText(refaccionInfo);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-
-
 
             textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
             textmotivo.setText(motivo);
@@ -152,23 +137,24 @@ public class DetalleFragment extends Fragment {
             texthora.setText(hora);
 
 
-            if(status.equals("pendiente")) {
+
+            if (status.equals("pendiente")) {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
-            }else if(status.equals("entrega")){
+            } else if (status.equals("entrega")) {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
-            }else if(status.equals("en espera")){
+            } else if (status.equals("en espera")) {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
-            }else if(status.equals("preparado")){
+            } else if (status.equals("preparado")) {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
-            }else {
+            } else {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
             }
 
 
-            textstatus.setText("Estatus: "+status);
+            textstatus.setText("Estatus: " + status);
 
 
-            textmecanico.setText("Id de mecanico: "+ mecanico);
+            textmecanico.setText("Id de mecanico: " + mecanico);
 
             if (!TextUtils.isEmpty(foto)) {
                 String imageUrl = "http://tallergeorgio.hopto.org:5613/verificaciones/imagenes/unidades/" + foto;
@@ -176,7 +162,7 @@ public class DetalleFragment extends Fragment {
                         .load(imageUrl)  // URL de la foto
                         .error(R.drawable.default_image)  // Aquí se especifica la imagen en caso de error
                         .into(imageViewDetalles);
-            }else{
+            } else {
 
                 Glide.with(this)
                         .load(R.drawable.default_image)  // Carga la imagen predeterminada si imageUrl está vacío
@@ -187,7 +173,6 @@ public class DetalleFragment extends Fragment {
 
         return rootView;
     }
-
 
 
 }

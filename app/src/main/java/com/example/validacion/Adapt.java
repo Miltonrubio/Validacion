@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
-
+/*
 public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
     private List<JSONObject> data;
     private Context context;
@@ -246,3 +246,4 @@ public class Adapt extends RecyclerView.Adapter<Adapt.ViewHolder> {
         }
     }
 }
+*/

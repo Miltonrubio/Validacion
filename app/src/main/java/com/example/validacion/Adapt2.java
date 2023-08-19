@@ -2,6 +2,8 @@ package com.example.validacion;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -55,7 +59,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     public Adapt2(List<JSONObject> data, Context context) {
         this.data = data;
         this.context = context;
-        this.filteredData = new ArrayList<>(data); // Inicializa la lista filtrada con los mismos datos que la lista original
+        this.filteredData = new ArrayList<>(data);
     }
     @NonNull
     @Override
@@ -65,7 +69,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     }
 
     @SuppressLint("ResourceAsColor")
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         try {
             JSONObject jsonObject = filteredData.get(position);
 
@@ -112,17 +116,17 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 holder.textStatus.setText(estatus);
 
                 if (estatus.equals("pendiente")) {
-                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline3); // Reemplaza con el nombre de tu drawable de fondo amarillo
+                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline3);
                 } else if (estatus.equals("prueba")){
-                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline2); // Reemplaza con el nombre de tu drawable de fondo predeterminado
+                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline2);
                 } else{
-                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline4); // Reemplaza con el nombre de tu drawable de fondo predeterminado
+                    holder.textStatus.setBackgroundResource(R.drawable.textview_outline4);
 
                 }
 
             } else {
                 holder.textStatus.setText("Status no disponible");
-                holder.textStatus.setBackgroundResource(R.drawable.textview_outline5); // Reemplaza con el nombre de tu drawable de fondo predeterminado
+                holder.textStatus.setBackgroundResource(R.drawable.textview_outline5);
 
             }
 
@@ -147,11 +151,11 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             if (!TextUtils.isEmpty(imageUrl)) {
                 Glide.with(holder.itemView.getContext())
                         .load(imageUrl)
-                        .error(R.drawable.default_image)  // Aquí se especifica la imagen en caso de error
+                        .error(R.drawable.default_image)
                         .into(holder.imageViewCoches);
             } else {
                 Glide.with(holder.itemView.getContext())
-                        .load(R.drawable.default_image)  // Carga la imagen predeterminada si imageUrl está vacío
+                        .load(R.drawable.default_image)
                         .into(holder.imageViewCoches);
             }
 
@@ -165,11 +169,15 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                                     if (!TextUtils.isEmpty(response)) {
                                         JSONObject jsonObject = filteredData.get(position);
 
-                                        // Crear un Bundle para enviar los datos al Fragment de Detalle
                                         Bundle bundle = new Bundle();
                                         bundle.putString("marca", marca);
                                         bundle.putString("modelo", modelo);
-                                        bundle.putString("refacciones", jsonObject.toString()); // Aquí se incluye el JSONArray
+
+
+                                   //     JSONArray refaccionesArray = new JSONArray();
+                                        bundle.putString("refacciones", jsonObject.toString());
+                                        Toast.makeText(context, jsonObject.toString(), Toast.LENGTH_SHORT).show();
+
                                         bundle.putString("motivo", jsonObject.optString("motivoingreso", ""));
                                         bundle.putString("fecha", jsonObject.optString("fecha_ingreso", ""));
                                         bundle.putString("status", jsonObject.optString("estatus", ""));
@@ -177,11 +185,12 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                                         bundle.putString("foto", jsonObject.optString("foto", ""));
                                         bundle.putString("hora", jsonObject.optString("hora_ingreso", ""));
 
-                                        // Instanciar el Fragment de Detalle y configurar el Bundle
+
+
                                         DetalleFragment detalleFragment = new DetalleFragment();
                                         detalleFragment.setArguments(bundle);
 
-                                        // Abrir el Fragment de Detalle
+
                                         FragmentManager fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
 
                                         fragmentManager.beginTransaction()
@@ -196,7 +205,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    // Manejar errores de la solicitud aquí
+
                                     Log.e("API Error", "Error en la solicitud: " + error.getMessage());
                                 }
                             }
@@ -210,12 +219,92 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                         }
                     };
 
-                    // Agregar la solicitud a la cola de solicitudes
                     RequestQueue requestQueue2 = Volley.newRequestQueue(context);
                     requestQueue2.add(stringRequest);
                 }
             });
 
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Clic Largo");
+                    builder.setMessage("Has dejado presionado el elemento en la posición: " + position);
+
+                    builder.setPositiveButton("Subir Foto", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(context, Prueba.class);
+                            intent.putExtra("position", position); // Puedes pasar datos adicionales si es necesario
+                            context.startActivity(intent);
+                        }
+                    });
+
+                    builder.setNegativeButton("Detalles", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            StringRequest stringRequest = new StringRequest(Request.Method.POST, UrlApiRefacciones,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            if (!TextUtils.isEmpty(response)) {
+                                                JSONObject jsonObject = filteredData.get(position);
+
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("marca", marca);
+                                                bundle.putString("modelo", modelo);
+                                                bundle.putString("refacciones", jsonObject.toString()); // Aquí se incluye el JSONArray
+                                                bundle.putString("motivo", jsonObject.optString("motivoingreso", ""));
+                                                bundle.putString("fecha", jsonObject.optString("fecha_ingreso", ""));
+                                                bundle.putString("status", jsonObject.optString("estatus", ""));
+                                                bundle.putString("mecanico", jsonObject.optString("id_check_mecanico", ""));
+                                                bundle.putString("foto", jsonObject.optString("foto", ""));
+                                                bundle.putString("hora", jsonObject.optString("hora_ingreso", ""));
+
+                                                DetalleFragment detalleFragment = new DetalleFragment();
+                                                detalleFragment.setArguments(bundle);
+
+                                                FragmentManager fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
+
+                                                fragmentManager.beginTransaction()
+                                                        .replace(R.id.frame_layoutCoches, detalleFragment)
+                                                        .addToBackStack(null)
+                                                        .commit();
+                                            } else {
+                                                Log.d("API Response", "Respuesta vacía");
+                                            }
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            // Manejar errores de la solicitud aquí
+                                            Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                                        }
+                                    }
+                            ) {
+                                @Override
+                                public Map<String, String> getParams() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    params.put("opcion", "3");
+                                    params.put("idventa", "60");
+                                    return params;
+                                }
+                            };
+
+                            // Agregar la solicitud a la cola de solicitudes
+                            RequestQueue requestQueue2 = Volley.newRequestQueue(context);
+                            requestQueue2.add(stringRequest);
+
+                        }
+                    });
+
+                    builder.show();
+
+                    return true; // Indica que el evento ha sido manejado
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -242,6 +331,8 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             textFecha = itemView.findViewById(R.id.textFecha);
             textStatus = itemView.findViewById(R.id.textStatus);
             imageViewCoches = itemView.findViewById(R.id.imageViewCoches);
+
+
         }
     }
 
@@ -253,11 +344,19 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             for (JSONObject item : data) {
                 String marca = item.optString("marcaI", "").toLowerCase();
                 String modelo = item.optString("modeloI", "").toLowerCase();
-                if (marca.contains(query) || modelo.contains(query)) {
+                String nombre = item.optString("nombre", "").toLowerCase();
+                String status = item.optString("estatus", "").toLowerCase();
+                String placa = item.optString("placasI", "").toLowerCase();
+                if (marca.contains(query) || modelo.contains(query) || placa.contains(query)|| nombre.contains(query)|| status.contains(query)) {
                     filteredData.add(item);
                 }
             }
         }
+        notifyDataSetChanged();
+    }
+
+    public void setFilteredData(List<JSONObject> filteredData) {
+        this.filteredData = new ArrayList<>(filteredData);
         notifyDataSetChanged();
     }
 
