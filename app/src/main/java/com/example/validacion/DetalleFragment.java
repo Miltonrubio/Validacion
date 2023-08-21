@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -95,8 +96,6 @@ public class DetalleFragment extends Fragment {
         TextView textstatus = rootView.findViewById(R.id.tvstatus);
         ImageView imageViewDetalles = rootView.findViewById(R.id.imageViewDetalles); // Asegúrate de tener el ID correcto para el ImageView
 
-
-        // Obtener los datos del Bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
             String marca = bundle.getString("marca", "");
@@ -105,38 +104,16 @@ public class DetalleFragment extends Fragment {
 
             String hora = bundle.getString("hora", "");
             String status = bundle.getString("status", "");
-            String mecanico = bundle.getString("mecanico", "");
+            String mecanico = bundle.getString("mecanicos");
             String motivo = bundle.getString("motivo", "");
             String foto = bundle.getString("foto", "");
             String refaccionesJson = bundle.getString("refacciones");
 
-            if (!TextUtils.isEmpty(refaccionesJson)) {
-                try {
-                    JSONObject refaccionObj = new JSONObject(refaccionesJson);
-
-                    String idRefaccion = refaccionObj.optString("idrefaccion");
-                    String clave = refaccionObj.optString("clave");
-                    String cantidad = refaccionObj.optString("cantidad");
-                    String descripcion = refaccionObj.optString("descripcion");
-
-                    String refaccionInfo = "ID Refacción: " + idRefaccion + "\n" +
-                            "Clave: " + clave + "\n" +
-                            "Cantidad: " + cantidad + "\n" +
-                            "Descripción: " + descripcion + "\n\n";
-
-                    tvrefacciones.setText(refaccionInfo);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            tvrefacciones.setText(refaccionesJson);
             textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
             textmotivo.setText(motivo);
             textfecha.setText(fecha);
             texthora.setText(hora);
-
-
 
             if (status.equals("pendiente")) {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
@@ -149,12 +126,8 @@ public class DetalleFragment extends Fragment {
             } else {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
             }
-
-
             textstatus.setText("Estatus: " + status);
-
-
-            textmecanico.setText("Id de mecanico: " + mecanico);
+            textmecanico.setText(mecanico);
 
             if (!TextUtils.isEmpty(foto)) {
                 String imageUrl = "http://tallergeorgio.hopto.org:5613/verificaciones/imagenes/unidades/" + foto;
@@ -163,12 +136,10 @@ public class DetalleFragment extends Fragment {
                         .error(R.drawable.default_image)  // Aquí se especifica la imagen en caso de error
                         .into(imageViewDetalles);
             } else {
-
                 Glide.with(this)
                         .load(R.drawable.default_image)  // Carga la imagen predeterminada si imageUrl está vacío
                         .into(imageViewDetalles);
             }
-
         }
 
         return rootView;

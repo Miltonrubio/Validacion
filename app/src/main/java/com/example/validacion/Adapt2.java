@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +49,8 @@ import javax.annotation.Nullable;
 public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
 
     private Context context;
+    private String Url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
     private String UrlApiRefacciones = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
-
-    public String refacciones;
-
 
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
@@ -61,6 +60,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
         this.context = context;
         this.filteredData = new ArrayList<>(data);
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -71,22 +71,16 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         try {
-            JSONObject jsonObject = filteredData.get(position);
-
-            String id_ref = jsonObject.optString("id_ser_refacciones", "");
-            String marca = jsonObject.optString("marcaI", "");
-
-            String modelo = jsonObject.optString("modeloI", "");
-            String placa = jsonObject.optString("placasI", "");
-            String dueño = jsonObject.optString("nombre", "");
-            String motivo = jsonObject.optString("motivoingreso", "");
-
-
-            String estatus = jsonObject.optString("estatus", "");
-
-            String fecha_ingreso = jsonObject.optString("fecha_ingreso", "");
-
-            String hora_ingreso = jsonObject.optString("hora_ingreso", "");
+            JSONObject jsonObject2 = filteredData.get(position);
+            String id_ref = jsonObject2.optString("id_ser_refacciones", "");
+            String marca = jsonObject2.optString("marcaI", "");
+            String modelo = jsonObject2.optString("modeloI", "");
+            String placa = jsonObject2.optString("placasI", "");
+            String dueño = jsonObject2.optString("nombre", "");
+            String motivo = jsonObject2.optString("motivoingreso", "");
+            String estatus = jsonObject2.optString("estatus", "");
+            String fecha_ingreso = jsonObject2.optString("fecha_ingreso", "");
+            String hora_ingreso = jsonObject2.optString("hora_ingreso", "");
 
             if (!marca.equals("null") && !modelo.equals("null")) {
                 holder.textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
@@ -117,17 +111,15 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
 
                 if (estatus.equals("pendiente")) {
                     holder.textStatus.setBackgroundResource(R.drawable.textview_outline3);
-                } else if (estatus.equals("prueba")){
+                } else if (estatus.equals("prueba")) {
                     holder.textStatus.setBackgroundResource(R.drawable.textview_outline2);
-                } else{
+                } else {
                     holder.textStatus.setBackgroundResource(R.drawable.textview_outline4);
-
                 }
 
             } else {
                 holder.textStatus.setText("Status no disponible");
                 holder.textStatus.setBackgroundResource(R.drawable.textview_outline5);
-
             }
 
             if (!fecha_ingreso.equals("null") && !hora_ingreso.equals("null")) {
@@ -136,18 +128,13 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 holder.textFecha.setText("Fecha no disponible");
             }
 
-
-            String urlOriginal = jsonObject.getString("foto");
+            String urlOriginal = jsonObject2.getString("foto");
             String urlFormateada = "AbHidalgo/91c9318a8e649f0a357ed81bb0b867bc.jpg";
 
             if (!TextUtils.isEmpty(urlOriginal) && !urlOriginal.equals("null")) {
                 urlFormateada = urlOriginal.replace("-", "/");
             }
-
-
             String imageUrl = "http://tallergeorgio.hopto.org:5613/verificaciones/imagenes/unidades/" + urlFormateada;
-
-
             if (!TextUtils.isEmpty(imageUrl)) {
                 Glide.with(holder.itemView.getContext())
                         .load(imageUrl)
@@ -162,65 +149,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, UrlApiRefacciones,
-                            new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-                                    if (!TextUtils.isEmpty(response)) {
-                                        JSONObject jsonObject = filteredData.get(position);
-
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("marca", marca);
-                                        bundle.putString("modelo", modelo);
-
-
-                                   //     JSONArray refaccionesArray = new JSONArray();
-                                        bundle.putString("refacciones", jsonObject.toString());
-                                        Toast.makeText(context, jsonObject.toString(), Toast.LENGTH_SHORT).show();
-
-                                        bundle.putString("motivo", jsonObject.optString("motivoingreso", ""));
-                                        bundle.putString("fecha", jsonObject.optString("fecha_ingreso", ""));
-                                        bundle.putString("status", jsonObject.optString("estatus", ""));
-                                        bundle.putString("mecanico", jsonObject.optString("id_check_mecanico", ""));
-                                        bundle.putString("foto", jsonObject.optString("foto", ""));
-                                        bundle.putString("hora", jsonObject.optString("hora_ingreso", ""));
-
-
-
-                                        DetalleFragment detalleFragment = new DetalleFragment();
-                                        detalleFragment.setArguments(bundle);
-
-
-                                        FragmentManager fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
-
-                                        fragmentManager.beginTransaction()
-                                                .replace(R.id.frame_layoutCoches, detalleFragment)
-                                                .addToBackStack(null)
-                                                .commit();
-                                    } else {
-                                        Log.d("API Response", "Respuesta vacía");
-                                    }
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-
-                                    Log.e("API Error", "Error en la solicitud: " + error.getMessage());
-                                }
-                            }
-                    ) {
-                        @Override
-                        public Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            params.put("opcion", "3");
-                            params.put("idventa", "60");
-                            return params;
-                        }
-                    };
-
-                    RequestQueue requestQueue2 = Volley.newRequestQueue(context);
-                    requestQueue2.add(stringRequest);
+                    obtenerDatosVolley(position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso);
                 }
             });
 
@@ -228,9 +157,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 @Override
                 public boolean onLongClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle("Clic Largo");
-                    builder.setMessage("Has dejado presionado el elemento en la posición: " + position);
-
+                    builder.setMessage("Seleccionaste el elemento: " + position);
                     builder.setPositiveButton("Subir Foto", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -243,60 +170,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                     builder.setNegativeButton("Detalles", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
-                            StringRequest stringRequest = new StringRequest(Request.Method.POST, UrlApiRefacciones,
-                                    new Response.Listener<String>() {
-                                        @Override
-                                        public void onResponse(String response) {
-                                            if (!TextUtils.isEmpty(response)) {
-                                                JSONObject jsonObject = filteredData.get(position);
-
-                                                Bundle bundle = new Bundle();
-                                                bundle.putString("marca", marca);
-                                                bundle.putString("modelo", modelo);
-                                                bundle.putString("refacciones", jsonObject.toString()); // Aquí se incluye el JSONArray
-                                                bundle.putString("motivo", jsonObject.optString("motivoingreso", ""));
-                                                bundle.putString("fecha", jsonObject.optString("fecha_ingreso", ""));
-                                                bundle.putString("status", jsonObject.optString("estatus", ""));
-                                                bundle.putString("mecanico", jsonObject.optString("id_check_mecanico", ""));
-                                                bundle.putString("foto", jsonObject.optString("foto", ""));
-                                                bundle.putString("hora", jsonObject.optString("hora_ingreso", ""));
-
-                                                DetalleFragment detalleFragment = new DetalleFragment();
-                                                detalleFragment.setArguments(bundle);
-
-                                                FragmentManager fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
-
-                                                fragmentManager.beginTransaction()
-                                                        .replace(R.id.frame_layoutCoches, detalleFragment)
-                                                        .addToBackStack(null)
-                                                        .commit();
-                                            } else {
-                                                Log.d("API Response", "Respuesta vacía");
-                                            }
-                                        }
-                                    },
-                                    new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            // Manejar errores de la solicitud aquí
-                                            Log.e("API Error", "Error en la solicitud: " + error.getMessage());
-                                        }
-                                    }
-                            ) {
-                                @Override
-                                public Map<String, String> getParams() throws AuthFailureError {
-                                    Map<String, String> params = new HashMap<String, String>();
-                                    params.put("opcion", "3");
-                                    params.put("idventa", "60");
-                                    return params;
-                                }
-                            };
-
-                            // Agregar la solicitud a la cola de solicitudes
-                            RequestQueue requestQueue2 = Volley.newRequestQueue(context);
-                            requestQueue2.add(stringRequest);
-
+                            obtenerDatosVolley(position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso);
                         }
                     });
 
@@ -309,13 +183,10 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             e.printStackTrace();
         }
     }
-
-
     @Override
     public int getItemCount() {
         return filteredData.size();
     }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textMarca, textModelo, textPlaca, textDueño, textFecha, textStatus;
@@ -331,8 +202,6 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             textFecha = itemView.findViewById(R.id.textFecha);
             textStatus = itemView.findViewById(R.id.textStatus);
             imageViewCoches = itemView.findViewById(R.id.imageViewCoches);
-
-
         }
     }
 
@@ -347,7 +216,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 String nombre = item.optString("nombre", "").toLowerCase();
                 String status = item.optString("estatus", "").toLowerCase();
                 String placa = item.optString("placasI", "").toLowerCase();
-                if (marca.contains(query) || modelo.contains(query) || placa.contains(query)|| nombre.contains(query)|| status.contains(query)) {
+                if (marca.contains(query) || modelo.contains(query) || placa.contains(query) || nombre.contains(query) || status.contains(query)) {
                     filteredData.add(item);
                 }
             }
@@ -359,5 +228,131 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
         this.filteredData = new ArrayList<>(filteredData);
         notifyDataSetChanged();
     }
+
+
+    private void obtenerDatosVolley(int position, String marca, String modelo, String motivo, String fecha_ingreso, String estatus, String hora_ingreso) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, UrlApiRefacciones,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (!TextUtils.isEmpty(response)) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+
+                                // Construir una cadena con los datos de la respuesta
+                                StringBuilder stringBuilder = new StringBuilder();
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    String descripcion = jsonObject.optString("descripcion", "");
+                                    String cantidad = jsonObject.optString("cantidad", "");
+                                    String precio = jsonObject.optString("precio", "");
+                                    String importe = jsonObject.optString("importe", "");
+
+                                    stringBuilder.append("REFACCION ").append(i+1).append(": \n");
+                                    stringBuilder.append("\n");
+                                    stringBuilder.append("descripción: ").append(descripcion).append("\n");
+                                    stringBuilder.append("cantidad: ").append(cantidad).append("\n");
+                                    stringBuilder.append("precio: ").append(precio).append("\n");
+                                    stringBuilder.append("importe: ").append(importe).append("\n");
+                                    stringBuilder.append("\n");
+                                }
+
+                                Bundle bundle = new Bundle();
+                                bundle.putString("marca", marca);
+                                bundle.putString("modelo", modelo);
+                                bundle.putString("refacciones", stringBuilder.toString());
+                                bundle.putString("motivo", motivo);
+                                bundle.putString("fecha", fecha_ingreso);
+                                bundle.putString("status", estatus);
+                                bundle.putString("hora", hora_ingreso);
+
+                                realizarSegundoRequest(bundle);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("API Response", "Respuesta vacía");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "3");
+                params.put("idventa", "60");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+
+
+    private void realizarSegundoRequest(Bundle bundle) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (!TextUtils.isEmpty(response)) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+
+                                StringBuilder stringBuilder = new StringBuilder();
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    String descripcion = jsonObject.optString("nombre", "");
+                                    String cantidad = jsonObject.optString("motivoingreso", "");
+                                    stringBuilder.append(descripcion).append("\n");
+                                    stringBuilder.append("Encargado de: ").append(cantidad).append("\n");
+                                    stringBuilder.append("\n");
+                                }
+
+                                bundle.putString("mecanicos", stringBuilder.toString());
+
+                                DetalleFragment detalleFragment = new DetalleFragment();
+                                detalleFragment.setArguments(bundle);
+
+                                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.frame_layoutCoches, detalleFragment)
+                                        .addToBackStack(null)
+                                        .commit();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("API Response", "Respuesta vacía");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejar el error aquí
+                        Log.e("VolleyError", "Error en la solicitud: " + error.toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "6");
+                params.put("idventa", "60");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+
 
 }

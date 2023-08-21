@@ -58,6 +58,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter2);
 
         editTextBusqueda = view.findViewById(R.id.searchEditText);
+
         editTextBusqueda.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -79,28 +80,24 @@ public class HomeFragment extends Fragment {
 
     private void EnviarWS() {
         String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php/";
-
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-
                     dataList.clear();
-
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         dataList.add(jsonObject); // Agrega cada objeto JSON a la lista
                     }
-
                     adapter2.notifyDataSetChanged();
-
                     adapter2.setFilteredData(dataList);
                     adapter2.filter("");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                editTextBusqueda.setText("");
             }
         }, new Response.ErrorListener() {
             @Override

@@ -2,14 +2,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="16dp"
     android:layout_marginTop="10dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="9dp"
     android:elevation="4dp"
     android:padding="8dp"
-android:background="@drawable/rounded_background"
-    >
+    android:background="@drawable/rounded_background">
 
 <LinearLayout
         android:layout_width="match_parent"
@@ -33,15 +33,22 @@ android:background="@drawable/rounded_background"
             android:orientation="horizontal">
 
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imageViewCoches"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginEnd="10dp"
                 android:adjustViewBounds="true"
-                android:background="@drawable/rounded_image_background"
                 android:padding="8dp"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
+
+
+            />
 
             <!-- Parte derecha para textMarca y textStatus -->
             <LinearLayout
