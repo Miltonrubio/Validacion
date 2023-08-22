@@ -21,7 +21,14 @@
 
         android:backgroundTint="@color/azulito"
         android:layout_gravity="center_horizontal" />
+    <Button
+        android:id="@+id/guardarFoto2"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:text="Volley foto"
 
+        android:backgroundTint="@color/azulito"
+        android:layout_gravity="center_horizontal" />
     <TextView
         android:id="@+id/txtId"
         android:layout_width="100dp"

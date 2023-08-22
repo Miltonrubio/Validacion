@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,20 +63,54 @@ public class UsuariosFragment extends Fragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
-        // Aquí puedes encontrar tus vistas y configurar tus interacciones
-        ImageView guardarCredencialesButton = view.findViewById(R.id.guardarCredencialesButton);
-        guardarCredencialesButton.setOnClickListener(new View.OnClickListener() {
+        TextView cerrarSesion = view.findViewById(R.id.cerrarSesion);
+
+        ImageView coronaImg = view.findViewById(R.id.corona);
+
+        TextView tvNombreMecanico = view.findViewById(R.id.tvNombreMecanico);
+        TextView tvCorreoMecanico = view.findViewById(R.id.tvCorreoMecanico);
+        TextView tvEstadoMecanico = view.findViewById(R.id.tvEstadoMecanico);
+        TextInputLayout ContenedorCerrarSesion = view.findViewById(R.id.ContenedorCerrarSesion);
+
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+
+        String idusuario = sharedPreferences.getString("idusuario", "");
+        String nombre = sharedPreferences.getString("nombre", "");
+        String estado = sharedPreferences.getString("estado", "");
+        String correo = sharedPreferences.getString("email", "");
+        String permisos = sharedPreferences.getString("permisos", "");
+
+        if (permisos.equals("SUPERADMIN")) {
+            coronaImg.setVisibility(View.VISIBLE);
+        }
+
+        tvEstadoMecanico.setText(estado);
+        tvCorreoMecanico.setText(correo);
+        tvNombreMecanico.setText( idusuario + " - " +nombre);
+
+
+        cerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 cerrarSesion();
             }
         });
+
+        ContenedorCerrarSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                cerrarSesion();
+            }
+        });
+
 
         return view;
     }

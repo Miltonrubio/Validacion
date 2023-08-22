@@ -49,7 +49,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
-
+implementation("com.journeyapps:zxing-android-embedded:4.1.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.android.support:support-annotations:28.0.0")

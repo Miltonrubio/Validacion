@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "PreferenciaInicial";
 
-    String idUsuario;
     private static final String EVENT_KEY = "Evento Realizado";
     String personalToken;
 
@@ -97,10 +96,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void guardarCredenciales(String username, String password, boolean rememberMe) {
+    private void guardarCredenciales(String idusuario, String nombre, String password, String telefono, String email, String permisos, String estado, String tipo,
+                                     String foto, boolean rememberMe) {
+
         SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("email", username);
+        editor.putString("email", email);
+        editor.putString("idusuario", idusuario);
+        editor.putString("nombre", nombre);
+        editor.putString("telefono", telefono);
+        editor.putString("permisos", permisos);
+        editor.putString("estado", estado);
+        editor.putString("tipo", tipo);
+        editor.putString("foto", foto);
         editor.putString("password", rememberMe ? password : "");
         editor.putBoolean("rememberMe", rememberMe);
         editor.apply();
@@ -114,14 +122,12 @@ public class MainActivity extends AppCompatActivity {
     private void IniciarSession() {
         String valorusername = inputUsername.getText().toString();
         String valorpassword = inputPassword.getText().toString();
-        boolean rememberMe = checkBoxRememberMe.isChecked();
 
 
         if (valorusername.isEmpty() || valorpassword.isEmpty()) {
             Toast.makeText(context, "LLENE TODOS LOS CAMPOS", Toast.LENGTH_SHORT).show();
         } else {
             Login(valorusername, valorpassword);
-            guardarCredenciales(valorusername, valorpassword, rememberMe);
         }
     }
 
@@ -138,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
                     } else {
 
                         try {
+
+
+                            boolean rememberMe = checkBoxRememberMe.isChecked();
                             // Convertir la respuesta en un JSONArray
                             JSONArray jsonArray = new JSONArray(response);
 
@@ -145,7 +154,20 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                                idUsuario = jsonObject.getString("idusuario");
+                              String  idusuario = jsonObject.getString("idusuario");
+                                String nombre= jsonObject.getString("nombre");
+                                String password= jsonObject.getString("password");
+                                String telefono= jsonObject.getString("telefono");
+                                String email= jsonObject.getString("email");
+                                String permisos= jsonObject.getString("permisos");
+                                String estado= jsonObject.getString("estado");
+                                String tipo= jsonObject.getString("tipo");
+                                String foto= jsonObject.getString("foto");
+
+
+                                guardarCredenciales(idusuario, nombre, password,telefono,email,permisos,estado,tipo,foto,rememberMe);
+
+                                RegistrarToken(idusuario);
                             }
 
 
@@ -153,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, Activity_Binding.class);
                             startActivity(intent);
                             finish();
-                            RegistrarToken(idUsuario);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -233,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 public void  enviarACamara(View view){
-    Intent intent = new Intent(MainActivity.this, Prueba.class);
+    Intent intent = new Intent(MainActivity.this, Prueba2.class);
     startActivity(intent);
 }
 
