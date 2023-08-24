@@ -24,6 +24,7 @@ public class Prueba2 extends AppCompatActivity {
         btnScann.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+/*
                 IntentIntegrator integrador = new IntentIntegrator(Prueba2.this);
                 integrador.setDesiredBarcodeFormats(integrador.ALL_CODE_TYPES);
                 integrador.setPrompt("Lector - DCP");
@@ -33,11 +34,12 @@ public class Prueba2 extends AppCompatActivity {
                 integrador.setBarcodeImageEnabled(true);
 
                 integrador.initiateScan();
-
+*/
             }
         });
     }
 
+    /*
     protected  void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
@@ -55,6 +57,6 @@ public class Prueba2 extends AppCompatActivity {
 
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
+    }*/
 
 }

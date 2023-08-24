@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "581915082532",
+    "project_id": "tallergeorgio-8a05f",
+    "storage_bucket": "tallergeorgio-8a05f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581915082532:android:831fd5eab87708f1be3db1",
+        "android_client_info": {
+          "package_name": "com.example.checktaller"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581915082532-5eklhp3390nndo4dlt2ap86jfdfosh90.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDzdPmAoopuNY7ojB7uGxCTunmABDz60g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581915082532-5eklhp3390nndo4dlt2ap86jfdfosh90.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581915082532:android:6179a53add4da319be3db1",
+        "android_client_info": {
+          "package_name": "com.example.validacion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581915082532-5eklhp3390nndo4dlt2ap86jfdfosh90.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDzdPmAoopuNY7ojB7uGxCTunmABDz60g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581915082532-5eklhp3390nndo4dlt2ap86jfdfosh90.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

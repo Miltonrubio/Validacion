@@ -1,5 +1,7 @@
 package com.example.validacion;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -22,10 +26,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +46,7 @@ public class HomeFragment extends Fragment {
     private List<JSONObject> dataList = new ArrayList<>();
     private EditText editTextBusqueda;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +57,20 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ImageView LectorQr = view.findViewById(R.id.LectorQr);
+        LectorQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentIntegrator integrator = IntentIntegrator.forSupportFragment(HomeFragment.this);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+                integrator.setPrompt("Lector de còdigos - Taller Georgio");
+                integrator.setCameraId(0);
+                integrator.setBeepEnabled(true);
+                integrator.setBarcodeImageEnabled(true);
+                integrator.initiateScan();
+            }
+        });
 
         recyclerView = view.findViewById(R.id.recyclerViewFragment);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -77,7 +99,17 @@ public class HomeFragment extends Fragment {
 
         EnviarWS();
     }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null && result.getContents() != null) {
+            String scanResult = result.getContents();
+            editTextBusqueda.setText(scanResult);
+        } else {
+            Toast.makeText(getContext(), "Escaneo cancelado", Toast.LENGTH_SHORT).show();
+        }
+    }
     private void EnviarWS() {
         String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php/";
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {

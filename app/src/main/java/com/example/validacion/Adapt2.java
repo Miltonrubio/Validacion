@@ -157,7 +157,9 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 @Override
                 public boolean onLongClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Seleccionaste el elemento: " + position);
+                    builder.setMessage("Seleccionaste el elemento: " + marca  + " " +modelo);
+
+//                    (position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso);
                     builder.setPositiveButton("Subir Foto", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

@@ -70,6 +70,7 @@
             android:windowEnterAnimation="@anim/fade_in"
             android:windowExitAnimation="@anim/fade_out" />
 
+
         <service
             android:name=".MyFirebaseService"
             android:exported="false"
