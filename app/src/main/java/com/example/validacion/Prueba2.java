@@ -1,6 +1,7 @@
 package com.example.validacion;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,31 +13,34 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Prueba2 extends AppCompatActivity {
+
+
+    Button log_out;
+
+    ViewPager2 viewPager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prueba2);
 
-        Button btnScann = findViewById(R.id.btnScann);
+viewPager2= findViewById(R.id.ViewPager425);
 
-        btnScann.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-/*
-                IntentIntegrator integrador = new IntentIntegrator(Prueba2.this);
-                integrador.setDesiredBarcodeFormats(integrador.ALL_CODE_TYPES);
-                integrador.setPrompt("Lector - DCP");
+        List<SlideItem> slideItems = new ArrayList<>();
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg"));
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/54320220de0e1462e914998658cec710.jpg"));
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/27bea1b4e42ccd5ab66d50d09483eb4a.jpg"));
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg"));
 
-                integrador.setCameraId(0);
-                integrador.setBeepEnabled(true);
-                integrador.setBarcodeImageEnabled(true);
 
-                integrador.initiateScan();
-*/
-            }
-        });
+
+viewPager2.setAdapter(new SlideAdapter(slideItems,viewPager2));
+
+
     }
 
     /*

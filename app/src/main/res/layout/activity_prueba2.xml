@@ -6,28 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".Prueba2">
 
-    <TextView
-        android:id="@+id/txtResultado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="170dp"
-        android:layout_marginTop="320dp"
-        android:layout_marginEnd="183dp"
-        android:layout_marginBottom="392dp"
-        android:text="Prueba Notificacion 2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnScann"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.128" />
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        tools:ignore="MissingConstraints"
+        android:layout_margin="9dp"
+        android:id="@+id/ViewPager425"
+
+        />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

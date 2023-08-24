@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -149,7 +150,10 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    obtenerDatosVolley(position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso);
+
+                    AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(new ArrayList<>());
+                    obtenerDatosVolley(position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso /*, adaptadorRefacciones*/);
+
                 }
             });
 
@@ -172,7 +176,9 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                     builder.setNegativeButton("Detalles", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            obtenerDatosVolley(position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso);
+
+                            AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(new ArrayList<>());
+                            obtenerDatosVolley(position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso/* , adaptadorRefacciones*/);
                         }
                     });
 
@@ -232,7 +238,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     }
 
 
-    private void obtenerDatosVolley(int position, String marca, String modelo, String motivo, String fecha_ingreso, String estatus, String hora_ingreso) {
+    private void obtenerDatosVolley(int position, String marca, String modelo, String motivo, String fecha_ingreso, String estatus, String hora_ingreso/* , AdaptadorRefacciones adaptadorRefacciones*/) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UrlApiRefacciones,
                 new Response.Listener<String>() {
                     @Override
@@ -241,7 +247,9 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                             try {
                                 JSONArray jsonArray = new JSONArray(response);
 
-                                // Construir una cadena con los datos de la respuesta
+                              //  List<Refacciones> listaRefacciones = new ArrayList<>();
+
+                                Bundle bundle = new Bundle();
                                 StringBuilder stringBuilder = new StringBuilder();
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -249,25 +257,32 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                                     String cantidad = jsonObject.optString("cantidad", "");
                                     String precio = jsonObject.optString("precio", "");
                                     String importe = jsonObject.optString("importe", "");
+                                    String idventa = jsonObject.optString("idventa", "");
 
-                                    stringBuilder.append("REFACCION ").append(i+1).append(": \n");
-                                    stringBuilder.append("\n");
-                                    stringBuilder.append("descripción: ").append(descripcion).append("\n");
-                                    stringBuilder.append("cantidad: ").append(cantidad).append("\n");
-                                    stringBuilder.append("precio: ").append(precio).append("\n");
-                                    stringBuilder.append("importe: ").append(importe).append("\n");
-                                    stringBuilder.append("\n");
+
+                                    /*
+                                    stringBuilder.append("descripción").append(descripcion);
+                                    stringBuilder.append("cantidad").append(cantidad);
+                                    stringBuilder.append("precio").append(precio);
+                                    stringBuilder.append("importe").append(importe);
+                                    stringBuilder.append("idventa").append(importe);
+*/
+
+                                /*    Refacciones refaccion = new Refacciones(cantidad, descripcion, precio, idventa);
+                                    listaRefacciones.add(refaccion);
+
+                                    */
                                 }
 
-                                Bundle bundle = new Bundle();
                                 bundle.putString("marca", marca);
                                 bundle.putString("modelo", modelo);
-                                bundle.putString("refacciones", stringBuilder.toString());
+                                bundle.putString("refacciones", response.toString());
                                 bundle.putString("motivo", motivo);
                                 bundle.putString("fecha", fecha_ingreso);
                                 bundle.putString("status", estatus);
                                 bundle.putString("hora", hora_ingreso);
 
+                           //    adaptadorRefacciones.actualizarLista(listaRefacciones);
                                 realizarSegundoRequest(bundle);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -307,17 +322,18 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                             try {
                                 JSONArray jsonArray = new JSONArray(response);
 
-                                StringBuilder stringBuilder = new StringBuilder();
+                           //     StringBuilder stringBuilder = new StringBuilder();
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                     /*   JSONObject jsonObject = jsonArray.getJSONObject(i);
+
                                     String descripcion = jsonObject.optString("nombre", "");
                                     String cantidad = jsonObject.optString("motivoingreso", "");
                                     stringBuilder.append(descripcion).append("\n");
                                     stringBuilder.append("Encargado de: ").append(cantidad).append("\n");
-                                    stringBuilder.append("\n");
+                                    stringBuilder.append("\n");*/
                                 }
 
-                                bundle.putString("mecanicos", stringBuilder.toString());
+                                bundle.putString("mecanicos", response.toString());
 
                                 DetalleFragment detalleFragment = new DetalleFragment();
                                 detalleFragment.setArguments(bundle);

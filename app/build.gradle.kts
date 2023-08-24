@@ -67,6 +67,8 @@ implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
 
+    implementation ("androidx.viewpager2:viewpager2:1.0")
+    implementation("com.makeramen:roundedimageview:2.3.0")
 
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
     implementation("com.google.firebase:firebase-analytics")

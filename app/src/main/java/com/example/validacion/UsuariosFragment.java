@@ -99,7 +99,7 @@ public class UsuariosFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                cerrarSesion();
+               IrASlider();
             }
         });
 
@@ -107,7 +107,7 @@ public class UsuariosFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                cerrarSesion();
+                IrASlider();
             }
         });
 
@@ -128,5 +128,10 @@ public class UsuariosFragment extends Fragment {
         requireActivity().finish();
     }
 
+    private void IrASlider() {
 
+        Intent intent = new Intent(requireContext(), Prueba2.class);
+        startActivity(intent);
+        requireActivity().finish();
+    }
 }
