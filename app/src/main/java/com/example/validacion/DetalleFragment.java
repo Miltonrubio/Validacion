@@ -1,6 +1,7 @@
 package com.example.validacion;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -60,7 +61,11 @@ public class DetalleFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+
     ViewPager2 viewPager2;
+    RecyclerView recyclerViewRefacciones;
+    RecyclerView recyclerViewMecanicos;
 
     public DetalleFragment() {
         // Required empty public constructor
@@ -97,85 +102,29 @@ public class DetalleFragment extends Fragment {
         TextView textfecha = rootView.findViewById(R.id.tv4);
         TextView texthora = rootView.findViewById(R.id.tv5);
         TextView textstatus = rootView.findViewById(R.id.tvstatus);
-        viewPager2 =rootView.findViewById(R.id.ViewPager);
 
-        List<SlideItem> slideItems = new ArrayList<>();
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/54320220de0e1462e914998658cec710.jpg"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/27bea1b4e42ccd5ab66d50d09483eb4a.jpg"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg"));
-        viewPager2.setAdapter(new SlideAdapter(slideItems,viewPager2));
+        recyclerViewRefacciones = rootView.findViewById(R.id.recyclerViewRefacciones);
 
+        recyclerViewMecanicos = rootView.findViewById(R.id.recyclerViewMecanicos);
 
-        viewPager2.setClipToPadding(false);
-        viewPager2.setClipChildren(false);
-        viewPager2.setOffscreenPageLimit(4);
-
-        viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-
-
-        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
-        compositePageTransformer.addTransformer(new MarginPageTransformer(10));
-
-        compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
-            @Override
-            public void transformPage(@NonNull View page, float position) {
-                float r =1 - Math.abs(position);
-                page.setScaleY(0.85f + 0.15f);
-            }
-        });
-
-        viewPager2.setPageTransformer(compositePageTransformer);
-
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback(){
-            public void onPageSelected(int position){
-                super.onPageSelected(position);
-
-                sliderHandler.removeCallbacks(sliderRunnable);
-                sliderHandler.postDelayed(sliderRunnable,1500);
-            }
-        });
+        viewPager2 = rootView.findViewById(R.id.ViewPager);
 
 
         Bundle bundle = getArguments();
-        String refaccionesJson = null;
         if (bundle != null) {
             String marca = bundle.getString("marca", "");
             String modelo = bundle.getString("modelo", "");
             String fecha = bundle.getString("fecha", "");
-
             String hora = bundle.getString("hora", "");
             String status = bundle.getString("status", "");
-            String mecanico = bundle.getString("mecanicos");
             String motivo = bundle.getString("motivo", "");
-            String foto = bundle.getString("foto", "");
-            refaccionesJson = bundle.getString("refacciones");
+            String idventa = bundle.getString("idventa", "");
 
+            CargarRefacciones(idventa);
+            CargarMecanicos(idventa);
+            CargarImagenes(idventa);
 
-            RecyclerView recyclerViewRefacciones = rootView.findViewById(R.id.recyclerViewRefacciones);
-            List<Refacciones> listaRefacciones = obtenerListaDeRefacciones(refaccionesJson);
-
-            AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(listaRefacciones);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
-            recyclerViewRefacciones.setLayoutManager(layoutManager);
-            recyclerViewRefacciones.setAdapter(adaptadorRefacciones);
-
-
-
-            RecyclerView recyclerViewMecanicos = rootView.findViewById(R.id.recyclerViewMecanicos);
-            List<Mecanicos> listaMecanicos= obtenerListaDeMecanicos(mecanico);
-
-            AdaptadorMecanicos adaptadorMecanicos = new AdaptadorMecanicos(listaMecanicos);
-            LinearLayoutManager layoutManager2 = new LinearLayoutManager(requireContext());
-            recyclerViewMecanicos.setLayoutManager(layoutManager2);
-            recyclerViewMecanicos.setAdapter(adaptadorMecanicos);
-
-
-
-            textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
-            textmotivo.setText(motivo);
-            textfecha.setText(fecha);
-            texthora.setText(hora);
+            //Texto del fragment con validaciones
 
             if (status.equals("pendiente")) {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
@@ -188,77 +137,215 @@ public class DetalleFragment extends Fragment {
             } else {
                 textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
             }
+
+            textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
             textstatus.setText("Estatus: " + status);
-
-            /*
-            if (!TextUtils.isEmpty(foto)) {
-                String imageUrl = "http://tallergeorgio.hopto.org:5613/verificaciones/imagenes/unidades/" + foto;
-                Glide.with(this)
-                        .load(imageUrl)  // URL de la foto
-                        .error(R.drawable.default_image)  // Aquí se especifica la imagen en caso de error
-                        .into(imageViewDetalles);
-            } else {
-                Glide.with(this)
-                        .load(R.drawable.default_image)  // Carga la imagen predeterminada si imageUrl está vacío
-                        .into(imageViewDetalles);
-            }
-
-
-             */
+            textmotivo.setText(motivo);
+            textfecha.setText(fecha);
+            texthora.setText(hora);
         }
         return rootView;
     }
 
-    private List<Refacciones> obtenerListaDeRefacciones(String jsonString) {
-        List<Refacciones> listaRefacciones = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonString);
+    private void CargarImagenes(String idventa) {
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+        StringRequest stringRequest3 = new StringRequest(Request.Method.POST, urlApi,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        List<SlideItem> slideItems = new ArrayList<>();
 
-                String idrefaccion = jsonObject.getString("idrefaccion");
-                String descripcion = jsonObject.getString("descripcion");
-                String precio = jsonObject.getString("precio");
-                String cantidad = jsonObject.getString("cantidad");
+                        if (!TextUtils.isEmpty(response)) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject fotoObj = jsonArray.getJSONObject(i);
+                                    String foto = fotoObj.getString("foto");
+                                    String fotoUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/";
 
-                Refacciones refaccion = new Refacciones(cantidad, descripcion, precio, idrefaccion);
-                listaRefacciones.add(refaccion);
+                                   slideItems.add(new SlideItem(fotoUrl + foto));
+
+
+                                }
+                                viewPager2.setAdapter(new SlideAdapter(slideItems, viewPager2));
+                                viewPager2.setClipToPadding(false);
+
+
+
+                                viewPager2.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        int currentItem = viewPager2.getCurrentItem();
+                                        SlideItem selectedSlide = slideItems.get(currentItem);
+
+                                        Toast.makeText(requireContext(), "Elemento seleccionado"+ selectedSlide, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+
+                                viewPager2.setClipChildren(false);
+                                viewPager2.setOffscreenPageLimit(4);
+                                viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+                                CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+                                compositePageTransformer.addTransformer(new MarginPageTransformer(10));
+                                compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                                    @Override
+                                    public void transformPage(@NonNull View page, float position) {
+                                        float r = 1 - Math.abs(position);
+                                        page.setScaleY(0.85f + 0.15f);
+                                    }
+                                });
+
+                                viewPager2.setPageTransformer(compositePageTransformer);
+                                viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                                    public void onPageSelected(int position) {
+                                        super.onPageSelected(position);
+                                        sliderHandler.removeCallbacks(sliderRunnable);
+                                        sliderHandler.postDelayed(sliderRunnable, 3000);
+                                    }
+                                });
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("API Response", "Respuesta vacía");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "8");
+                params.put("idventa", idventa);
+                return params;
             }
+        };
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return listaRefacciones;
+        RequestQueue requestQueue3 = Volley.newRequestQueue(requireContext());
+        requestQueue3.add(stringRequest3);
+
     }
 
+    private void CargarMecanicos(String idventa) {
 
+        StringRequest stringRequest2 = new StringRequest(Request.Method.POST, urlApi,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-    private List<Mecanicos> obtenerListaDeMecanicos(String jsonString) {
-        List<Mecanicos> listaMecanicos = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(jsonString);
+                        List<Mecanicos> listaMecanicos = new ArrayList<>();
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if (!TextUtils.isEmpty(response)) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
 
+                                    String foto = jsonObject.getString("foto");
+                                    String nombre = jsonObject.getString("nombre");
+                                    String motivoingreso = jsonObject.getString("motivoingreso");
+                                    String fecha_programada = jsonObject.getString("fecha_programada");
 
-                String foto = jsonObject.getString("foto");
-                String nombre = jsonObject.getString("nombre");
-                String motivoingreso = jsonObject.getString("motivoingreso");
-                String fecha_programada = jsonObject.getString("fecha_programada");
+                                    Mecanicos mecanicos = new Mecanicos(foto, nombre, motivoingreso, fecha_programada);
+                                    listaMecanicos.add(mecanicos);
+                                }
 
-
-                Mecanicos mecanicos = new Mecanicos(foto, nombre, motivoingreso, fecha_programada);
-                listaMecanicos.add(mecanicos);
+                                AdaptadorMecanicos adaptadorMecanicos = new AdaptadorMecanicos(listaMecanicos);
+                                LinearLayoutManager layoutManager2 = new LinearLayoutManager(requireContext());
+                                recyclerViewMecanicos.setLayoutManager(layoutManager2);
+                                recyclerViewMecanicos.setAdapter(adaptadorMecanicos);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("API Response", "Respuesta vacía");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "6");
+                params.put("idventa", idventa);
+                return params;
             }
+        };
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return listaMecanicos;
+        RequestQueue requestQueue2 = Volley.newRequestQueue(requireContext());
+        requestQueue2.add(stringRequest2);
+
     }
 
+    private void CargarRefacciones(String idventa) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlApi,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        List<Refacciones> listaRefacciones = new ArrayList<>();
+
+                        if (!TextUtils.isEmpty(response)) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                    String idrefaccion = jsonObject.getString("idrefaccion");
+                                    String descripcion = jsonObject.getString("descripcion");
+                                    String precio = jsonObject.getString("precio");
+                                    String cantidad = jsonObject.getString("cantidad");
+
+                                    Refacciones refaccion = new Refacciones(cantidad, descripcion, precio, idrefaccion);
+                                    listaRefacciones.add(refaccion);
+                                }
+
+                                AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(listaRefacciones);
+                                recyclerViewRefacciones.setLayoutManager(new LinearLayoutManager(requireContext()));
+                                recyclerViewRefacciones.setAdapter(adaptadorRefacciones);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("API Response", "Respuesta vacía");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "3");
+                params.put("idventa", idventa);
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        requestQueue.add(stringRequest);
+    }
 
     private Runnable sliderRunnable = new Runnable() {
         @Override
@@ -266,5 +353,16 @@ public class DetalleFragment extends Fragment {
             viewPager2.setCurrentItem(viewPager2.getCurrentItem() + 1);
         }
     };
+
+
+    public void onPause() {
+        super.onPause();
+        sliderHandler.removeCallbacks(sliderRunnable);
+    }
+
+    public void onResume() {
+        super.onResume();
+        sliderHandler.postDelayed(sliderRunnable, 3000);
+    }
 
 }

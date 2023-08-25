@@ -86,4 +86,5 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
     };
 
 
+
 }

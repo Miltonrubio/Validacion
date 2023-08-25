@@ -1,5 +1,7 @@
 package com.example.validacion;
 
+import android.view.View;
+
 public class SlideItem {
 
     private String image;
@@ -15,4 +17,5 @@ public class SlideItem {
     public void setImage(String image) {
         this.image = image;
     }
+
 }
