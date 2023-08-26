@@ -28,17 +28,17 @@ public class Prueba2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prueba2);
 
-viewPager2= findViewById(R.id.ViewPager425);
+        viewPager2 = findViewById(R.id.ViewPager425);
+
 
         List<SlideItem> slideItems = new ArrayList<>();
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/54320220de0e1462e914998658cec710.jpg"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/27bea1b4e42ccd5ab66d50d09483eb4a.jpg"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg"));
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg", "1"));
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/54320220de0e1462e914998658cec710.jpg","2"));
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/27bea1b4e42ccd5ab66d50d09483eb4a.jpg","3"));
+        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg","4"));
 
 
-
-viewPager2.setAdapter(new SlideAdapter(slideItems,viewPager2));
+        viewPager2.setAdapter(new SlideAdapter(slideItems, viewPager2));
 
 
     }

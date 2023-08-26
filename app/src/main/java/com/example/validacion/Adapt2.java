@@ -7,11 +7,16 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +45,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -190,56 +197,102 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Seleccionaste el elemento: " + marca + " " + modelo);
+                        int[] location = new int[2];
+                        view.getLocationOnScreen(location);
 
-                        builder.setPositiveButton("Subir Foto", new DialogInterface.OnClickListener() {
+                        int centerX = location[0] + view.getWidth() / 2;
+                        int centerY = location[1] + view.getHeight() / 2;
+
+                        DisplayMetrics displayMetrics = new DisplayMetrics();
+                        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+                        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
+                        int screenWidth = displayMetrics.widthPixels;
+                        int screenHeight = displayMetrics.heightPixels;
+
+                        centerX = screenWidth / 2;
+                        centerY = screenHeight / 2;
+
+                        PopupMenu popupMenu = new PopupMenu(context, view, Gravity.CENTER); // Set gravity to center
+                        popupMenu.getMenuInflater().inflate(R.menu.menu_opciones, popupMenu.getMenu());
+
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(context, Prueba.class);
-
-                                intent.putExtra("marca", marca);
-                                intent.putExtra("id_ser_venta", id_ser_venta);
-                                context.startActivity(intent);
-                            }
-                        });
-
-                        builder.setNegativeButton("Detalles", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(new ArrayList<>());
-//                                obtenerDatosVolley(position, marca, modelo, motivo, fecha_ingreso, estatus, hora_ingreso, id_ser_venta);
-
+                            public boolean onMenuItemClick(MenuItem menuItem) {
 
                                 Bundle bundle = new Bundle();
-
                                 bundle.putString("marca", marca);
                                 bundle.putString("modelo", modelo);
                                 bundle.putString("motivo", motivo);
                                 bundle.putString("fecha", fecha_ingreso);
                                 bundle.putString("status", estatus);
                                 bundle.putString("hora", hora_ingreso);
-
                                 bundle.putString("idventa", id_ser_venta);
 
-                                DetalleFragment detalleFragment = new DetalleFragment();
-                                detalleFragment.setArguments(bundle);
+                                switch (menuItem.getItemId()) {
+                                    case R.id.opcionDetalles:
 
-                                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-                                fragmentManager.beginTransaction()
-                                        .replace(R.id.frame_layoutCoches, detalleFragment)
-                                        .addToBackStack(null)
-                                        .commit();
 
+                                        DetalleFragment detalleFragment = new DetalleFragment();
+                                        detalleFragment.setArguments(bundle);
+
+                                        FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                                        fragmentManager.beginTransaction()
+                                                .replace(R.id.frame_layoutCoches, detalleFragment)
+                                                .addToBackStack(null)
+                                                .commit();
+                                        return true;
+
+                                    case R.id.opcionFotos:
+                                        Intent intent = new Intent(context, Prueba.class);
+                                        intent.putExtra("marca", marca);
+                                        intent.putExtra("id_ser_venta", id_ser_venta);
+                                        context.startActivity(intent);
+                                        return true;
+
+                                    case R.id.opcionCheck:
+
+                                        CheckListFragment checkListFragment = new CheckListFragment();
+                                        checkListFragment.setArguments(bundle);
+
+                                        FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
+                                        fragmentManagerCheck.beginTransaction()
+                                                .replace(R.id.frame_layoutCoches, checkListFragment)
+                                                .addToBackStack(null)
+                                                .commit();
+                                        return true;
+
+                                    case R.id.opcionCancelar:
+                                        // Acción para la opción 4
+                                        return true;
+
+                                    default:
+                                        return false;
+                                }
                             }
                         });
 
-                        builder.show();
+                        popupMenu.show();
+
+                        // Adjusting the icon visibility
+                        try {
+                            Field mPopup = PopupMenu.class.getDeclaredField("mPopup");
+                            mPopup.setAccessible(true);
+                            Object menuPopupHelper = mPopup.get(popupMenu);
+                            Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                            Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                            setForceIcons.invoke(menuPopupHelper, true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                         return true;
                     }
                 });
+
+
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

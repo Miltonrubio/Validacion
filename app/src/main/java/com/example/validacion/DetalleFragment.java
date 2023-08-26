@@ -67,6 +67,8 @@ public class DetalleFragment extends Fragment {
     RecyclerView recyclerViewRefacciones;
     RecyclerView recyclerViewMecanicos;
 
+    TextView tvRefacciones;
+
     public DetalleFragment() {
         // Required empty public constructor
     }
@@ -161,29 +163,16 @@ public class DetalleFragment extends Fragment {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject fotoObj = jsonArray.getJSONObject(i);
                                     String foto = fotoObj.getString("foto");
+                                    String id_ser_venta = fotoObj.getString("id_ser_venta");
                                     String fotoUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/";
 
-                                   slideItems.add(new SlideItem(fotoUrl + foto));
-
-
+                                   slideItems.add(new SlideItem(fotoUrl + foto, id_ser_venta));
                                 }
-                                viewPager2.setAdapter(new SlideAdapter(slideItems, viewPager2));
+
+                                SlideAdapter slideAdapter = new SlideAdapter(slideItems, viewPager2);
+
+                                viewPager2.setAdapter(slideAdapter);
                                 viewPager2.setClipToPadding(false);
-
-
-
-                                viewPager2.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        int currentItem = viewPager2.getCurrentItem();
-                                        SlideItem selectedSlide = slideItems.get(currentItem);
-
-                                        Toast.makeText(requireContext(), "Elemento seleccionado"+ selectedSlide, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-
-
                                 viewPager2.setClipChildren(false);
                                 viewPager2.setOffscreenPageLimit(4);
                                 viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
@@ -324,7 +313,7 @@ public class DetalleFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         } else {
-                            Log.d("API Response", "Respuesta vacía");
+                            tvRefacciones.setText("No hay Refacciones para mostrar");
                         }
                     }
                 },

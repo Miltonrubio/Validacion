@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/opcionDetalles"
+        android:title="Detalles" />
+    <item
+        android:id="@+id/opcionFotos"
+        android:title="Subir Fotos" />
+    <item
+        android:id="@+id/opcionCheck"
+        android:title="Check" />
+    <item
+        android:id="@+id/opcionCancelar"
+        android:title="Cancelar" />
+</menu>

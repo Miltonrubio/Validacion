@@ -222,9 +222,11 @@ public class Prueba extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject fotoObj = jsonArray.getJSONObject(i);
                                     String foto = fotoObj.getString("foto");
+
+                                    String id_ser_venta = fotoObj.getString("id_ser_venta");
                                     String fotoUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/";
 
-                                    slideItems.add(new SlideItem(fotoUrl + foto));
+                                    slideItems.add(new SlideItem(fotoUrl + foto, id_ser_venta));
                                 }
                                 viewPager2.setAdapter(new SlideAdapter(slideItems, viewPager2));
                                 viewPager2.setClipToPadding(false);
