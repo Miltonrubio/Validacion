@@ -5,8 +5,27 @@
     android:layout_height="match_parent"
     tools:context=".CheckListFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reciclerViewCheck"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/TVResultadoChecks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="right"
+            android:text=""
+            android:textColor="@color/azulito"
+            android:textSize="22sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reciclerViewCheck"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
 </FrameLayout>

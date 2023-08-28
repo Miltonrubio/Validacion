@@ -7,10 +7,9 @@ public class Cheks {
 
     String categoria;
 
-    String comentarios, id_ser_venta, urlfoto, valorcheck, fechacheck, horacheck, estado;
+    String comentarios, id_ser_venta, urlfoto, valorcheck, fechacheck, horacheck, estado, idcheck;
 
-
-    public Cheks(String descripcion, String categoria, String comentarios, String id_ser_venta, String urlfoto, String valorcheck, String fechacheck, String horacheck, String estado) {
+    public Cheks(String descripcion, String categoria, String comentarios, String id_ser_venta, String urlfoto, String valorcheck, String fechacheck, String horacheck, String estado, String idcheck) {
         this.descripcion = descripcion;
         this.categoria = categoria;
         this.comentarios = comentarios;
@@ -20,6 +19,15 @@ public class Cheks {
         this.fechacheck = fechacheck;
         this.horacheck = horacheck;
         this.estado = estado;
+        this.idcheck = idcheck;
+    }
+
+    public String getIdcheck() {
+        return idcheck;
+    }
+
+    public void setIdcheck(String idcheck) {
+        this.idcheck = idcheck;
     }
 
     public String getDescripcion() {

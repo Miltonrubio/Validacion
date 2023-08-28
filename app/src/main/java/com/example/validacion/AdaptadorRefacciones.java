@@ -52,17 +52,17 @@ public class AdaptadorRefacciones extends RecyclerView.Adapter<AdaptadorRefaccio
         return listaRefacciones.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nombreRefaccion, precioRefaccion, cantidadRefacciones;
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView nombreRefaccion, precioRefaccion, cantidadRefacciones;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            nombreRefaccion = itemView.findViewById(R.id.nombreRefaccion);
-            precioRefaccion = itemView.findViewById(R.id.precioRefaccion);
-            cantidadRefacciones=  itemView.findViewById(R.id.cantidadRefacciones);
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                nombreRefaccion = itemView.findViewById(R.id.nombreRefaccion);
+                precioRefaccion = itemView.findViewById(R.id.precioRefaccion);
+                cantidadRefacciones=  itemView.findViewById(R.id.cantidadRefacciones);
 
+            }
         }
-    }
 
 
     public void actualizarLista(List<Refacciones> nuevaLista) {
