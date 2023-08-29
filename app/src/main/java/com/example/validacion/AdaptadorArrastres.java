@@ -54,7 +54,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
+public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.ViewHolder> {
 
 
     private static final int VIEW_TYPE_ERROR = 0;
@@ -65,7 +65,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
 
-    public Adapt2(List<JSONObject> data, Context context) {
+    public AdaptadorArrastres(List<JSONObject> data, Context context) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
@@ -77,7 +77,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
 
 
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_coches, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_arrastres, parent, false);
             return new ViewHolder(view);
         } else {
 
@@ -93,33 +93,64 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
         if (getItemViewType(position) == VIEW_TYPE_ITEM) {
             try {
                 JSONObject jsonObject2 = filteredData.get(position);
-                String id_ref = jsonObject2.optString("id_ser_refacciones", "");
-                String marca = jsonObject2.optString("marcaI", "");
-                String modelo = jsonObject2.optString("modeloI", "");
-                String placa = jsonObject2.optString("placasI", "");
-                String dueño = jsonObject2.optString("nombre", "");
-                String motivo = jsonObject2.optString("motivoingreso", "");
+                String id = jsonObject2.optString("id", "");
+                String id_cliente = jsonObject2.optString("id_cliente", "");
+                String foto_mapa = jsonObject2.optString("foto_mapa", "");
+                String fecha_inicio = jsonObject2.optString("fecha_inicio", "");
+                String hora_inicio = jsonObject2.optString("hora_inicio", "");
+                String fecha_final = jsonObject2.optString("fecha_final", "");
+                String hora_final = jsonObject2.optString("hora_final", "");
+                String kilometros = jsonObject2.optString("kilometros", "");
+                String costo_kilometro = jsonObject2.optString("costo_kilometro", "");
+                String importe = jsonObject2.optString("id_ser_venta", "");
+                String observaciones = jsonObject2.optString("observaciones", "");
                 String estatus = jsonObject2.optString("estatus", "");
-                String fecha_ingreso = jsonObject2.optString("fecha_ingreso", "");
-                String hora_ingreso = jsonObject2.optString("hora_ingreso", "");
-                String id_ser_venta = jsonObject2.optString("id_ser_venta", "");
+                String nombre = jsonObject2.optString("nombre", "");
+                String empresa = jsonObject2.optString("estatus", "");
+                String telefono = jsonObject2.optString("telefono", "");
+                String modelo = jsonObject2.optString("modelo", "");
+                String estado = jsonObject2.optString("estado", "");
+            /*    String estado = jsonObject2.optString("estado", "");
+                String estado = jsonObject2.optString("estado", "");*/
+                String cliente = jsonObject2.optString("cliente", "");
+                String placas = jsonObject2.optString("placas", "");
 
                 Bundle bundle = new Bundle();
-                bundle.putString("marca", marca);
-                bundle.putString("modelo", modelo);
-                bundle.putString("motivo", motivo);
-                bundle.putString("fecha", fecha_ingreso);
-                bundle.putString("status", estatus);
-                bundle.putString("hora", hora_ingreso);
-                bundle.putString("idventa", id_ser_venta);
+             //   bundle.putString("id_unidad", id_unidad);
+                bundle.putString("id_cliente", id_cliente);
+                bundle.putString("foto_mapa", foto_mapa);
+                bundle.putString("fecha_inicio", fecha_inicio);
+                bundle.putString("estatus", estatus);
+                bundle.putString("hora_inicio", hora_inicio);
+                bundle.putString("fecha_final", fecha_final);
+                bundle.putString("hora_final", hora_final);
+                bundle.putString("kilometros", kilometros);
+                bundle.putString("costo_kilometro", costo_kilometro);
+                bundle.putString("importe", importe);
+                bundle.putString("observaciones", observaciones);
+                setTextViewText(holder.textPlaca2, placas, "Placa no disponible");
+
+                setTextViewText(holder.textMarca2,  modelo.toUpperCase(), "Marca no disponible");
+
+
+                setTextViewText(holder.textDueño2, cliente, "Dueño no disponible");
+
+                setTextViewText(holder.textFecha2, fecha_inicio, "Fecha no disponible");
+                setTextViewText(holder.textStatus, estatus, "Dueño no disponible");
+                setTextViewText(holder.textTelefono, telefono, "Telefono no disponible");
+                /*
 
                 setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");
                 setTextViewText(holder.textModelo, motivo.toUpperCase(), "Motivo no disponible");
                 setTextViewText(holder.textPlaca, placa, "Placa no disponible");
                 setTextViewText(holder.textDueño, dueño, "Dueño no disponible");
-                setStatusTextView(holder.textStatus, estatus);
+
                 setTextViewText(holder.textFecha, fecha_ingreso + ".   " + hora_ingreso, "Fecha no disponible");
-                String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + jsonObject2.getString("foto");
+                String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mapas/" + jsonObject2.getString("foto");
+                loadImage(holder.imageViewCoches, imageUrl);
+*/
+
+                String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mapas/" + jsonObject2.getString("foto_mapa");
                 loadImage(holder.imageViewCoches, imageUrl);
 
                 holder.botonDesplegable.setOnClickListener(new View.OnClickListener() {
@@ -181,23 +212,24 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textMarca, textModelo, textPlaca, textDueño, textFecha, textStatus, TVNoInternet;
+        TextView textMarca2, textPlaca2, textFecha2, textStatus,textTelefono, textDueño2;
 
         ImageView imageViewCoches, IVNoInternet, botonDesplegable;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textMarca = itemView.findViewById(R.id.textMarca);
-            textModelo = itemView.findViewById(R.id.textModelo);
-            textPlaca = itemView.findViewById(R.id.textPlaca);
-            textDueño = itemView.findViewById(R.id.textDueño);
-            textFecha = itemView.findViewById(R.id.textFecha);
-            textStatus = itemView.findViewById(R.id.textStatus);
-            imageViewCoches = itemView.findViewById(R.id.imageViewCoches);
-            IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
-            TVNoInternet = itemView.findViewById(R.id.TVNoInternet);
 
-            botonDesplegable = itemView.findViewById(R.id.botonDesplegable);
+            textFecha2 = itemView.findViewById(R.id.textFecha2);
+            textStatus = itemView.findViewById(R.id.textStatus);
+            IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
+            textPlaca2 = itemView.findViewById(R.id.textPlaca2);
+            textMarca2 = itemView.findViewById(R.id.textMarca2);
+            textTelefono= itemView.findViewById(R.id.textTelefono);
+            textDueño2= itemView.findViewById(R.id.textDueño2);
+           //   textTelefono= itemView.findViewById(R.id.textTelefono);
+
+
+            botonDesplegable = itemView.findViewById(R.id.botonDesplegable2);
         }
     }
 
@@ -303,39 +335,23 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     }
 
     private void setTextViewText(TextView textView, String text, String defaultText) {
-        if (text.equals(null)|| text.equals("")) {
+        if (text.equals(null) || text.equals("")) {
             textView.setText(defaultText);
         } else {
             textView.setText(text);
         }
     }
 
-    private void setStatusTextView(TextView textView, String status) {
-        if (!status.equals("null")) {
-            textView.setText(status);
-
-            if (status.equalsIgnoreCase("pendiente") || status.equalsIgnoreCase("prueba") || status.equalsIgnoreCase("diagnostico") || status.equalsIgnoreCase("espera")) {
-                textView.setBackgroundResource(R.drawable.textview_outline3);
-            } else if (status.equalsIgnoreCase("terminado") || status.equalsIgnoreCase("finalizado")) {
-                textView.setBackgroundResource(R.drawable.textview_outline2);
-            } else {
-                textView.setBackgroundResource(R.drawable.textview_outline4);
-            }
-        } else {
-            textView.setText("Status no disponible");
-            textView.setBackgroundResource(R.drawable.textview_outline5);
-        }
-    }
 
     private void loadImage(ImageView imageView, String imageUrl) {
         if (!TextUtils.isEmpty(imageUrl)) {
             Glide.with(imageView.getContext())
                     .load(imageUrl)
-                    .error(R.drawable.default_image)
+                    .error(R.drawable.nointernet)
                     .into(imageView);
         } else {
             Glide.with(imageView.getContext())
-                    .load(R.drawable.default_image)
+                    .load(R.drawable.nointernet)
                     .into(imageView);
         }
     }

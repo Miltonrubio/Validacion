@@ -31,25 +31,44 @@ public class Activity_Binding extends AppCompatActivity {
         setContentView(R.layout.activity_binding);
 
 
+        SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
 
+        String tipoUsuario = sharedPreferences.getString("tipo", "");
 
         binding = ActivityBindingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        replaceFragment(new HomeFragment());
+        if(tipoUsuario.equals("admin")){
+            replaceFragment(new ArrastresFragment());
+            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+                switch (item.getItemId()) {
 
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
+                    case (R.id.menu_home):
+                        replaceFragment(new ArrastresFragment());
+                        break;
+                    case (R.id.menu_usuario):
+                        replaceFragment(new UsuariosFragment());
+                        break;
+                }
+                return true;
+            });
+        }else{
+            replaceFragment(new HomeFragment());
 
-                case (R.id.menu_home):
-                    replaceFragment(new HomeFragment());
-                    break;
-                case (R.id.menu_usuario):
-                    replaceFragment(new UsuariosFragment());
-                    break;
-            }
-            return true;
-        });
+            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+                switch (item.getItemId()) {
+
+                    case (R.id.menu_home):
+                        replaceFragment(new HomeFragment());
+                        break;
+                    case (R.id.menu_usuario):
+                        replaceFragment(new UsuariosFragment());
+                        break;
+                }
+                return true;
+            });
+        }
+
 
     }
 
@@ -59,13 +78,14 @@ public class Activity_Binding extends AppCompatActivity {
 
 
     private void replaceFragment(Fragment fragment) {
+
         FragmentManager fragmentManager = getSupportFragmentManager();
-
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         fragmentTransaction.replace(R.id.frame_layoutCoches, fragment);
-
         fragmentTransaction.commit();
+
+
+
     }
 
 

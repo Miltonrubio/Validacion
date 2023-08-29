@@ -38,7 +38,7 @@ import java.util.Map;
  * Use the {@link CheckListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CheckListFragment extends Fragment implements SendData /* implements AdaptadorChecks.OnCheckUpdatedListener*/ {
+public class CheckListFragment extends Fragment implements AdaptadorChecks.AdaptadorListener /* implements AdaptadorChecks.OnCheckUpdatedListener*/ {
 
     List<Cheks> listaChecks = new ArrayList<>(); // Inicializar la lista aquí
 
@@ -125,8 +125,10 @@ public class CheckListFragment extends Fragment implements SendData /* implement
                                 }
 
                                 AdaptadorChecks adaptadorChecks = new AdaptadorChecks(listaChecks);
+                                adaptadorChecks.setAdaptadorListener(CheckListFragment.this); // Llamando al método en la instancia del adaptador
                                 reciclerViewCheck.setLayoutManager(new LinearLayoutManager(requireContext()));
                                 reciclerViewCheck.setAdapter(adaptadorChecks);
+
 
 
                                 int totalResultados = listaChecks.size();
@@ -165,7 +167,16 @@ public class CheckListFragment extends Fragment implements SendData /* implement
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(stringRequest);
     }
-    public void sendInfo(String valor) {
-        Toast.makeText(getActivity(), "El valor recibido es: " + valor, Toast.LENGTH_SHORT).show();
+
+
+    public void onCheckUpdated(int position, String valorCheck, int valoresVaciosChecks, int totalValores) {
+        int calculo= totalValores-valoresVaciosChecks;
+
+        if (calculo!=0){
+            TVResultadoChecks.setText("Revisados: "+calculo + " / "+ totalValores);
+        }else{
+            TVResultadoChecks.setVisibility(View.INVISIBLE);
+        }
     }
+
 }

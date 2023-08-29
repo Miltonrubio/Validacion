@@ -11,38 +11,38 @@
     android:padding="8dp"
     android:background="@drawable/rounded_background">
 
-<LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_background"
         android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"> <!-- Dividir el espacio en dos partes iguales -->
-
-
-        <ImageView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/botonDesplegable"
-            android:src="@drawable/baseline_build_24"
-        android:contentDescription="Ícono" />
+            android:orientation="horizontal"
+            android:weightSum="2"> <!-- Dividir el espacio en dos partes iguales -->
 
-        <TextView
-            android:id="@+id/textFecha"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:hint="Fecha"
-            android:layout_gravity="right"
-            android:gravity="right"
-            android:textColor="@color/azulito"
-            android:textSize="15sp"
-            android:layout_marginBottom="5dp" />
-    </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/botonDesplegable2"
+                android:src="@drawable/baseline_build_24"
+                android:contentDescription="Ícono" />
+
+            <TextView
+                android:id="@+id/textFecha2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="Fecha"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:textColor="@color/azulito"
+                android:textSize="15sp"
+                android:layout_marginBottom="5dp" />
+        </LinearLayout>
 
         <!-- Image and textMarca LinearLayout -->
         <LinearLayout
@@ -51,23 +51,6 @@
             android:orientation="horizontal">
 
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imageViewCoches"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="10dp"
-                android:adjustViewBounds="true"
-                android:layout_gravity="center_vertical"
-                android:padding="8dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
-
-
-            />
 
             <!-- Parte derecha para textMarca y textStatus -->
             <LinearLayout
@@ -88,20 +71,20 @@
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/textDueño"
+                    android:id="@+id/textDueño2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:hint="Dueño"
+                    android:hint="Cliente"
                     android:layout_marginBottom="5dp"
                     android:textColor="@color/azulito"
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/textMarca"
+                    android:id="@+id/textMarca2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="MARCA"
+                    android:hint="Coche"
                     android:textColor="@color/azulito"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -124,7 +107,7 @@
                 android:padding="5dp">
 
                 <TextView
-                    android:id="@+id/textPlaca"
+                    android:id="@+id/textPlaca2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Placas"
@@ -133,7 +116,7 @@
                     android:gravity="center"
                     android:textStyle="bold"
                     android:background="@drawable/textview_outline3"/>
-                />
+
             </LinearLayout>
 
             <!-- Parte derecha para textModelo -->
@@ -147,17 +130,16 @@
                 >
 
                 <TextView
-                    android:id="@+id/textModelo"
+                    android:id="@+id/textTelefono"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Motivo"
+                     android:hint="Motivo"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp"
                     android:textColor="@color/black"
                     android:textSize="15dp"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingBottom="10dp"
-                    android:textStyle="bold"
-                    android:background="@drawable/textview_outline2"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </LinearLayout>

@@ -34,18 +34,26 @@ import java.util.Map;
 public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHolder> {
 
 
-    SendData listener;
     private List<Cheks> listaChecks;
 
     public int valoresVaciosChecks = 0;
 
-    public int getValoresVacios() {
-        return valoresVaciosChecks;
-    }
-
 
     public AdaptadorChecks(List<Cheks> listaChecks) {
+
         this.listaChecks = listaChecks;
+
+        valoresVaciosChecks = calcularValoresVacios();
+    }
+    private int calcularValoresVacios() {
+        int count = 0;
+        for (Cheks checks : listaChecks) {
+            String valorCheck = checks.getValorcheck();
+            if (TextUtils.isEmpty(valorCheck) || valorCheck.equals("PENDIENTE")) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @NonNull
@@ -63,18 +71,24 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
         String IDCheck = checks.getIdcheck();
         String descripcion = checks.getDescripcion();
 
-        if (TextUtils.isEmpty(valorCheck)) {
-            valoresVaciosChecks++; // Incrementar el contador de valores vacíos
-        }
+
         holder.textPendiente.setVisibility(View.INVISIBLE);
         if ("R".equals(valorCheck)) {
             holder.regularRadioButton.setChecked(true);
+
+            // valoresVaciosChecks--;
         } else if ("B".equals(valorCheck)) {
             holder.buenoRadioButton.setChecked(true);
+
+            //    valoresVaciosChecks--;
         } else if ("M".equals(valorCheck)) {
             holder.maloRadioButton.setChecked(true);
+
+            //   valoresVaciosChecks--;
         } else if ("NA".equals(valorCheck)) {
             holder.naRadioButton.setChecked(true);
+
+            //  valoresVaciosChecks--;
         } else {
 
             holder.regularRadioButton.setChecked(false);
@@ -82,6 +96,9 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
             holder.maloRadioButton.setChecked(false);
             holder.buenoRadioButton.setChecked(false);
             holder.textPendiente.setVisibility(View.VISIBLE);
+
+            //  valoresVaciosChecks++;
+
         }
 
         holder.regularRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -161,8 +178,11 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
                             showToast(context, descripcion + " Revisado");
                             listaChecks.get(position).setValorcheck(valorCheck);
                             notifyItemChanged(position);
+                          int  valoresVacios= calcularValoresVacios();
+                            if (adaptadorListener != null) {
+                                adaptadorListener.onCheckUpdated(position, valorCheck, valoresVacios, listaChecks.size());
+                            }
 
-                       //     listener.sendInfo("Hola");
                         } else {
                             Toast.makeText(context, "La respuesta está vacía", Toast.LENGTH_SHORT).show();
                         }
@@ -185,7 +205,6 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
             }
         };
 
-        // Utiliza el contexto proporcionado para crear la cola de solicitudes
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
@@ -206,17 +225,15 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
             textPendiente = itemView.findViewById(R.id.textPendiente);
         }
     }
-/*
-    public interface OnCheckUpdatedListener {
-        void onCheckUpdated(int position);
+
+    private AdaptadorListener adaptadorListener;
+
+    public void setAdaptadorListener(AdaptadorListener listener) {
+        this.adaptadorListener = listener;
     }
 
-    private OnCheckUpdatedListener checkUpdatedListener;
-
-    public void setOnCheckUpdatedListener(OnCheckUpdatedListener listener) {
-        this.checkUpdatedListener = listener;
+    public interface AdaptadorListener {
+        void onCheckUpdated(int position, String valorCheck, int valoresVaciosChecks, int TotalValores);
     }
-*/
-
 
 }

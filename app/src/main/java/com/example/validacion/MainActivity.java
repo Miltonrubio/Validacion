@@ -70,18 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         tomarToken();
-        /*
-        SharedPreferences preferenciaInicial = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        boolean eventOccurred = preferenciaInicial.getBoolean(EVENT_KEY, false);
 
-        if (!eventOccurred) {
-            tomarToken();
-            SharedPreferences.Editor editor = preferenciaInicial.edit();
-            editor.putBoolean(EVENT_KEY, true);
-            editor.apply();
-        }
-
-*/
         SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
         boolean rememberMe = sharedPreferences.getBoolean("rememberMe", false);
         if (rememberMe) {
@@ -144,8 +133,6 @@ public class MainActivity extends AppCompatActivity {
                     } else {
 
                         try {
-
-
                             boolean rememberMe = checkBoxRememberMe.isChecked();
                             // Convertir la respuesta en un JSONArray
                             JSONArray jsonArray = new JSONArray(response);
@@ -170,8 +157,6 @@ public class MainActivity extends AppCompatActivity {
                                 RegistrarToken(idusuario);
                             }
 
-
-                            // Inicio de sesión exitoso, redirigir a la actividad PrincipalActivity
                             Intent intent = new Intent(MainActivity.this, Activity_Binding.class);
                             startActivity(intent);
                             finish();
