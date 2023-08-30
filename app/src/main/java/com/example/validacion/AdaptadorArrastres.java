@@ -93,6 +93,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
         if (getItemViewType(position) == VIEW_TYPE_ITEM) {
             try {
                 JSONObject jsonObject2 = filteredData.get(position);
+
                 String id = jsonObject2.optString("id", "");
                 String id_cliente = jsonObject2.optString("id_cliente", "");
                 String foto_mapa = jsonObject2.optString("foto_mapa", "");
@@ -116,7 +117,8 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 String placas = jsonObject2.optString("placas", "");
 
                 Bundle bundle = new Bundle();
-             //   bundle.putString("id_unidad", id_unidad);
+
+                bundle.putString("id", id);
                 bundle.putString("id_cliente", id_cliente);
                 bundle.putString("foto_mapa", foto_mapa);
                 bundle.putString("fecha_inicio", fecha_inicio);
@@ -129,31 +131,13 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 bundle.putString("importe", importe);
                 bundle.putString("observaciones", observaciones);
                 setTextViewText(holder.textPlaca2, placas, "Placa no disponible");
-
-                setTextViewText(holder.textMarca2,  modelo.toUpperCase(), "Marca no disponible");
-
-
+                setTextViewText(holder.textMarca2, modelo.toUpperCase(), "Marca no disponible");
                 setTextViewText(holder.textDueño2, cliente, "Dueño no disponible");
-
                 setTextViewText(holder.textFecha2, fecha_inicio, "Fecha no disponible");
                 setTextViewText(holder.textStatus, estatus, "Dueño no disponible");
                 setTextViewText(holder.textTelefono, telefono, "Telefono no disponible");
-                /*
 
-                setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");
-                setTextViewText(holder.textModelo, motivo.toUpperCase(), "Motivo no disponible");
-                setTextViewText(holder.textPlaca, placa, "Placa no disponible");
-                setTextViewText(holder.textDueño, dueño, "Dueño no disponible");
-
-                setTextViewText(holder.textFecha, fecha_ingreso + ".   " + hora_ingreso, "Fecha no disponible");
-                String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mapas/" + jsonObject2.getString("foto");
-                loadImage(holder.imageViewCoches, imageUrl);
-*/
-
-                String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mapas/" + jsonObject2.getString("foto_mapa");
-                loadImage(holder.imageViewCoches, imageUrl);
-
-                holder.botonDesplegable.setOnClickListener(new View.OnClickListener() {
+                holder.botonDesplegable2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         showPopupMenu(view, bundle);
@@ -163,14 +147,13 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(new ArrayList<>());
 
-                        DetalleFragment detalleFragment = new DetalleFragment();
-                        detalleFragment.setArguments(bundle);
+                        DetallesArrastres detallesArrastres = new DetallesArrastres();
+                        detallesArrastres.setArguments(bundle);
 
                         FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
                         fragmentManager.beginTransaction()
-                                .replace(R.id.frame_layoutCoches, detalleFragment)
+                                .replace(R.id.frame_layoutCoches, detallesArrastres)
                                 .addToBackStack(null)
                                 .commit();
 
@@ -184,8 +167,8 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                         return true;
                     }
                 });
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } finally {
+
             }
         } else if (getItemViewType(position) == VIEW_TYPE_ERROR && filteredData.isEmpty()) {
 
@@ -212,9 +195,9 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textMarca2, textPlaca2, textFecha2, textStatus,textTelefono, textDueño2;
+        TextView textMarca2, textPlaca2, textFecha2, textStatus, textTelefono, textDueño2;
 
-        ImageView imageViewCoches, IVNoInternet, botonDesplegable;
+        ImageView imageViewCoches, IVNoInternet, botonDesplegable2;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -224,12 +207,12 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
             IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
             textPlaca2 = itemView.findViewById(R.id.textPlaca2);
             textMarca2 = itemView.findViewById(R.id.textMarca2);
-            textTelefono= itemView.findViewById(R.id.textTelefono);
-            textDueño2= itemView.findViewById(R.id.textDueño2);
-           //   textTelefono= itemView.findViewById(R.id.textTelefono);
+            textTelefono = itemView.findViewById(R.id.textTelefono);
+            textDueño2 = itemView.findViewById(R.id.textDueño2);
+            //   textTelefono= itemView.findViewById(R.id.textTelefono);
 
 
-            botonDesplegable = itemView.findViewById(R.id.botonDesplegable2);
+            botonDesplegable2 = itemView.findViewById(R.id.botonDesplegable2);
         }
     }
 
@@ -342,7 +325,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
         }
     }
 
-
+/*
     private void loadImage(ImageView imageView, String imageUrl) {
         if (!TextUtils.isEmpty(imageUrl)) {
             Glide.with(imageView.getContext())
@@ -355,5 +338,5 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     .into(imageView);
         }
     }
-
+*/
 }

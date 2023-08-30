@@ -2,7 +2,6 @@ package com.example.validacion;
 
 public class Mecanicos {
 
-
     String foto, nombre, motivoingreso, fecha_programada;
 
     public Mecanicos(String foto, String nombre, String motivoingreso, String fecha_programada) {

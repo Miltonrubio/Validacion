@@ -1,66 +1,119 @@
 package com.example.validacion;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.TravelMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Prueba2 extends AppCompatActivity {
+public class Prueba2 extends AppCompatActivity implements OnMapReadyCallback {
 
+    private MapView mapView;
+    private GoogleMap googleMap;
 
-    Button log_out;
+    private double LATITUD = 18.467;
+    private double LONGITUD = -97.4181;
 
-    ViewPager2 viewPager2;
-
+    private double DEST_LATITUDE = 18.477;
+    private double DEST_LONGITUDE = -97.4191;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prueba2);
 
-        viewPager2 = findViewById(R.id.ViewPager425);
+        mapView = findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+    }
+    public void onMapReady(@NonNull GoogleMap map) {
+        googleMap = map;
 
+        // Draw a route between the two points
+        drawRoute();
 
-        List<SlideItem> slideItems = new ArrayList<>();
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg", "1"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/54320220de0e1462e914998658cec710.jpg","2"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/27bea1b4e42ccd5ab66d50d09483eb4a.jpg","3"));
-        slideItems.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/0dae41abd73c135c15730828328eb56a.jpg","4"));
+        // Add markers for the starting and destination points
+        LatLng startLocation = new LatLng(LATITUD, LONGITUD);
+        LatLng destLocation = new LatLng(DEST_LATITUDE, DEST_LONGITUDE);
 
+        googleMap.addMarker(new MarkerOptions().position(startLocation).title("Starting Location"));
+        googleMap.addMarker(new MarkerOptions().position(destLocation).title("Destination"));
 
-        viewPager2.setAdapter(new SlideAdapter(slideItems, viewPager2));
-
-
+        // Move camera to the center of the locations
+        LatLng center = new LatLng((LATITUD + DEST_LATITUDE) / 2, (LONGITUD + DEST_LONGITUDE) / 2);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15f));
     }
 
-    /*
-    protected  void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
+    private void drawRoute() {
+        GeoApiContext geoApiContext = new GeoApiContext.Builder()
+                .apiKey("AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ")
+                .build();
 
-        TextView txtResultado = findViewById(R.id.txtResultado);
-        if(!result.equals(null)){
-            if (result.getContents()== null){
-                Toast.makeText(this, "Cancelado", Toast.LENGTH_SHORT).show();
-            }else {
+        DirectionsApiRequest request = DirectionsApi.newRequest(geoApiContext)
+                .mode(TravelMode.DRIVING)
+                .origin(new com.google.maps.model.LatLng(LATITUD, LONGITUD))
+                .destination(new com.google.maps.model.LatLng(DEST_LATITUDE, DEST_LONGITUDE));
 
-                Toast.makeText(this, result.getContents(), Toast.LENGTH_SHORT).show();
-                txtResultado.setText(result.getContents());
-            }
-        }else {
+        try {
+            DirectionsResult result = request.await();
+            DirectionsRoute route = result.routes[0];
+            String encodedPolyline = route.overviewPolyline.getEncodedPath();
+            List<LatLng> decodedPath = PolyUtil.decode(encodedPolyline);
 
-            super.onActivityResult(requestCode, resultCode, data);
+            PolylineOptions polylineOptions = new PolylineOptions()
+                    .addAll(decodedPath)
+                    .color(Color.RED)
+                    .width(5);
+
+            Polyline polyline = googleMap.addPolyline(polylineOptions);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }*/
+    }
 
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
 }

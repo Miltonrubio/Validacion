@@ -40,9 +40,6 @@ android {
 
 dependencies {
 
- /*   implementation("com.jakewharton:butterknife:10.2.3")
-    annotationProcessor("com.jakewharton:butterknife-compiler:10.2.3")*/
-
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.android.volley:volley:1.2.1")
@@ -59,6 +56,10 @@ implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("com.google.firebase:firebase-messaging:23.2.1")
     implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("com.google.maps:google-maps-services:0.17.0")
+    implementation ("com.google.maps.android:android-maps-utils:2.2.4")
+
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     implementation("androidx.cardview:cardview:1.0.0")

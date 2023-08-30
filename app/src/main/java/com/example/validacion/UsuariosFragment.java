@@ -99,7 +99,9 @@ public class UsuariosFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-             cerrarSesion();
+           //  cerrarSesion();
+
+            IrASlider();
             }
         });
 
@@ -107,7 +109,9 @@ public class UsuariosFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                cerrarSesion();
+                //  cerrarSesion();
+
+                IrASlider();
             }
         });
 

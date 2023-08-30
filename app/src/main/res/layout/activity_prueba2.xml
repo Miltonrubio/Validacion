@@ -6,15 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".Prueba2">
 
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        tools:ignore="MissingConstraints"
-        android:layout_margin="9dp"
-        android:id="@+id/ViewPager425"
-
-        />
+   <com.google.android.gms.maps.MapView
+       android:id="@+id/mapView"
+       android:layout_width="match_parent"
+       android:layout_height="720dp"
+       android:layout_gravity="center"
+       app:layout_constraintBottom_toBottomOf="parent" />
 
 
 
