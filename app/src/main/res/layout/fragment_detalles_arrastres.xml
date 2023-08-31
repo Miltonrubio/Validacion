@@ -8,7 +8,7 @@
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapViewArrastres"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="400dp"
         android:layout_gravity="center"
         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -34,7 +34,6 @@
             android:background="@drawable/rounded_background"
             android:elevation="4dp"
             android:orientation="vertical"
-
             android:padding="16dp"
             android:paddingBottom="15dp"
 
@@ -44,38 +43,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/tvClienteArrastre"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="Marca"
+                    android:text="Nombre de Cliente"
                     android:textColor="@color/azulito"
-                    android:textSize="32dp"
+                    android:textSize="26dp"
                     android:textStyle="bold" />
 
 
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
                 android:orientation="horizontal"
-                android:paddingBottom="15dp">
+                android:layout_marginBottom="12dp">
+                <TextView
+                    android:id="@+id/tvTelefonoCliente"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Telefono de Cliente"
+                    android:textSize="17dp"
+                    />
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tvFechaFinalArrastre"
+                    android:id="@+id/tvFechaInicioArrastre"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="left"
-                    android:text="Fecha final"
-                    android:textSize="19sp" />
+                    android:text="Fecha inicial"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvstatus2"
@@ -84,38 +96,73 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="Status"
+                    android:text="Estatus"
                     android:textSize="19sp" />
-
-
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="45dp"
+                android:layout_marginBottom="5dp"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tvFechaInicioArrastre"
+                    android:id="@+id/tvFechaFinalArrastre"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="Fecha"
-                    android:textColor="@color/black"
-                    android:textSize="23sp"
-                    android:textStyle="bold" />
+                    android:text="Fecha de finalizacion"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/LayoutKilometros"
+                >
+                <TextView
+                    android:id="@+id/TVTotalKilometros"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="Total de kilometros"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:orientation="horizontal"
+                android:id="@+id/LayoutPrecio"
+                >
+
+                <TextView
+                    android:id="@+id/TVPrecio"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="Precio total"
+                    android:textColor="@color/azulito"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -126,17 +173,16 @@
                     android:layout_weight="1"
                     android:gravity="left"
                     android:text="Choferes"
-                    android:textSize="23sp" />
+                    android:textSize="22sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/textview_outlinegris"
                 android:orientation="horizontal">
-
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewChoferes"
@@ -144,7 +190,18 @@
                     android:layout_height="321dp" />
             </LinearLayout>
 
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:id="@+id/BotonFinalizarArrastre"
+                    android:text="Finalizar Arrastre"
+                    android:backgroundTint="@color/azulito"
+                    />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

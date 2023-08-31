@@ -57,8 +57,10 @@ implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.firebase:firebase-messaging:23.2.1")
     implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
     implementation("com.google.android.gms:play-services-maps:18.1.0")
+
     implementation ("com.google.maps:google-maps-services:0.17.0")
     implementation ("com.google.maps.android:android-maps-utils:2.2.4")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 

@@ -1,8 +1,11 @@
 package com.example.validacion;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,8 +26,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +43,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.util.concurrent.HandlerExecutor;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -60,9 +66,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -76,6 +88,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     private MapView mapView;
     private GoogleMap googleMap;
 
+    private List<Polyline> routePolylines = new ArrayList<>();
     private ArrayList<MarkerInfo> markerList = new ArrayList<>();
 
 
@@ -85,10 +98,11 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     private double DEST_LATITUDE;
     private double DEST_LONGITUDE;
 
-    TextView tvstatus2, tvClienteArrastre, tvFechaInicioArrastre, tvFechaFinalArrastre;
+    TextView tvstatus2, tvClienteArrastre, tvFechaInicioArrastre, tvFechaFinalArrastre, TVTotalKilometros, TVPrecio, tvTelefonoCliente;
 
-    ImageView imageViewDetallesArrastres;
+    LinearLayout LayoutKilometros, LayoutPrecio;
 
+    Button BotonFinalizarArrastre;
     private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     RecyclerView recyclerViewChoferes;
@@ -118,20 +132,31 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         tvFechaFinalArrastre = rootView.findViewById(R.id.tvFechaFinalArrastre);
         tvFechaInicioArrastre = rootView.findViewById(R.id.tvFechaInicioArrastre);
         scrollView = rootView.findViewById(R.id.scrollViewArrastres); // Replace with the actual ID of your ScrollView
+        BotonFinalizarArrastre = rootView.findViewById(R.id.BotonFinalizarArrastre);
+        LayoutKilometros = rootView.findViewById(R.id.LayoutKilometros);
+        TVTotalKilometros = rootView.findViewById(R.id.TVTotalKilometros);
+        LayoutPrecio = rootView.findViewById(R.id.LayoutPrecio);
+        TVPrecio = rootView.findViewById(R.id.TVPrecio);
+        tvTelefonoCliente= rootView.findViewById(R.id.tvTelefonoCliente);
+
 
         Bundle bundle = getArguments();
+
         if (bundle != null) {
-
-            String fecha_inicio = bundle.getString("fecha_inicio", "");
-            String hora_inicio = bundle.getString("hora_inicio", "");
             String estatus = bundle.getString("estatus", "");
-            String kilometros = bundle.getString("kilometros", "");
             String observaciones = bundle.getString("observaciones", "");
-
             String id = bundle.getString("id", "");
+            String telefono = bundle.getString("telefono", "");
             CargarRutas(id);
 
-            //Texto del fragment con validaciones
+            tvTelefonoCliente.setText("+52 "+ telefono);
+            BotonFinalizarArrastre.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FinalizarArrastre(id);
+                }
+            });
+
             if (!estatus.equals("")) {
                 tvstatus2.setText("Estatus " + estatus);
                 if (estatus.equals("pendiente")) {
@@ -181,6 +206,80 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         return rootView;
     }
 
+    @SuppressLint("ResourceAsColor")
+    private void ImprimirDatosEnFragment(String cliente_nombre, String fecha_inicio, String hora_inicio, String fecha_final, String hora_final, String kilometros, String costoKilometro) {
+
+
+        if (kilometros.equals(0) || kilometros.equals("null") || kilometros.isEmpty()) {
+            LayoutKilometros.setVisibility(View.INVISIBLE);
+            TVPrecio.setText("El costo por kilometro es:" + costoKilometro);
+        } else {
+            Double costoTotal = (Double.parseDouble(kilometros)) * (Double.parseDouble(costoKilometro));
+
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            String costoTotalFormateado = decimalFormat.format(costoTotal);
+
+            DecimalFormat decimalFormat2 = new DecimalFormat("#.##");
+            String kilometrosFormateado = decimalFormat2.format(Double.parseDouble(kilometros));
+
+            TVTotalKilometros.setText("Total de kilometros: " + kilometrosFormateado + " km");
+            TVPrecio.setText("El costo total es: " + costoTotalFormateado + "$ MXM");
+        }
+
+        if (cliente_nombre.isEmpty() || cliente_nombre.equals("null")) {
+            tvClienteArrastre.setText("Cliente desconocido");
+        } else {
+
+            tvClienteArrastre.setText("" + cliente_nombre);
+        }
+
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = inputFormat.parse(fecha_inicio);
+
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
+            String fecha_formateada = outputFormat.format(date);
+
+            SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+            Date time = inputFormatHora.parse(hora_inicio);
+
+            SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+            String hora_formateada = outputFormatHora.format(time);
+
+            tvFechaInicioArrastre.setText("Comienzo: " + "\nEl " + fecha_formateada + " A las " + hora_formateada);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        if (fecha_final.isEmpty() || hora_final.isEmpty() || hora_final.equals("null") || fecha_final.equals("null")) {
+            tvFechaFinalArrastre.setVisibility(View.VISIBLE);
+            tvFechaFinalArrastre.setText("Arrastre sin finalizar");
+            tvFechaFinalArrastre.setTextColor(R.color.rojo);
+        } else {
+            tvFechaFinalArrastre.setVisibility(View.VISIBLE);
+
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date_final = inputFormat.parse(fecha_final);
+
+                SimpleDateFormat outputFormatFecha = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
+                String fecha_formateada_final = outputFormatFecha.format(date_final);
+
+                SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                Date time_final = inputFormatHora.parse(hora_final);
+
+                SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                String hora_formateada_final = outputFormatHora.format(time_final);
+
+                tvFechaFinalArrastre.setText("Finalizado:\nEl " + fecha_formateada_final + " A las " + hora_formateada_final);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
 
     private void CargarArrastre(String id_arrastre, String observaciones, String estatus) {
         StringRequest stringRequest3 = new StringRequest(Request.Method.POST, urlApi,
@@ -211,9 +310,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                                     listaChoferes.add(new Choferes(id_arrastre, chofer_nombre, unidad_marca, unidad_modelo, cliente_nombre, foto_mapa, fecha_inicio, hora_inicio,
                                             fecha_final, hora_final, kilometros, costo_kilometro, importe, observaciones, estatus));
 
-                                    tvClienteArrastre.setText("" + cliente_nombre);
-                                    tvFechaInicioArrastre.setText("Comienzo: " + fecha_inicio + " - " + hora_inicio);
-                                    tvFechaFinalArrastre.setText("Finalizado: " + fecha_final + "- " + hora_final);
+                                    ImprimirDatosEnFragment(cliente_nombre, fecha_inicio, hora_inicio, fecha_final, hora_final, kilometros, costo_kilometro);
 
                                 }
 
@@ -229,6 +326,8 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                             Log.d("API Response", "Respuesta vacía");
                         }
                     }
+
+
                 },
                 new Response.ErrorListener() {
                     @Override
@@ -274,14 +373,14 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                                     latitud_destino = rutasObj.getString("latitud_destino");
                                     longitud_destino = rutasObj.getString("longitud_destino");
                                     kilometros = rutasObj.getString("kilometros");
-                                  String  id = rutasObj.getString("id");
+                                    String id = rutasObj.getString("id");
 
                                     LATITUD = Double.parseDouble(latitud_origen);
                                     LONGITUD = Double.parseDouble(longitud_origen);
                                     DEST_LATITUDE = Double.parseDouble(latitud_destino);
                                     DEST_LONGITUDE = Double.parseDouble(longitud_destino);
 
-                                 markerList.add(new MarkerInfo(LATITUD, LONGITUD, DEST_LATITUDE, DEST_LONGITUDE, "Ruta "+ id));
+                                    markerList.add(new MarkerInfo(LATITUD, LONGITUD, DEST_LATITUDE, DEST_LONGITUDE, "Ruta " + id));
                                 }
 
                             } catch (JSONException e) {
@@ -313,119 +412,97 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     }
 
 
-    public void onMapReady(@NonNull GoogleMap map) {
-        googleMap = map;
-        drawRoute();
-        LatLng startLocation = new LatLng(LATITUD, LONGITUD);
-        LatLng destLocation = new LatLng(DEST_LATITUDE, DEST_LONGITUDE);
-
-        googleMap.addMarker(new MarkerOptions().position(startLocation).title("Salida"));
-        googleMap.addMarker(new MarkerOptions().position(destLocation).title("Destino"));
-
-        LatLng center = new LatLng((LATITUD + DEST_LATITUDE) / 2, (LONGITUD + DEST_LONGITUDE) / 2);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15f));
+    private void clearRoutePolylines() {
+        for (Polyline polyline : routePolylines) {
+            polyline.remove();
+        }
+        routePolylines.clear();
     }
 
-/*
-    @Override
+
     public void onMapReady(@NonNull GoogleMap map) {
         googleMap = map;
-        drawRoute();
 
         getView().post(() -> {
-            for (MarkerInfo markerInfo : markerList) {
-                LatLng markerLocation = new LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio());
-                googleMap.addMarker(new MarkerOptions().position(markerLocation).title(markerInfo.getTitulo()));
-            }
-
-            // Ajustar la cámara para mostrar todos los marcadores
-            if (!markerList.isEmpty()) {
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (MarkerInfo markerInfo : markerList) {
-                    builder.include(new LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio()));
-                }
-                LatLngBounds bounds = builder.build();
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100)); // 100 es el padding
-            }
+            drawRoute();
         });
     }
-*/
 
     private void drawRoute() {
-        GeoApiContext geoApiContext = new GeoApiContext.Builder()
-                .apiKey("AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ")
-                .build();
+        clearRoutePolylines();
 
-        DirectionsApiRequest request = DirectionsApi.newRequest(geoApiContext)
-                .mode(TravelMode.DRIVING)
-                .origin(new com.google.maps.model.LatLng(LATITUD, LONGITUD))
-                .destination(new com.google.maps.model.LatLng(DEST_LATITUDE, DEST_LONGITUDE));
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
-        try {
-            DirectionsResult result = request.await();
-            DirectionsRoute route = result.routes[0];
-            String encodedPolyline = route.overviewPolyline.getEncodedPath();
-            List<LatLng> decodedPath = PolyUtil.decode(encodedPolyline);
+        for (MarkerInfo markerInfo : markerList) {
+            LatLng markerStart = new LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio());
+            LatLng markerDest = new LatLng(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino());
 
-            PolylineOptions polylineOptions = new PolylineOptions()
-                    .addAll(decodedPath)
-                    .color(Color.RED)
-                    .width(5);
+            try {
+                List<Address> startAddresses = geocoder.getFromLocation(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio(), 1);
+                List<Address> destAddresses = geocoder.getFromLocation(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino(), 1);
 
-            Polyline polyline = googleMap.addPolyline(polylineOptions);
+                if (!startAddresses.isEmpty() && !destAddresses.isEmpty()) {
+                    Address startAddressObj = startAddresses.get(0);
+                    Address destAddressObj = destAddresses.get(0);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-/*
-private void drawRoute() {
-    GeoApiContext geoApiContext = new GeoApiContext.Builder()
-            .apiKey("AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ")
-            .build();
+                    String startAddress = startAddressObj.getThoroughfare() + ", #" + startAddressObj.getSubThoroughfare() + ", " + startAddressObj.getSubLocality() + " (Inicio)";
+                    String destAddress = destAddressObj.getThoroughfare() + ", #" + destAddressObj.getSubThoroughfare() + ", " + destAddressObj.getSubLocality() + " (Destino)";
 
-    DirectionsApiRequest request = DirectionsApi.newRequest(geoApiContext)
-            .mode(TravelMode.DRIVING)
-            .origin(new com.google.maps.model.LatLng(LATITUD, LONGITUD))
-            .destination(new com.google.maps.model.LatLng(DEST_LATITUDE, DEST_LONGITUDE));
+                    googleMap.addMarker(new MarkerOptions().position(markerStart).title(startAddress));
+                    googleMap.addMarker(new MarkerOptions().position(markerDest).title(destAddress));
 
-    request.setCallback(new PendingResult.Callback<DirectionsResult>() {
-        @Override
-        public void onResult(DirectionsResult result) {
-            if (result.routes != null && result.routes.length > 0) {
-                DirectionsRoute route = result.routes[0];
-                String encodedPolyline = route.overviewPolyline.getEncodedPath();
-                List<LatLng> decodedPath = PolyUtil.decode(encodedPolyline);
+                    GeoApiContext geoApiContext = new GeoApiContext.Builder()
+                            .apiKey("AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ")
+                            .build();
 
-                PolylineOptions polylineOptions = new PolylineOptions()
-                        .addAll(decodedPath)
-                        .color(Color.RED)
-                        .width(5);
+                    DirectionsApiRequest request = DirectionsApi.newRequest(geoApiContext)
+                            .mode(TravelMode.DRIVING)
+                            .origin(new com.google.maps.model.LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio()))
+                            .destination(new com.google.maps.model.LatLng(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino()));
 
-                // Asegurarse de que googleMap esté inicializado antes de agregar la polilínea
-                if (googleMap != null) {
-                    getActivity().runOnUiThread(() -> {
-                        Polyline polyline = googleMap.addPolyline(polylineOptions);
+                    request.setCallback(new PendingResult.Callback<DirectionsResult>() {
+                        @Override
+                        public void onResult(DirectionsResult result) {
+                            if (result.routes != null && result.routes.length > 0) {
+                                DirectionsRoute route = result.routes[0];
+                                String encodedPolyline = route.overviewPolyline.getEncodedPath();
+                                List<LatLng> decodedPath = PolyUtil.decode(encodedPolyline);
 
-                        // Ajustar la cámara para mostrar la ruta y los marcadores
-                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                        for (MarkerInfo markerInfo : markerList) {
-                            builder.include(new LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio()));
+                                PolylineOptions polylineOptions = new PolylineOptions()
+                                        .addAll(decodedPath)
+                                        .color(Color.RED)
+                                        .width(5);
+
+                                if (googleMap != null) {
+                                    getActivity().runOnUiThread(() -> {
+                                        Polyline polyline = googleMap.addPolyline(polylineOptions);
+                                        routePolylines.add(polyline);
+
+                                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                        builder.include(markerStart);
+                                        builder.include(markerDest);
+                                        LatLngBounds bounds = builder.build();
+
+                                        int padding = 100;
+                                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                                        googleMap.animateCamera(cameraUpdate);
+                                    });
+                                }
+                            }
                         }
-                        LatLngBounds bounds = builder.build();
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+
+                        @Override
+                        public void onFailure(Throwable e) {
+                            e.printStackTrace();
+                        }
                     });
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+    }
 
-        @Override
-        public void onFailure(Throwable e) {
-            e.printStackTrace();
-        }
-    });
-}
-*/
 
     @Override
     public void onResume() {
@@ -451,4 +528,37 @@ private void drawRoute() {
         mapView.onLowMemory();
     }
 
+
+    private void FinalizarArrastre(String id_arrastre) {
+        StringRequest stringRequest3 = new StringRequest(Request.Method.POST, urlApi,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (!TextUtils.isEmpty(response)) {
+                            Toast.makeText(requireContext(), "Se finalizo el arrastre", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.d("API Response", "Respuesta vacía");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "17");
+                params.put("id", id_arrastre);
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue3 = Volley.newRequestQueue(requireContext());
+        requestQueue3.add(stringRequest3);
+
+    }
 }

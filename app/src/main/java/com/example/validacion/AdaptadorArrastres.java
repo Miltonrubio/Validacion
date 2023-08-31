@@ -47,9 +47,13 @@ import org.json.JSONObject;
 import java.io.DataOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -93,7 +97,6 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
         if (getItemViewType(position) == VIEW_TYPE_ITEM) {
             try {
                 JSONObject jsonObject2 = filteredData.get(position);
-
                 String id = jsonObject2.optString("id", "");
                 String id_cliente = jsonObject2.optString("id_cliente", "");
                 String foto_mapa = jsonObject2.optString("foto_mapa", "");
@@ -109,12 +112,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 String nombre = jsonObject2.optString("nombre", "");
                 String empresa = jsonObject2.optString("estatus", "");
                 String telefono = jsonObject2.optString("telefono", "");
-                String modelo = jsonObject2.optString("modelo", "");
-                String estado = jsonObject2.optString("estado", "");
-            /*    String estado = jsonObject2.optString("estado", "");
-                String estado = jsonObject2.optString("estado", "");*/
                 String cliente = jsonObject2.optString("cliente", "");
-                String placas = jsonObject2.optString("placas", "");
 
                 Bundle bundle = new Bundle();
 
@@ -130,10 +128,32 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 bundle.putString("costo_kilometro", costo_kilometro);
                 bundle.putString("importe", importe);
                 bundle.putString("observaciones", observaciones);
-                setTextViewText(holder.textPlaca2, placas, "Placa no disponible");
-                setTextViewText(holder.textMarca2, modelo.toUpperCase(), "Marca no disponible");
+                bundle.putString("telefono", telefono);
+
                 setTextViewText(holder.textDueño2, cliente, "Dueño no disponible");
-                setTextViewText(holder.textFecha2, fecha_inicio, "Fecha no disponible");
+
+                try {
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date_inicio = inputFormat.parse(fecha_inicio);
+
+                    SimpleDateFormat outputFormatFecha = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
+                    String fecha_formateada = outputFormatFecha.format(date_inicio);
+
+                    SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                    Date time = inputFormatHora.parse(hora_inicio);
+
+                    SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                    String hora_formateada_inicio = outputFormatHora.format(time);
+
+                    setTextViewText(holder.textFecha2, fecha_formateada+ ". A las " + hora_formateada_inicio, "Fecha no disponible");
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
                 setTextViewText(holder.textStatus, estatus, "Dueño no disponible");
                 setTextViewText(holder.textTelefono, telefono, "Telefono no disponible");
 
@@ -195,9 +215,9 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textMarca2, textPlaca2, textFecha2, textStatus, textTelefono, textDueño2;
+        TextView   textFecha2, textStatus, textTelefono, textDueño2;
 
-        ImageView imageViewCoches, IVNoInternet, botonDesplegable2;
+        ImageView  IVNoInternet, botonDesplegable2;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -205,13 +225,8 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
             textFecha2 = itemView.findViewById(R.id.textFecha2);
             textStatus = itemView.findViewById(R.id.textStatus);
             IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
-            textPlaca2 = itemView.findViewById(R.id.textPlaca2);
-            textMarca2 = itemView.findViewById(R.id.textMarca2);
             textTelefono = itemView.findViewById(R.id.textTelefono);
             textDueño2 = itemView.findViewById(R.id.textDueño2);
-            //   textTelefono= itemView.findViewById(R.id.textTelefono);
-
-
             botonDesplegable2 = itemView.findViewById(R.id.botonDesplegable2);
         }
     }
@@ -225,19 +240,22 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
             String[] keywords = query.toLowerCase().split(" ");
 
             for (JSONObject item : data) {
-                String marca = item.optString("marcaI", "").toLowerCase();
-                String modelo = item.optString("modeloI", "").toLowerCase();
                 String nombre = item.optString("nombre", "").toLowerCase();
-                String status = item.optString("estatus", "").toLowerCase();
-                String placa = item.optString("placasI", "").toLowerCase();
+                String empresa = item.optString("empresa", "").toLowerCase();
+                String telefono = item.optString("telefono", "").toLowerCase();
+                String estatus = item.optString("estatus", "").toLowerCase();
+                String placas = item.optString("placas", "").toLowerCase();
+                String modelo = item.optString("modelo", "").toLowerCase();
+                String id = item.optString("id", "").toLowerCase();
+
 
                 boolean matchesAllKeywords = true;
 
                 for (String keyword : keywords) {
-                    if (!(marca.contains(keyword) || modelo.contains(keyword) || placa.contains(keyword) ||
-                            nombre.contains(keyword) || status.contains(keyword))) {
+                    if (!(modelo.contains(keyword) || empresa.contains(keyword) || telefono.contains(keyword) || id.contains(keyword) || placas.contains(keyword) ||
+                            nombre.contains(keyword) || estatus.contains(keyword))) {
                         matchesAllKeywords = false;
-                        break; // Si alguna palabra clave no coincide, no es necesario verificar más
+                        break;
                     }
                 }
 
@@ -266,17 +284,18 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
 
                 switch (menuItem.getItemId()) {
                     case R.id.opcionDetalles:
-                        DetalleFragment detalleFragment = new DetalleFragment();
-                        detalleFragment.setArguments(bundle);
+                        DetallesArrastres detallesArrastres = new DetallesArrastres();
+                        detallesArrastres.setArguments(bundle);
 
                         FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
                         fragmentManager.beginTransaction()
-                                .replace(R.id.frame_layoutCoches, detalleFragment)
+                                .replace(R.id.frame_layoutCoches, detallesArrastres)
                                 .addToBackStack(null)
                                 .commit();
                         return true;
-
+/*
                     case R.id.opcionFotos:
+
                         Intent intent = new Intent(context, Prueba.class);
                         intent.putExtra("marca", bundle.getString("marca"));
                         intent.putExtra("id_ser_venta", bundle.getString("idventa"));
@@ -293,7 +312,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                                 .addToBackStack(null)
                                 .commit();
                         return true;
-
+*/
                     case R.id.opcionCancelar:
                         return true;
 
@@ -318,7 +337,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
     }
 
     private void setTextViewText(TextView textView, String text, String defaultText) {
-        if (text.equals(null) || text.equals("")) {
+        if (text.equals(null) || text.equals("") || text.equals("null")) {
             textView.setText(defaultText);
         } else {
             textView.setText(text);

@@ -78,16 +78,8 @@
                     android:hint="Cliente"
                     android:layout_marginBottom="5dp"
                     android:textColor="@color/azulito"
-                    android:textSize="15sp" />
+                    android:textSize="17sp" />
 
-                <TextView
-                    android:id="@+id/textMarca2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Coche"
-                    android:textColor="@color/azulito"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
@@ -106,42 +98,22 @@
                 android:layout_marginTop="5dp"
                 android:padding="5dp">
 
-                <TextView
-                    android:id="@+id/textPlaca2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Placas"
-                    android:textColor="@color/azulito"
-                    android:textSize="17dp"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:background="@drawable/textview_outline3"/>
+                    <TextView
+                        android:id="@+id/textTelefono"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Telefono Cliente"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="10dp"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
 
             </LinearLayout>
 
             <!-- Parte derecha para textModelo -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.3"
-                android:orientation="vertical"
-                android:padding="8dp"
-                android:gravity="center_vertical"
-                >
 
-                <TextView
-                    android:id="@+id/textTelefono"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                     android:hint="Motivo"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="15dp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
