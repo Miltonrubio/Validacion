@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         StringRequest requestLogin = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 if (response.equals(response)) {
                     if (response.equals("fallo")) {
                         Toast.makeText(context, "USUARIO O CONTRASEÑA INCORRECTA", Toast.LENGTH_SHORT).show();
@@ -139,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
                             // Procesar los datos del JSONArray si es necesario
                             for (int i = 0; i < jsonArray.length(); i++) {
+
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                               String  idusuario = jsonObject.getString("idusuario");
@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(context, "Los datos son incorrectos", Toast.LENGTH_LONG).show();
                         }
                     }
                 } else {

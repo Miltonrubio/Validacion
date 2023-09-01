@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -68,14 +69,14 @@ public class UsuariosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
-        TextView cerrarSesion = view.findViewById(R.id.cerrarSesion);
 
         ImageView coronaImg = view.findViewById(R.id.corona);
 
         TextView tvNombreMecanico = view.findViewById(R.id.tvNombreMecanico);
         TextView tvCorreoMecanico = view.findViewById(R.id.tvCorreoMecanico);
         TextView tvEstadoMecanico = view.findViewById(R.id.tvEstadoMecanico);
-        TextInputLayout ContenedorCerrarSesion = view.findViewById(R.id.ContenedorCerrarSesion);
+
+        Button customButton= view.findViewById(R.id.customButton);
 
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
@@ -95,23 +96,11 @@ public class UsuariosFragment extends Fragment {
         tvNombreMecanico.setText( idusuario + " - " +nombre);
 
 
-        cerrarSesion.setOnClickListener(new View.OnClickListener() {
+        customButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-          cerrarSesion();
-
-          //  IrASlider();
-            }
-        });
-
-        ContenedorCerrarSesion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                cerrarSesion();
-
-             //   IrASlider();
+             //   cerrarSesion();
+           IrASlider();
             }
         });
 
@@ -134,7 +123,7 @@ public class UsuariosFragment extends Fragment {
 
     private void IrASlider() {
 
-        Intent intent = new Intent(requireContext(), Prueba2.class);
+        Intent intent = new Intent(requireContext(), Prueba.class);
         startActivity(intent);
         requireActivity().finish();
     }

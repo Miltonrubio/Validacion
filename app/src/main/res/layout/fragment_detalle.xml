@@ -154,9 +154,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
             android:background="@drawable/textview_outlinegris"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="13dp"
+            >
 
             <TextView
                 android:id="@+id/tvmecanico"
@@ -168,14 +169,21 @@
                 android:text="Mecanico"
                 android:textSize="23sp" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewMecanicos"
                 android:layout_width="match_parent"
-                android:layout_height="321dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:paddingBottom="10dp"/>
         </LinearLayout>
-
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -200,7 +208,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewRefacciones"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:paddingBottom="10dp"/>
     </LinearLayout>

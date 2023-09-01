@@ -87,6 +87,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     private boolean isTwoFingerScroll = false;
     private MapView mapView;
     private GoogleMap googleMap;
+    private Polyline selectedPolyline;
 
     private List<Polyline> routePolylines = new ArrayList<>();
     private ArrayList<MarkerInfo> markerList = new ArrayList<>();
@@ -100,13 +101,15 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
 
     TextView tvstatus2, tvClienteArrastre, tvFechaInicioArrastre, tvFechaFinalArrastre, TVTotalKilometros, TVPrecio, tvTelefonoCliente;
 
-    LinearLayout LayoutKilometros, LayoutPrecio;
+    LinearLayout LayoutKilometros, LayoutPrecio, LayoutFinalizar, LayouttodasLasRutas;
 
     Button BotonFinalizarArrastre;
     private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
-    RecyclerView recyclerViewChoferes;
+    RecyclerView recyclerViewChoferes, recyclerViewRutas;
     ScrollView scrollView;
+
+    String apiKey="AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ";
 
 
     public DetallesArrastres() {
@@ -129,6 +132,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         tvstatus2 = rootView.findViewById(R.id.tvstatus2);
         tvClienteArrastre = rootView.findViewById(R.id.tvClienteArrastre);
         recyclerViewChoferes = rootView.findViewById(R.id.recyclerViewChoferes);
+        recyclerViewRutas = rootView.findViewById(R.id.recyclerViewRutas);
         tvFechaFinalArrastre = rootView.findViewById(R.id.tvFechaFinalArrastre);
         tvFechaInicioArrastre = rootView.findViewById(R.id.tvFechaInicioArrastre);
         scrollView = rootView.findViewById(R.id.scrollViewArrastres); // Replace with the actual ID of your ScrollView
@@ -136,9 +140,17 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         LayoutKilometros = rootView.findViewById(R.id.LayoutKilometros);
         TVTotalKilometros = rootView.findViewById(R.id.TVTotalKilometros);
         LayoutPrecio = rootView.findViewById(R.id.LayoutPrecio);
+        LayoutFinalizar = rootView.findViewById(R.id.LayoutFinalizar);
+        LayouttodasLasRutas= rootView.findViewById(R.id.LayouttodasLasRutas);
         TVPrecio = rootView.findViewById(R.id.TVPrecio);
         tvTelefonoCliente= rootView.findViewById(R.id.tvTelefonoCliente);
 
+        LayouttodasLasRutas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawRoute();
+            }
+        });
 
         Bundle bundle = getArguments();
 
@@ -165,13 +177,17 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
                 } else if (estatus.equals("en espera")) {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
-                } else if (estatus.equals("preparado") || estatus.equals("finalizado")) {
+                } else if (estatus.equals("preparado") || estatus.equals("finalizado")|| estatus.equals("FINALIZADO")) {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
+                    LayoutFinalizar.setVisibility(View.GONE);
                 } else {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
+
+                    LayoutFinalizar.setVisibility(View.GONE);
                 }
             } else {
 
+                LayoutFinalizar.setVisibility(View.GONE);
                 tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
                 tvstatus2.setText("No hay estatus");
             }
@@ -186,7 +202,6 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                     int action = event.getAction();
                     int pointerCount = event.getPointerCount();
 
-                    // Permitir el desplazamiento hacia arriba en el ScrollView si estás al principio de la vista
                     if (scrollView.getScrollY() == 0 && event.getY() < rootView.getHeight() / 2) {
                         scrollView.requestDisallowInterceptTouchEvent(false);
                     } else {
@@ -223,14 +238,14 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             String kilometrosFormateado = decimalFormat2.format(Double.parseDouble(kilometros));
 
             TVTotalKilometros.setText("Total de kilometros: " + kilometrosFormateado + " km");
-            TVPrecio.setText("El costo total es: " + costoTotalFormateado + "$ MXM");
+            TVPrecio.setText("Importe total: " + costoTotalFormateado + "$ MXM");
         }
 
         if (cliente_nombre.isEmpty() || cliente_nombre.equals("null")) {
             tvClienteArrastre.setText("Cliente desconocido");
+            LayoutFinalizar.setVisibility(View.GONE);
         } else {
-
-            tvClienteArrastre.setText("" + cliente_nombre);
+            tvClienteArrastre.setText(cliente_nombre);
         }
 
         try {
@@ -383,6 +398,21 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                                     markerList.add(new MarkerInfo(LATITUD, LONGITUD, DEST_LATITUDE, DEST_LONGITUDE, "Ruta " + id));
                                 }
 
+                                AdaptadorRutas adaptadorRutas = new AdaptadorRutas(markerList);
+
+                                adaptadorRutas.setOnItemClickListener(new AdaptadorRutas.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(int position) {
+                                        MarkerInfo markerInfo = markerList.get(position);
+                                        drawSelectedRoute(position);
+                                    }
+                                });
+
+                                LinearLayoutManager layoutManager3 = new LinearLayoutManager(requireContext());
+                                recyclerViewRutas.setLayoutManager(layoutManager3);
+                                recyclerViewRutas.setAdapter(adaptadorRutas);
+
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -428,10 +458,94 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    private void drawSelectedRoute(int selectedRouteIndex) {
+        clearRoutePolylines();
+
+        if (selectedRouteIndex < 0 || selectedRouteIndex >= markerList.size()) {
+            // Verificar si el índice seleccionado es válido
+            drawRoute();
+            return;
+        }
+
+        MarkerInfo selectedMarkerInfo = markerList.get(selectedRouteIndex);
+        LatLng markerStart = new LatLng(selectedMarkerInfo.getLatitud_inicio(), selectedMarkerInfo.getLongitud_inicio());
+        LatLng markerDest = new LatLng(selectedMarkerInfo.getLatitud_destino(), selectedMarkerInfo.getLongitud_destino());
+
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        try {
+            List<Address> startAddresses = geocoder.getFromLocation(selectedMarkerInfo.getLatitud_inicio(), selectedMarkerInfo.getLongitud_inicio(), 1);
+            List<Address> destAddresses = geocoder.getFromLocation(selectedMarkerInfo.getLatitud_destino(), selectedMarkerInfo.getLongitud_destino(), 1);
+
+            if (!startAddresses.isEmpty() && !destAddresses.isEmpty()) {
+                Address startAddressObj = startAddresses.get(0);
+                Address destAddressObj = destAddresses.get(0);
+
+                String startAddress = startAddressObj.getThoroughfare() + ", #" + startAddressObj.getSubThoroughfare() + ", " + startAddressObj.getSubLocality() + " (Inicio)";
+                String destAddress = destAddressObj.getThoroughfare() + ", #" + destAddressObj.getSubThoroughfare() + ", " + destAddressObj.getSubLocality() + " (Destino)";
+
+                googleMap.addMarker(new MarkerOptions().position(markerStart).title(startAddress));
+                googleMap.addMarker(new MarkerOptions().position(markerDest).title(destAddress));
+
+                GeoApiContext geoApiContext = new GeoApiContext.Builder()
+                        .apiKey(apiKey)
+                        .build();
+
+                DirectionsApiRequest request2 = DirectionsApi.newRequest(geoApiContext)
+                        .mode(TravelMode.DRIVING)
+                        .origin(new com.google.maps.model.LatLng(selectedMarkerInfo.getLatitud_inicio(), selectedMarkerInfo.getLongitud_inicio()))
+                        .destination(new com.google.maps.model.LatLng(selectedMarkerInfo.getLatitud_destino(), selectedMarkerInfo.getLongitud_destino()));
+
+                request2.setCallback(new PendingResult.Callback<DirectionsResult>() {
+                    @Override
+                    public void onResult(DirectionsResult result) {
+                        if (result.routes != null && result.routes.length > 0) {
+                            DirectionsRoute route = result.routes[0];
+                            String encodedPolyline = route.overviewPolyline.getEncodedPath();
+                            List<LatLng> decodedPath = PolyUtil.decode(encodedPolyline);
+
+                            PolylineOptions polylineOptions = new PolylineOptions()
+                                    .addAll(decodedPath)
+                                    .color(Color.RED)
+                                    .width(5);
+
+                            if (googleMap != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    Polyline polyline = googleMap.addPolyline(polylineOptions);
+                                    routePolylines.add(polyline);
+
+                                    // Crear un nuevo builder para incluir todos los puntos de la ruta
+                                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                    for (LatLng point : decodedPath) {
+                                        builder.include(point);
+                                    }
+                                    LatLngBounds bounds = builder.build();
+
+                                    int padding = 100;
+                                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                                    googleMap.animateCamera(cameraUpdate);
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void drawRoute() {
         clearRoutePolylines();
 
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder(); // Paso 1: Crear un builder para las coordenadas
 
         for (MarkerInfo markerInfo : markerList) {
             LatLng markerStart = new LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio());
@@ -451,16 +565,20 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                     googleMap.addMarker(new MarkerOptions().position(markerStart).title(startAddress));
                     googleMap.addMarker(new MarkerOptions().position(markerDest).title(destAddress));
 
+                    // Paso 2: Agregar las coordenadas al builder
+                    builder.include(markerStart);
+                    builder.include(markerDest);
+
                     GeoApiContext geoApiContext = new GeoApiContext.Builder()
-                            .apiKey("AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ")
+                            .apiKey(apiKey)
                             .build();
 
-                    DirectionsApiRequest request = DirectionsApi.newRequest(geoApiContext)
+                    DirectionsApiRequest request2 = DirectionsApi.newRequest(geoApiContext)
                             .mode(TravelMode.DRIVING)
                             .origin(new com.google.maps.model.LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio()))
                             .destination(new com.google.maps.model.LatLng(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino()));
 
-                    request.setCallback(new PendingResult.Callback<DirectionsResult>() {
+                    request2.setCallback(new PendingResult.Callback<DirectionsResult>() {
                         @Override
                         public void onResult(DirectionsResult result) {
                             if (result.routes != null && result.routes.length > 0) {
@@ -478,12 +596,9 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                                         Polyline polyline = googleMap.addPolyline(polylineOptions);
                                         routePolylines.add(polyline);
 
-                                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                        builder.include(markerStart);
-                                        builder.include(markerDest);
+                                        // Paso 4: Ajustar la cámara para que se centre en las coordenadas
                                         LatLngBounds bounds = builder.build();
-
-                                        int padding = 100;
+                                        int padding = 180;
                                         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                                         googleMap.animateCamera(cameraUpdate);
                                     });
@@ -502,6 +617,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             }
         }
     }
+
 
 
     @Override
@@ -559,6 +675,85 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
 
         RequestQueue requestQueue3 = Volley.newRequestQueue(requireContext());
         requestQueue3.add(stringRequest3);
+    }
 
+
+    private void showDrivingRoute(MarkerInfo markerInfo) {
+        // Limpia cualquier Polyline previamente seleccionada
+        if (selectedPolyline != null) {
+            // Si ya hay una Polyline seleccionada, quítala
+            selectedPolyline.remove();
+        }
+
+        // Obtén los puntos de inicio y destino
+        LatLng markerStart = new LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio());
+        LatLng markerDest = new LatLng(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino());
+
+        // Agrega marcadores para el inicio y el destino
+        googleMap.addMarker(new MarkerOptions().position(markerStart).title("Inicio"));
+        googleMap.addMarker(new MarkerOptions().position(markerDest).title("Destino"));
+
+        // Crea una nueva Polyline para resaltar la ruta seleccionada
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .add(markerStart)
+                .add(markerDest)
+                .color(Color.BLUE)  // Cambia el color como desees
+                .width(7);           // Cambia el ancho como desees
+
+        selectedPolyline = googleMap.addPolyline(polylineOptions);
+
+        // Calcula la cámara para centrar y hacer zoom en la ruta seleccionada
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(markerStart);
+        builder.include(markerDest);
+        LatLngBounds bounds = builder.build();
+
+        int padding = 80;  // Ajusta el valor del relleno según tus preferencias
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        googleMap.animateCamera(cameraUpdate);
+
+        // Traza la ruta como si fuera conduciendo
+        GeoApiContext geoApiContext = new GeoApiContext.Builder()
+                .apiKey("AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ")  // Reemplaza con tu clave de API de Google Maps
+                .build();
+
+        DirectionsApiRequest request = DirectionsApi.newRequest(geoApiContext)
+                .mode(TravelMode.DRIVING)  // Cambia el modo de transporte a "DRIVING"
+                .origin(new com.google.maps.model.LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio()))
+                .destination(new com.google.maps.model.LatLng(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino()));
+
+        request.setCallback(new PendingResult.Callback<DirectionsResult>() {
+            @Override
+            public void onResult(DirectionsResult result) {
+                if (result.routes != null && result.routes.length > 0) {
+                    DirectionsRoute route = result.routes[0];
+                    String encodedPolyline = route.overviewPolyline.getEncodedPath();
+                    List<LatLng> decodedPath = PolyUtil.decode(encodedPolyline);
+
+                    PolylineOptions polylineOptions = new PolylineOptions()
+                            .addAll(decodedPath)
+                            .color(Color.RED)
+                            .width(5);
+
+                    if (googleMap != null) {
+                        getActivity().runOnUiThread(() -> {
+                            Polyline polyline = googleMap.addPolyline(polylineOptions);
+                            routePolylines.add(polyline);
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+    public void onItemClick(int position) {
+
+        MarkerInfo markerInfo = markerList.get(position);
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -45,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DateFormatSymbols;
@@ -109,8 +112,9 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 String importe = jsonObject2.optString("id_ser_venta", "");
                 String observaciones = jsonObject2.optString("observaciones", "");
                 String estatus = jsonObject2.optString("estatus", "");
-                String nombre = jsonObject2.optString("nombre", "");
-                String empresa = jsonObject2.optString("estatus", "");
+
+                Double latitud_destino= Double.valueOf(jsonObject2.optString("latitud_destino",""));
+                Double longitud_destino= Double.valueOf(jsonObject2.optString("longitud_destino",""));
                 String telefono = jsonObject2.optString("telefono", "");
                 String cliente = jsonObject2.optString("cliente", "");
 
@@ -152,6 +156,31 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     e.printStackTrace();
                 }
 
+                Log.d("COORDENADAS", "la direccion es: "+ longitud_destino + " "+ latitud_destino);
+                Geocoder geocoder = new Geocoder(holder.itemView.getContext());
+
+                try {
+                    // Obtiene una lista de direcciones a partir de las coordenadas.
+                    List<Address> addresses = geocoder.getFromLocation(latitud_destino, longitud_destino, 1);
+
+                    if (!addresses.isEmpty()) {
+                        // Obtiene la primera dirección de la lista.
+                        Address address = addresses.get(0);
+
+                        // Convierte la dirección a una cadena.
+                        String direccion = address.getAddressLine(0);
+
+                        Log.d("COORDENADAS", "la direccion es: "+ direccion);
+                        setTextViewText(holder.textDireccion, direccion, "Direccion no disponible");
+                    }else{
+
+                        setTextViewText(holder.textDireccion, "No disponible", "Direccion no disponible");
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("GEOCODER_ERROR", "Error al obtener la dirección", e);
+                }
 
 
                 setTextViewText(holder.textStatus, estatus, "Dueño no disponible");
@@ -215,7 +244,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView   textFecha2, textStatus, textTelefono, textDueño2;
+        TextView   textFecha2, textStatus, textTelefono, textDueño2,textDireccion;
 
         ImageView  IVNoInternet, botonDesplegable2;
 
@@ -227,6 +256,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
             IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
             textTelefono = itemView.findViewById(R.id.textTelefono);
             textDueño2 = itemView.findViewById(R.id.textDueño2);
+            textDireccion= itemView.findViewById(R.id.textDireccionDestino);
             botonDesplegable2 = itemView.findViewById(R.id.botonDesplegable2);
         }
     }

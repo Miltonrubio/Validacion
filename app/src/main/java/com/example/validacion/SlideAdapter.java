@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
@@ -48,6 +49,23 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
         // return new SlideViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_coches_container, parent, false));
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_coches_container, parent, false);
         SlideViewHolder viewHolder = new SlideViewHolder(view);
+
+/*
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                SlideItem clickedItem = slideItems.get(position);
+
+                if (position != RecyclerView.NO_POSITION) {
+                    // Muestra la vista emergente (DialogFragment) con la imagen a pantalla completa
+                    ImageDialogFragment dialogFragment = new ImageDialogFragment(clickedItem.getImage());
+                    dialogFragment.show(((AppCompatActivity) parent.getContext()).getSupportFragmentManager(), "ImageDialogFragment");
+                }
+            }
+        });
+*/
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,13 +74,16 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
 
 
                 if (position != RecyclerView.NO_POSITION) {
-                    showAlertDialog(parent.getContext(), position, clickedItem);
+                   showAlertDialog(parent.getContext(), position, clickedItem);
+                   // Toast.makeText(parent.getContext(), clickedItem.getImage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
 
         return viewHolder;
     }
+
+
 
     @Override
     public void onBindViewHolder(@NonNull SlideViewHolder holder, int position) {

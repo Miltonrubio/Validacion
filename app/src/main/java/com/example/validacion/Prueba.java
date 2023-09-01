@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
@@ -62,7 +64,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Prueba extends AppCompatActivity {
+public class Prueba extends AppCompatActivity{
 
     private Handler sliderHandler = new Handler();
 
@@ -92,6 +94,10 @@ public class Prueba extends AppCompatActivity {
 
 
         CargarImagenes(idSerVenta);
+
+
+
+
 
         btnGuardarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,7 +276,7 @@ public class Prueba extends AppCompatActivity {
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("opcion", "8");
-                params.put("idventa", idventa);
+                params.put("idventa", "60");
                 return params;
             }
         };
