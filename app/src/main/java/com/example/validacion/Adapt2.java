@@ -47,9 +47,13 @@ import org.json.JSONObject;
 import java.io.DataOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -118,7 +122,34 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 setTextViewText(holder.textPlaca, placa, "Placa no disponible");
                 setTextViewText(holder.textDueño, dueño, "Dueño no disponible");
                 setStatusTextView(holder.textStatus, estatus);
-                setTextViewText(holder.textFecha, fecha_ingreso + ".   " + hora_ingreso, "Fecha no disponible");
+
+
+                try {
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date_inicio = inputFormat.parse(fecha_ingreso);
+
+                    SimpleDateFormat outputFormatFecha = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
+                    String fecha_formateada = outputFormatFecha.format(date_inicio);
+
+                    SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                    Date time = inputFormatHora.parse(hora_ingreso);
+
+                    SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                    String hora_formateada_inicio = outputFormatHora.format(time);
+
+                    setTextViewText(holder.textFecha, fecha_formateada + ". A las " + hora_formateada_inicio, "Fecha no disponible");
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+             //   setTextViewText(holder.textFecha, fecha_ingreso + ".   " + hora_ingreso, "Fecha no disponible");
+
+
+
+
                 String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + jsonObject2.getString("foto");
                 loadImage(holder.imageViewCoches, imageUrl);
 
@@ -215,11 +246,14 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 String nombre = item.optString("nombre", "").toLowerCase();
                 String status = item.optString("estatus", "").toLowerCase();
                 String placa = item.optString("placasI", "").toLowerCase();
+                String fecha = item.optString("fecha_ingreso", "").toLowerCase();
+
+                String hora = item.optString("hora_ingreso", "").toLowerCase();
 
                 boolean matchesAllKeywords = true;
 
                 for (String keyword : keywords) {
-                    if (!(marca.contains(keyword) || modelo.contains(keyword) || placa.contains(keyword) ||
+                    if (!(marca.contains(keyword) || modelo.contains(keyword) || placa.contains(keyword)|| fecha.contains(keyword)|| hora.contains(keyword) ||
                             nombre.contains(keyword) || status.contains(keyword))) {
                         matchesAllKeywords = false;
                         break; // Si alguna palabra clave no coincide, no es necesario verificar más

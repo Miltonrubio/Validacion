@@ -113,8 +113,6 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 String observaciones = jsonObject2.optString("observaciones", "");
                 String estatus = jsonObject2.optString("estatus", "");
                 String direccion = jsonObject2.optString("direccion", "");
-                //   Double latitud_destino= Double.valueOf(jsonObject2.optString("latitud_destino",""));
-                //   Double longitud_destino= Double.valueOf(jsonObject2.optString("longitud_destino",""));
                 String telefono = jsonObject2.optString("telefono", "");
                 String cliente = jsonObject2.optString("cliente", "");
 
@@ -157,36 +155,6 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     e.printStackTrace();
                 }
 
-
-                /*
-                Log.d("COORDENADAS", "la direccion es: "+ longitud_destino + " "+ latitud_destino);
-
-
-                Geocoder geocoder = new Geocoder(holder.itemView.getContext());
-
-                try {
-                    // Obtiene una lista de direcciones a partir de las coordenadas.
-                    List<Address> addresses = geocoder.getFromLocation(latitud_destino, longitud_destino, 1);
-
-                    if (!addresses.isEmpty()) {
-                        // Obtiene la primera dirección de la lista.
-                        Address address = addresses.get(0);
-
-                        // Convierte la dirección a una cadena.
-                        String direccion = address.getAddressLine(0);
-
-                        Log.d("COORDENADAS", "la direccion es: "+ direccion);
-                        setTextViewText(holder.textDireccion, direccion, "Direccion no disponible");
-                    }else{
-
-                        setTextViewText(holder.textDireccion, "No disponible", "Direccion no disponible");
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.e("GEOCODER_ERROR", "Error al obtener la dirección", e);
-                }
-*/
                 setTextViewText(holder.textStatus, estatus, "Dueño no disponible");
                 setTextViewText(holder.textTelefono, telefono, "Telefono no disponible");
 
@@ -289,7 +257,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 boolean matchesAllKeywords = true;
 
                 for (String keyword : keywords) {
-                    if (!(modelo.contains(keyword) || empresa.contains(keyword) || telefono.contains(keyword) || id.contains(keyword) || placas.contains(keyword) ||
+                    if (!(modelo.contains(keyword) || empresa.contains(keyword)|| direccion.contains(keyword) || telefono.contains(keyword) || id.contains(keyword) || placas.contains(keyword) ||
                             nombre.contains(keyword) || estatus.contains(keyword))) {
                         matchesAllKeywords = false;
                         break;
