@@ -1,5 +1,6 @@
 package com.example.validacion;
 
+import android.annotation.SuppressLint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.text.TextUtils;
@@ -35,7 +36,7 @@ public class AdaptadorRutas extends RecyclerView.Adapter<AdaptadorRutas.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         MarkerInfo markerInfo = listaRutas.get(position);
         Double latitud_destino = markerInfo.getLatitud_destino();
         Double longitud_destino = markerInfo.getLongitud_destino();
@@ -49,6 +50,7 @@ public class AdaptadorRutas extends RecyclerView.Adapter<AdaptadorRutas.ViewHold
                 }
             }
         });
+
 
         Geocoder geocoder = new Geocoder(holder.itemView.getContext());
         try {
@@ -81,6 +83,9 @@ public class AdaptadorRutas extends RecyclerView.Adapter<AdaptadorRutas.ViewHold
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+ 
     }
 
 

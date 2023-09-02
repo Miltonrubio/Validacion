@@ -168,7 +168,7 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
 
 
     private void cambiarImagenPrincipal(Context context, String id_ser_Venta, String foto) {
-        String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+        String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest request = new StringRequest(Request.Method.POST, url,

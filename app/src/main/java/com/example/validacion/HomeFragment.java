@@ -111,7 +111,7 @@ public class HomeFragment extends Fragment {
         }
     }
     private void EnviarWS() {
-        String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php/";
+        String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

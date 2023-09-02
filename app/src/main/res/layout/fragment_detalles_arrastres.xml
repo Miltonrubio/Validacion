@@ -69,6 +69,7 @@
                     android:gravity="left"
                     android:text="Telefono de Cliente"
                     android:textSize="17dp"
+                    android:visibility="gone"
                     />
 
 

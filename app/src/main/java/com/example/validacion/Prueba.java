@@ -68,7 +68,7 @@ public class Prueba extends AppCompatActivity{
 
     private Handler sliderHandler = new Handler();
 
-    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
     ViewPager2 viewPager2;
     private CameraManager cameraManager;
@@ -173,7 +173,7 @@ public class Prueba extends AppCompatActivity{
             Bitmap imageBitmap = bitmaps[0];
 
             OkHttpClient client = new OkHttpClient();
-            String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+            String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
             String nombreArchivo = "imagen" + System.currentTimeMillis() + ".jpg";
             File imageFile = bitmapToFile(imageBitmap, "image.jpg");

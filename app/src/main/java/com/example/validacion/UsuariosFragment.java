@@ -99,8 +99,8 @@ public class UsuariosFragment extends Fragment {
         customButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //   cerrarSesion();
-           IrASlider();
+                cerrarSesion();
+         //  IrASlider();
             }
         });
 

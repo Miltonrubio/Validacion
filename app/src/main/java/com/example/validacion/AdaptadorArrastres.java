@@ -112,9 +112,9 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 String importe = jsonObject2.optString("id_ser_venta", "");
                 String observaciones = jsonObject2.optString("observaciones", "");
                 String estatus = jsonObject2.optString("estatus", "");
-
-                Double latitud_destino= Double.valueOf(jsonObject2.optString("latitud_destino",""));
-                Double longitud_destino= Double.valueOf(jsonObject2.optString("longitud_destino",""));
+                String direccion = jsonObject2.optString("direccion", "");
+                //   Double latitud_destino= Double.valueOf(jsonObject2.optString("latitud_destino",""));
+                //   Double longitud_destino= Double.valueOf(jsonObject2.optString("longitud_destino",""));
                 String telefono = jsonObject2.optString("telefono", "");
                 String cliente = jsonObject2.optString("cliente", "");
 
@@ -134,6 +134,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 bundle.putString("observaciones", observaciones);
                 bundle.putString("telefono", telefono);
 
+             setTextViewText(holder.textDireccion, direccion, "Direccion no disponible");
                 setTextViewText(holder.textDueño2, cliente, "Dueño no disponible");
 
                 try {
@@ -149,14 +150,18 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
                     String hora_formateada_inicio = outputFormatHora.format(time);
 
-                    setTextViewText(holder.textFecha2, fecha_formateada+ ". A las " + hora_formateada_inicio, "Fecha no disponible");
+                    setTextViewText(holder.textFecha2, fecha_formateada + ". A las " + hora_formateada_inicio, "Fecha no disponible");
 
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
+
+                /*
                 Log.d("COORDENADAS", "la direccion es: "+ longitud_destino + " "+ latitud_destino);
+
+
                 Geocoder geocoder = new Geocoder(holder.itemView.getContext());
 
                 try {
@@ -181,8 +186,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     e.printStackTrace();
                     Log.e("GEOCODER_ERROR", "Error al obtener la dirección", e);
                 }
-
-
+*/
                 setTextViewText(holder.textStatus, estatus, "Dueño no disponible");
                 setTextViewText(holder.textTelefono, telefono, "Telefono no disponible");
 
@@ -192,6 +196,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                         showPopupMenu(view, bundle);
                     }
                 });
+
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -244,9 +249,9 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView   textFecha2, textStatus, textTelefono, textDueño2,textDireccion;
+        TextView textFecha2, textStatus, textTelefono, textDueño2, textDireccion;
 
-        ImageView  IVNoInternet, botonDesplegable2;
+        ImageView IVNoInternet, botonDesplegable2;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -256,7 +261,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
             IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
             textTelefono = itemView.findViewById(R.id.textTelefono);
             textDueño2 = itemView.findViewById(R.id.textDueño2);
-            textDireccion= itemView.findViewById(R.id.textDireccionDestino);
+            textDireccion = itemView.findViewById(R.id.textDireccionDestino);
             botonDesplegable2 = itemView.findViewById(R.id.botonDesplegable2);
         }
     }
@@ -276,6 +281,8 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 String estatus = item.optString("estatus", "").toLowerCase();
                 String placas = item.optString("placas", "").toLowerCase();
                 String modelo = item.optString("modelo", "").toLowerCase();
+
+                String direccion = item.optString("direccion", "").toLowerCase();
                 String id = item.optString("id", "").toLowerCase();
 
 
@@ -374,18 +381,4 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
         }
     }
 
-/*
-    private void loadImage(ImageView imageView, String imageUrl) {
-        if (!TextUtils.isEmpty(imageUrl)) {
-            Glide.with(imageView.getContext())
-                    .load(imageUrl)
-                    .error(R.drawable.nointernet)
-                    .into(imageView);
-        } else {
-            Glide.with(imageView.getContext())
-                    .load(R.drawable.nointernet)
-                    .into(imageView);
-        }
-    }
-*/
 }

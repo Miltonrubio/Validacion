@@ -48,7 +48,7 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
 
     private TextView TVResultadoChecks; // Declarar el TextView
 
-    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
     public CheckListFragment() {
         // Required empty public constructor

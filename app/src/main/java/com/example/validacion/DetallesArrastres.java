@@ -77,11 +77,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link DetalleFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
 
     private boolean isTwoFingerScroll = false;
@@ -104,7 +99,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     LinearLayout LayoutKilometros, LayoutPrecio, LayoutFinalizar, LayouttodasLasRutas;
 
     Button BotonFinalizarArrastre;
-    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
     RecyclerView recyclerViewChoferes, recyclerViewRutas;
     ScrollView scrollView;
@@ -114,9 +109,6 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
 
     public DetallesArrastres() {
     }
-
-    private Handler sliderHandler = new Handler();
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,7 +180,6 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             } else {
 
                 LayoutFinalizar.setVisibility(View.GONE);
-                tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
                 tvstatus2.setText("No hay estatus");
             }
 
@@ -196,27 +187,6 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             mapView = rootView.findViewById(R.id.mapViewArrastres);
             mapView.onCreate(savedInstanceState);
             mapView.getMapAsync(this);
-            mapView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    int action = event.getAction();
-                    int pointerCount = event.getPointerCount();
-
-                    if (scrollView.getScrollY() == 0 && event.getY() < rootView.getHeight() / 2) {
-                        scrollView.requestDisallowInterceptTouchEvent(false);
-                    } else {
-                        scrollView.requestDisallowInterceptTouchEvent(true);
-                    }
-
-                    if (pointerCount == 2) {
-                        isTwoFingerScroll = true;
-                    } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-                        isTwoFingerScroll = false;
-                    }
-
-                    return false;
-                }
-            });
         }
         return rootView;
     }
@@ -539,6 +509,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             e.printStackTrace();
         }
     }
+
 
     private void drawRoute() {
         clearRoutePolylines();

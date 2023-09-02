@@ -170,6 +170,8 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
 
     private void ActualizarChecks(String valorCheck, String idcheck, Context context, String descripcion, int position) {
         String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlApi,
                 new Response.Listener<String>() {
                     @Override

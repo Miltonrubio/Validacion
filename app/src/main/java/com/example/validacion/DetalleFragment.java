@@ -53,7 +53,7 @@ import java.util.Map;
 public class DetalleFragment extends Fragment {
 
 
-    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
     ViewPager2 viewPager2;
     RecyclerView recyclerViewRefacciones;

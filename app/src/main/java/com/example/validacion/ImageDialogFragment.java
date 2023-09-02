@@ -23,7 +23,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-public class ImageDialogFragment extends DialogFragment {
+public class ImageDialogFragment /*extends DialogFragment {
 
     public ImageDialogFragment() {
         // Required empty public constructor
@@ -81,7 +81,7 @@ public class ImageDialogFragment extends DialogFragment {
                 .into(imageView);
 
 */
-
+/*
         ImageView imageView = rootView.findViewById(R.id.dialogImageView);
         imageView.setImageDrawable(imageDrawable);
 
@@ -96,4 +96,7 @@ public class ImageDialogFragment extends DialogFragment {
         }
         return dialog;
     }
+
+    */
+{
 }
