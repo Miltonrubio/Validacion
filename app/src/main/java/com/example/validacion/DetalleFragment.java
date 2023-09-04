@@ -113,6 +113,7 @@ public class DetalleFragment extends Fragment {
             CargarMecanicos(idventa);
             CargarImagenes(idventa);
 
+
             //Texto del fragment con validaciones
 
             if (status.equals("pendiente")) {
@@ -295,6 +296,8 @@ public class DetalleFragment extends Fragment {
                                 AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(listaRefacciones);
                                 recyclerViewRefacciones.setLayoutManager(new LinearLayoutManager(requireContext()));
                                 recyclerViewRefacciones.setAdapter(adaptadorRefacciones);
+
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

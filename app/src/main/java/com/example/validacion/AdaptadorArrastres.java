@@ -114,7 +114,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 String estatus = jsonObject2.optString("estatus", "");
                 String direccion = jsonObject2.optString("direccion", "");
                 String telefono = jsonObject2.optString("telefono", "");
-                String cliente = jsonObject2.optString("cliente", "");
+                String cliente = jsonObject2.optString("nombre", "");
 
                 Bundle bundle = new Bundle();
 

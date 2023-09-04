@@ -2,10 +2,13 @@ package com.example.validacion;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -373,10 +376,36 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                                 adaptadorRutas.setOnItemClickListener(new AdaptadorRutas.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(int position) {
+                                        // Obtén el objeto MarkerInfo seleccionado
                                         MarkerInfo markerInfo = markerList.get(position);
-                                        drawSelectedRoute(position);
+
+                                        // Crea un diálogo de opciones
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                        builder.setTitle("Selecciona una opción")
+                                                .setItems(new CharSequence[]{"Mostrar Ruta", "Cómo Llegar"}, new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        switch (which) {
+                                                            case 0:
+                                                                drawSelectedRoute(position);
+                                                                break;
+                                                            case 1:
+                                                                launchNavigation(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino());
+                                                                break;
+                                                        }
+                                                    }
+                                                })
+                                                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        // El usuario canceló el diálogo
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+
+                                        // Muestra el diálogo
+                                        builder.create().show();
                                     }
                                 });
+
 
                                 LinearLayoutManager layoutManager3 = new LinearLayoutManager(requireContext());
                                 recyclerViewRutas.setLayoutManager(layoutManager3);
@@ -412,21 +441,21 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void clearRoutePolylines() {
-        for (Polyline polyline : routePolylines) {
-            polyline.remove();
+        private void clearRoutePolylines() {
+            for (Polyline polyline : routePolylines) {
+                polyline.remove();
+            }
+            routePolylines.clear();
         }
-        routePolylines.clear();
-    }
 
 
-    public void onMapReady(@NonNull GoogleMap map) {
-        googleMap = map;
+        public void onMapReady(@NonNull GoogleMap map) {
+            googleMap = map;
 
-        getView().post(() -> {
-            drawRoute();
-        });
-    }
+            getView().post(() -> {
+                drawRoute();
+            });
+        }
 
     private void drawSelectedRoute(int selectedRouteIndex) {
         clearRoutePolylines();
@@ -649,82 +678,28 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void showDrivingRoute(MarkerInfo markerInfo) {
-        // Limpia cualquier Polyline previamente seleccionada
-        if (selectedPolyline != null) {
-            // Si ya hay una Polyline seleccionada, quítala
-            selectedPolyline.remove();
-        }
-
-        // Obtén los puntos de inicio y destino
-        LatLng markerStart = new LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio());
-        LatLng markerDest = new LatLng(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino());
-
-        // Agrega marcadores para el inicio y el destino
-        googleMap.addMarker(new MarkerOptions().position(markerStart).title("Inicio"));
-        googleMap.addMarker(new MarkerOptions().position(markerDest).title("Destino"));
-
-        // Crea una nueva Polyline para resaltar la ruta seleccionada
-        PolylineOptions polylineOptions = new PolylineOptions()
-                .add(markerStart)
-                .add(markerDest)
-                .color(Color.BLUE)  // Cambia el color como desees
-                .width(7);           // Cambia el ancho como desees
-
-        selectedPolyline = googleMap.addPolyline(polylineOptions);
-
-        // Calcula la cámara para centrar y hacer zoom en la ruta seleccionada
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(markerStart);
-        builder.include(markerDest);
-        LatLngBounds bounds = builder.build();
-
-        int padding = 80;  // Ajusta el valor del relleno según tus preferencias
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        googleMap.animateCamera(cameraUpdate);
-
-        // Traza la ruta como si fuera conduciendo
-        GeoApiContext geoApiContext = new GeoApiContext.Builder()
-                .apiKey("AIzaSyCkF9dXkDa3GjKlrLUdLc7BEx5031MELDQ")  // Reemplaza con tu clave de API de Google Maps
-                .build();
-
-        DirectionsApiRequest request = DirectionsApi.newRequest(geoApiContext)
-                .mode(TravelMode.DRIVING)  // Cambia el modo de transporte a "DRIVING"
-                .origin(new com.google.maps.model.LatLng(markerInfo.getLatitud_inicio(), markerInfo.getLongitud_inicio()))
-                .destination(new com.google.maps.model.LatLng(markerInfo.getLatitud_destino(), markerInfo.getLongitud_destino()));
-
-        request.setCallback(new PendingResult.Callback<DirectionsResult>() {
-            @Override
-            public void onResult(DirectionsResult result) {
-                if (result.routes != null && result.routes.length > 0) {
-                    DirectionsRoute route = result.routes[0];
-                    String encodedPolyline = route.overviewPolyline.getEncodedPath();
-                    List<LatLng> decodedPath = PolyUtil.decode(encodedPolyline);
-
-                    PolylineOptions polylineOptions = new PolylineOptions()
-                            .addAll(decodedPath)
-                            .color(Color.RED)
-                            .width(5);
-
-                    if (googleMap != null) {
-                        getActivity().runOnUiThread(() -> {
-                            Polyline polyline = googleMap.addPolyline(polylineOptions);
-                            routePolylines.add(polyline);
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-
     public void onItemClick(int position) {
 
         MarkerInfo markerInfo = markerList.get(position);
     }
+
+
+    private void launchNavigation(double destinationLat, double destinationLng) {
+        // Crear una Uri para la ubicación de destino
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + destinationLat + "," + destinationLng);
+
+        // Crear una intención para abrir Google Maps con la navegación
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps"); // Esto asegura que se abra en Google Maps
+
+        // Verificar si Google Maps está instalado en el dispositivo
+        if (mapIntent.resolveActivity(getContext().getPackageManager()) != null) {
+            startActivity(mapIntent);
+        } else {
+            // Si Google Maps no está instalado, puedes manejarlo aquí, por ejemplo, mostrando un mensaje de error.
+            // También puedes proporcionar una alternativa, como abrir un navegador web con direcciones.
+        }
+    }
+
+
 }
