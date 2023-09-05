@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -44,15 +45,25 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
 
         String fotoMecanico= mecanicos.getFoto();
 
-        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mecanico/0ff922ddee3e92d91b1e95b25a51e61c.jpg";
+        String fecha= mecanicos.getFecha_programada();
+        if(fecha.equals("null") || fecha.isEmpty()){
+            holder.fechaMecanico.setText("AUN SIN FECHA ESTIMADA");
+
+            holder.fechaMecanico.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.rojo));
+        }else {
+            holder.fechaMecanico.setText(fecha);
+        }
+
+
+        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mecanico/" + fotoMecanico;
         if (!TextUtils.isEmpty(fotoMecanico)) {
             Glide.with(holder.itemView.getContext())
                     .load(imageUrl)
-                    .error(R.drawable.default_image)
+                    .error(R.drawable.mecanico)
                     .into(holder.imageViewMecanico);
         } else {
             Glide.with(holder.itemView.getContext())
-                    .load(R.drawable.default_image)
+                    .load(R.drawable.mecanico)
                     .into(holder.imageViewMecanico);
         }
 
@@ -68,14 +79,14 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView reparacionMecanico, nombreMecanico;
+        TextView reparacionMecanico, nombreMecanico, fechaMecanico;
 
         ImageView imageViewMecanico;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewMecanico = itemView.findViewById(R.id.imageViewMecanico);
-
+            fechaMecanico=itemView.findViewById(R.id.fechaMecanico);
             nombreMecanico = itemView.findViewById(R.id.nombreMecanico);
             reparacionMecanico=  itemView.findViewById(R.id.reparacionMecanico);
         }

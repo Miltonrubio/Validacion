@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,8 +53,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +137,9 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 bundle.putString("observaciones", observaciones);
                 bundle.putString("telefono", telefono);
 
-             setTextViewText(holder.textDireccion, direccion, "Direccion no disponible");
+                setTextViewText(holder.textDireccion, direccion, "Direccion no disponible");
+
+
                 setTextViewText(holder.textDueño2, cliente, "Dueño no disponible");
 
                 try {
@@ -155,16 +162,26 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     e.printStackTrace();
                 }
 
-                setTextViewText(holder.textStatus, estatus, "Dueño no disponible");
+                setTextViewText(holder.textStatus, estatus.toUpperCase(), "Estado no disponible");
+
+                if (estatus.equals("pendiente")) {
+                    int colorAmarillo = ContextCompat.getColor(context, R.color.amarillo);
+                    holder.textStatus.setTextColor(colorAmarillo);
+                } else if (estatus.equals("activo")) {
+                    int colorNegro = ContextCompat.getColor(context, R.color.black);
+                    holder.textStatus.setTextColor(colorNegro);
+                } else if (estatus.equals("finalizado")) {
+                    int colorVerde = ContextCompat.getColor(context, R.color.verde);
+                    holder.textStatus.setTextColor(colorVerde);
+                } else if (estatus.equals("cancelado")) {
+                    int colorRojo = ContextCompat.getColor(context, R.color.rojo);
+                    holder.textStatus.setTextColor(colorRojo);
+                } else {
+                    int colorRojo = ContextCompat.getColor(context, R.color.rojo);
+                    holder.textStatus.setTextColor(colorRojo);
+                }
+
                 setTextViewText(holder.textTelefono, telefono, "Telefono no disponible");
-
-                holder.botonDesplegable2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showPopupMenu(view, bundle);
-                    }
-                });
-
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -182,13 +199,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     }
                 });
 
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        showPopupMenu(view, bundle);
-                        return true;
-                    }
-                });
+
             } finally {
 
             }
@@ -196,7 +207,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
 
             if (filteredData.isEmpty()) {
                 Glide.with(holder.itemView.getContext())
-                        .load(R.drawable.nointernet)
+                        .load(R.drawable.noarrastres)
                         .into(holder.IVNoInternet);
             }
         }
@@ -219,7 +230,8 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textFecha2, textStatus, textTelefono, textDueño2, textDireccion;
 
-        ImageView IVNoInternet, botonDesplegable2;
+        ImageView IVNoInternet;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -230,7 +242,6 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
             textTelefono = itemView.findViewById(R.id.textTelefono);
             textDueño2 = itemView.findViewById(R.id.textDueño2);
             textDireccion = itemView.findViewById(R.id.textDireccionDestino);
-            botonDesplegable2 = itemView.findViewById(R.id.botonDesplegable2);
         }
     }
 
@@ -257,7 +268,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 boolean matchesAllKeywords = true;
 
                 for (String keyword : keywords) {
-                    if (!(modelo.contains(keyword) || empresa.contains(keyword)|| direccion.contains(keyword) || telefono.contains(keyword) || id.contains(keyword) || placas.contains(keyword) ||
+                    if (!(modelo.contains(keyword) || empresa.contains(keyword) || direccion.contains(keyword) || telefono.contains(keyword) || id.contains(keyword) || placas.contains(keyword) ||
                             nombre.contains(keyword) || estatus.contains(keyword))) {
                         matchesAllKeywords = false;
                         break;
@@ -279,70 +290,8 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
     }
 
 
-    private void showPopupMenu(View view, Bundle bundle) {
-        PopupMenu popupMenu = new PopupMenu(context, view, Gravity.CENTER);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_opciones, popupMenu.getMenu());
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-
-                switch (menuItem.getItemId()) {
-                    case R.id.opcionDetalles:
-                        DetallesArrastres detallesArrastres = new DetallesArrastres();
-                        detallesArrastres.setArguments(bundle);
-
-                        FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.frame_layoutCoches, detallesArrastres)
-                                .addToBackStack(null)
-                                .commit();
-                        return true;
-/*
-                    case R.id.opcionFotos:
-
-                        Intent intent = new Intent(context, Prueba.class);
-                        intent.putExtra("marca", bundle.getString("marca"));
-                        intent.putExtra("id_ser_venta", bundle.getString("idventa"));
-                        context.startActivity(intent);
-                        return true;
-
-                    case R.id.opcionCheck:
-                        CheckListFragment checkListFragment = new CheckListFragment();
-                        checkListFragment.setArguments(bundle);
-
-                        FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
-                        fragmentManagerCheck.beginTransaction()
-                                .replace(R.id.frame_layoutCoches, checkListFragment)
-                                .addToBackStack(null)
-                                .commit();
-                        return true;
-*/
-                    case R.id.opcionCancelar:
-                        return true;
-
-                    default:
-                        return false;
-                }
-            }
-        });
-
-        popupMenu.show();
-
-        try {
-            Field mPopup = PopupMenu.class.getDeclaredField("mPopup");
-            mPopup.setAccessible(true);
-            Object menuPopupHelper = mPopup.get(popupMenu);
-            Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
-            Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
-            setForceIcons.invoke(menuPopupHelper, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void setTextViewText(TextView textView, String text, String defaultText) {
-        if (text.equals(null) || text.equals("") || text.equals("null")) {
+        if (text.equals(null) || text.equals("") || text.equals(":null") || text.equals("null") || text.isEmpty()) {
             textView.setText(defaultText);
         } else {
             textView.setText(text);

@@ -1,7 +1,6 @@
 package com.example.validacion;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,24 +13,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.CompositePageTransformer;
-import androidx.viewpager2.widget.MarginPageTransformer;
-import androidx.viewpager2.widget.ViewPager2;
 
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -44,8 +34,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
-import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -68,7 +56,6 @@ import com.google.maps.model.TravelMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -82,7 +69,6 @@ import java.util.Map;
 
 public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
 
-    private boolean isTwoFingerScroll = false;
     private MapView mapView;
     private GoogleMap googleMap;
     private Polyline selectedPolyline;
@@ -97,9 +83,9 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     private double DEST_LATITUDE;
     private double DEST_LONGITUDE;
 
-    TextView tvstatus2, tvClienteArrastre, tvFechaInicioArrastre, tvFechaFinalArrastre, TVTotalKilometros, TVPrecio, tvTelefonoCliente;
+    TextView tvstatus2, tvClienteArrastre, tvFechaInicioArrastre, tvFechaFinalArrastre, TVTotalKilometros, TVPrecio, tvTelefonoCliente, tvMoyivoCancelacion;
 
-    LinearLayout LayoutKilometros, LayoutPrecio, LayoutFinalizar, LayouttodasLasRutas;
+    LinearLayout LayoutKilometros, LayoutPrecio, LayoutFinalizar, LayouttodasLasRutas, LayoutMotivoCancelacion;
 
     Button BotonFinalizarArrastre;
     private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
@@ -130,15 +116,17 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         recyclerViewRutas = rootView.findViewById(R.id.recyclerViewRutas);
         tvFechaFinalArrastre = rootView.findViewById(R.id.tvFechaFinalArrastre);
         tvFechaInicioArrastre = rootView.findViewById(R.id.tvFechaInicioArrastre);
-        scrollView = rootView.findViewById(R.id.scrollViewArrastres); // Replace with the actual ID of your ScrollView
+        scrollView = rootView.findViewById(R.id.scrollViewArrastres);
         BotonFinalizarArrastre = rootView.findViewById(R.id.BotonFinalizarArrastre);
         LayoutKilometros = rootView.findViewById(R.id.LayoutKilometros);
         TVTotalKilometros = rootView.findViewById(R.id.TVTotalKilometros);
         LayoutPrecio = rootView.findViewById(R.id.LayoutPrecio);
         LayoutFinalizar = rootView.findViewById(R.id.LayoutFinalizar);
+        LayoutMotivoCancelacion=rootView.findViewById(R.id.LayoutMotivoCancelacion);
         LayouttodasLasRutas= rootView.findViewById(R.id.LayouttodasLasRutas);
         TVPrecio = rootView.findViewById(R.id.TVPrecio);
         tvTelefonoCliente= rootView.findViewById(R.id.tvTelefonoCliente);
+        tvMoyivoCancelacion= rootView.findViewById(R.id.tvMoyivoCancelacion);
 
         LayouttodasLasRutas.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,7 +144,19 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             String telefono = bundle.getString("telefono", "");
             CargarRutas(id);
 
-            tvTelefonoCliente.setText("+52 "+ telefono);
+            if(telefono.equals("")|| telefono.equals("null")|| telefono.equals(null) || telefono.isEmpty()){
+                tvTelefonoCliente.setText("Telefono no disponible");
+            }else {
+                tvTelefonoCliente.setText("+52 "+ telefono);
+            }
+
+            if(observaciones.equals("")|| observaciones.equals("null")|| observaciones.equals(null) || observaciones.isEmpty()){
+                LayoutMotivoCancelacion.setVisibility(View.GONE);
+            }else {
+                LayoutMotivoCancelacion.setVisibility(View.VISIBLE);
+                tvMoyivoCancelacion.setText(observaciones);
+            }
+
             BotonFinalizarArrastre.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -164,26 +164,25 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                 }
             });
 
-            if (!estatus.equals("")) {
-                tvstatus2.setText("Estatus " + estatus);
+            if (!estatus.equals("") || !estatus.isEmpty()) {
+                tvstatus2.setText("Estatus: \n" + estatus.toUpperCase());
+
+
                 if (estatus.equals("pendiente")) {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
-                } else if (estatus.equals("entrega")) {
+                }else if (estatus.equals("activo")) {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
-                } else if (estatus.equals("en espera")) {
-                    tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
-                } else if (estatus.equals("preparado") || estatus.equals("finalizado")|| estatus.equals("FINALIZADO")) {
+                } else if (estatus.equals("finalizado")) {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
                     LayoutFinalizar.setVisibility(View.GONE);
-                } else {
+                }else if (estatus.equals("cancelado")) {
                     tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
-
                     LayoutFinalizar.setVisibility(View.GONE);
                 }
             } else {
-
-                LayoutFinalizar.setVisibility(View.GONE);
                 tvstatus2.setText("No hay estatus");
+                LayoutFinalizar.setVisibility(View.GONE);
+                tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
             }
 
             CargarArrastre(id, observaciones, estatus);

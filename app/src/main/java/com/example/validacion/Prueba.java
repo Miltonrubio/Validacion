@@ -96,9 +96,6 @@ public class Prueba extends AppCompatActivity{
         CargarImagenes(idSerVenta);
 
 
-
-
-
         btnGuardarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -276,7 +273,7 @@ public class Prueba extends AppCompatActivity{
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("opcion", "8");
-                params.put("idventa", "60");
+                params.put("idventa", idSerVenta);
                 return params;
             }
         };

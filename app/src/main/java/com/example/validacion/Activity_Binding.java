@@ -38,7 +38,7 @@ public class Activity_Binding extends AppCompatActivity {
         binding = ActivityBindingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if(permisosUsuario.equals("SUPERADMIN")){
+        if(permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("MECANICO")|| permisosUsuario.equals("MECANICOS")){
 
                 replaceFragment(new HomeFragment());
                 binding.bottomNavigationView.setOnItemSelectedListener(item -> {

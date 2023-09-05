@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,13 +60,9 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
-
-
     private static final int VIEW_TYPE_ERROR = 0;
     private static final int VIEW_TYPE_ITEM = 1;
-
     private Context context;
-
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
 
@@ -78,8 +75,6 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-
         if (viewType == VIEW_TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_coches, parent, false);
             return new ViewHolder(view);
@@ -95,103 +90,106 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         if (getItemViewType(position) == VIEW_TYPE_ITEM) {
+            JSONObject jsonObject2 = filteredData.get(position);
+            String id_ref = jsonObject2.optString("id_ser_refacciones", "");
+            String id_check_mecanico = jsonObject2.optString("id_check_mecanico", "");
+            String foto = jsonObject2.optString("foto", "");
+            String marca = jsonObject2.optString("marcaI", "");
+            String modelo = jsonObject2.optString("modeloI", "");
+            String placa = jsonObject2.optString("placasI", "");
+            String dueño = jsonObject2.optString("nombre", "");
+            String motivo = jsonObject2.optString("motivoingreso", "");
+            String estatus = jsonObject2.optString("estatus", "");
+            String fecha_ingreso = jsonObject2.optString("fecha_ingreso", "");
+            String hora_ingreso = jsonObject2.optString("hora_ingreso", "");
+            String id_ser_venta = jsonObject2.optString("id_ser_venta", "");
+
+            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("marca", marca);
+            bundle.putString("modelo", modelo);
+            bundle.putString("motivo", motivo);
+            bundle.putString("fecha", fecha_ingreso);
+            bundle.putString("status", estatus);
+            bundle.putString("hora", hora_ingreso);
+            bundle.putString("idventa", id_ser_venta);
+
+/*
+            if (TextUtils.isEmpty(foto) || foto.equals("null")) {
+                holder.IconoCamara.setVisibility(View.VISIBLE);
+            } else {
+               holder.IconoCamara.setVisibility(View.GONE);
+            }
+
+            if (TextUtils.isEmpty(id_check_mecanico) || id_check_mecanico.equals("null") || id_check_mecanico.equals("0")) {
+
+                holder.IconoMecanico.setVisibility(View.VISIBLE);
+            } else {
+                holder.IconoMecanico.setVisibility(View.GONE);
+            }
+*/
+            setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");
+            setTextViewText(holder.textModelo, motivo.toUpperCase(), "Motivo no disponible");
+            setTextViewText(holder.textPlaca, placa, "Placa no disponible");
+            setTextViewText(holder.textDueño, dueño, "Dueño no disponible");
+            setStatusTextView(holder.textStatus, estatus);
+
             try {
-                JSONObject jsonObject2 = filteredData.get(position);
-                String id_ref = jsonObject2.optString("id_ser_refacciones", "");
-                String marca = jsonObject2.optString("marcaI", "");
-                String modelo = jsonObject2.optString("modeloI", "");
-                String placa = jsonObject2.optString("placasI", "");
-                String dueño = jsonObject2.optString("nombre", "");
-                String motivo = jsonObject2.optString("motivoingreso", "");
-                String estatus = jsonObject2.optString("estatus", "");
-                String fecha_ingreso = jsonObject2.optString("fecha_ingreso", "");
-                String hora_ingreso = jsonObject2.optString("hora_ingreso", "");
-                String id_ser_venta = jsonObject2.optString("id_ser_venta", "");
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date_inicio = inputFormat.parse(fecha_ingreso);
 
-                Bundle bundle = new Bundle();
-                bundle.putString("marca", marca);
-                bundle.putString("modelo", modelo);
-                bundle.putString("motivo", motivo);
-                bundle.putString("fecha", fecha_ingreso);
-                bundle.putString("status", estatus);
-                bundle.putString("hora", hora_ingreso);
-                bundle.putString("idventa", id_ser_venta);
+                SimpleDateFormat outputFormatFecha = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
+                String fecha_formateada = outputFormatFecha.format(date_inicio);
 
-                setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");
-                setTextViewText(holder.textModelo, motivo.toUpperCase(), "Motivo no disponible");
-                setTextViewText(holder.textPlaca, placa, "Placa no disponible");
-                setTextViewText(holder.textDueño, dueño, "Dueño no disponible");
-                setStatusTextView(holder.textStatus, estatus);
+                SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                Date time = inputFormatHora.parse(hora_ingreso);
 
-
-                try {
-                    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    Date date_inicio = inputFormat.parse(fecha_ingreso);
-
-                    SimpleDateFormat outputFormatFecha = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
-                    String fecha_formateada = outputFormatFecha.format(date_inicio);
-
-                    SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
-                    Date time = inputFormatHora.parse(hora_ingreso);
-
-                    SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
-                    String hora_formateada_inicio = outputFormatHora.format(time);
-
-                    setTextViewText(holder.textFecha, fecha_formateada + ". A las " + hora_formateada_inicio, "Fecha no disponible");
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-             //   setTextViewText(holder.textFecha, fecha_ingreso + ".   " + hora_ingreso, "Fecha no disponible");
-
-
-
-
-                String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + jsonObject2.getString("foto");
-                loadImage(holder.imageViewCoches, imageUrl);
-
-                holder.botonDesplegable.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showPopupMenu(view, bundle);
-                    }
-                });
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(new ArrayList<>());
-
-                        DetalleFragment detalleFragment = new DetalleFragment();
-                        detalleFragment.setArguments(bundle);
-
-                        FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.frame_layoutCoches, detalleFragment)
-                                .addToBackStack(null)
-                                .commit();
-
-                    }
-                });
-
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        showPopupMenu(view, bundle);
-                        return true;
-                    }
-                });
-            } catch (JSONException e) {
+                SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                String hora_formateada_inicio = outputFormatHora.format(time);
+                setTextViewText(holder.textFecha, fecha_formateada + ". A las " + hora_formateada_inicio, "Fecha no disponible");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            loadImage(holder.imageViewCoches, imageUrl);
+
+            holder.botonDesplegable.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showPopupMenu(view, bundle);
+                }
+            });
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(new ArrayList<>());
+
+                    DetalleFragment detalleFragment = new DetalleFragment();
+                    detalleFragment.setArguments(bundle);
+
+                    FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.frame_layoutCoches, detalleFragment)
+                            .addToBackStack(null)
+                            .commit();
+
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    showPopupMenu(view, bundle);
+                    return true;
+                }
+            });
         } else if (getItemViewType(position) == VIEW_TYPE_ERROR && filteredData.isEmpty()) {
 
             if (filteredData.isEmpty()) {
                 Glide.with(holder.itemView.getContext())
-                        .load(R.drawable.nointernet)
+                        .load(R.drawable.nocoches)
                         .into(holder.IVNoInternet);
             }
         }
@@ -212,9 +210,9 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textMarca, textModelo, textPlaca, textDueño, textFecha, textStatus, TVNoInternet;
+        TextView textMarca, textModelo, textPlaca, textDueño, textFecha, textStatus;
 
-        ImageView imageViewCoches, IVNoInternet, botonDesplegable;
+        ImageView imageViewCoches, IVNoInternet, botonDesplegable, IconoCamara, IconoMecanico;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -226,8 +224,8 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             textStatus = itemView.findViewById(R.id.textStatus);
             imageViewCoches = itemView.findViewById(R.id.imageViewCoches);
             IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
-            TVNoInternet = itemView.findViewById(R.id.TVNoInternet);
-
+         //   IconoMecanico = itemView.findViewById(R.id.IconoMecanico);
+        //    IconoCamara = itemView.findViewById(R.id.IconoCamara);
             botonDesplegable = itemView.findViewById(R.id.botonDesplegable);
         }
     }
@@ -253,7 +251,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 boolean matchesAllKeywords = true;
 
                 for (String keyword : keywords) {
-                    if (!(marca.contains(keyword) || modelo.contains(keyword) || placa.contains(keyword)|| fecha.contains(keyword)|| hora.contains(keyword) ||
+                    if (!(marca.contains(keyword) || modelo.contains(keyword) || placa.contains(keyword) || fecha.contains(keyword) || hora.contains(keyword) ||
                             nombre.contains(keyword) || status.contains(keyword))) {
                         matchesAllKeywords = false;
                         break; // Si alguna palabra clave no coincide, no es necesario verificar más
@@ -337,7 +335,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
     }
 
     private void setTextViewText(TextView textView, String text, String defaultText) {
-        if (text.equals(null)|| text.equals("")) {
+        if (text.equals(null) || text.equals("") || text.equals("null") || text.isEmpty()) {
             textView.setText(defaultText);
         } else {
             textView.setText(text);
@@ -346,14 +344,44 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
 
     private void setStatusTextView(TextView textView, String status) {
         if (!status.equals("null")) {
-            textView.setText(status);
+            textView.setText(status.toUpperCase());
 
-            if (status.equalsIgnoreCase("pendiente") || status.equalsIgnoreCase("prueba") || status.equalsIgnoreCase("diagnostico") || status.equalsIgnoreCase("espera")) {
+            if (status.equalsIgnoreCase("pendiente")) {
                 textView.setBackgroundResource(R.drawable.textview_outline3);
-            } else if (status.equalsIgnoreCase("terminado") || status.equalsIgnoreCase("finalizado")) {
-                textView.setBackgroundResource(R.drawable.textview_outline2);
-            } else {
+            } else if (status.equalsIgnoreCase("Finalizado")) {
+
                 textView.setBackgroundResource(R.drawable.textview_outline4);
+            } else if (status.equalsIgnoreCase("Servicios programado")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outline4);
+            } else if (status.equalsIgnoreCase("Cita programada")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outline2);
+            } else if (status.equalsIgnoreCase("Diagnostico")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outline5);
+            } else if (status.equalsIgnoreCase("En espera")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outlinegris);
+            } else if (status.equalsIgnoreCase("En servicio")) {
+                textView.setBackgroundResource(R.drawable.textview_outline3);
+            } else if (status.equalsIgnoreCase("Prueba de ruta")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outlinenegro);
+                int colorBlanco = ContextCompat.getColor(context, R.color.white);
+                textView.setTextColor(colorBlanco);
+
+            } else if (status.equalsIgnoreCase("Lavado y detallado")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outline2);
+            } else if (status.equalsIgnoreCase("Listo para entrega")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outline4);
+            } else if (status.equalsIgnoreCase("Entregado")) {
+
+                textView.setBackgroundResource(R.drawable.textview_outline4);
+            } else {
+                textView.setBackgroundResource(R.drawable.textview_outline2);
             }
         } else {
             textView.setText("Status no disponible");

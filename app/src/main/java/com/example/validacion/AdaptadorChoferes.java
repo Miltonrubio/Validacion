@@ -39,15 +39,15 @@ public class AdaptadorChoferes extends RecyclerView.Adapter<AdaptadorChoferes.Vi
 
         String fotoMecanico= choferes.getFoto_mapa();
 
-        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mecanico/0ff922ddee3e92d91b1e95b25a51e61c.jpg";
+        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/"+fotoMecanico;
         if (!TextUtils.isEmpty(fotoMecanico)) {
             Glide.with(holder.itemView.getContext())
                     .load(imageUrl)
-                    .error(R.drawable.nointernet)
+                    .error(R.drawable.chofer)
                     .into(holder.imageViewChofer);
         } else {
             Glide.with(holder.itemView.getContext())
-                    .load(R.drawable.nointernet)
+                    .load(R.drawable.chofer)
                     .into(holder.imageViewChofer);
         }
 

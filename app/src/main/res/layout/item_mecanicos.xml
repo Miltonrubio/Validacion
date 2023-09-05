@@ -22,7 +22,6 @@
                 android:gravity="right"
                 android:text="Fecha estimada"
                 android:layout_marginEnd="25dp"
-                android:textColor="@color/azulito"
                 android:textSize="15sp" />
 
 
@@ -66,16 +65,15 @@
                     android:hint="Mecanico"
                     android:layout_marginBottom="12dp"
                     android:textColor="@color/azulito"
-                    android:textSize="15sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/reparacionMecanico"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Reparando: "
-                    android:textColor="@color/azulito"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                   android:textSize="14sp" />
 
             </LinearLayout>
 

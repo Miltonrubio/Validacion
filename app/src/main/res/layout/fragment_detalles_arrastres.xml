@@ -43,6 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/tvClienteArrastre"
                     android:layout_width="0dp"
@@ -53,14 +54,15 @@
                     android:textColor="@color/azulito"
                     android:textSize="26dp"
                     android:textStyle="bold" />
-
-
             </LinearLayout>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/tvTelefonoCliente"
                     android:layout_width="0dp"
@@ -68,12 +70,9 @@
                     android:layout_weight="1"
                     android:gravity="left"
                     android:text="Telefono de Cliente"
-                    android:textSize="17dp"
-                    android:visibility="gone"
-                    />
-
-
+                    android:textSize="17dp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -98,7 +97,7 @@
                     android:layout_weight="1"
                     android:gravity="right"
                     android:text="Estatus"
-                    android:textSize="19sp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -116,16 +115,16 @@
                     android:layout_weight="1"
                     android:gravity="left"
                     android:text="Fecha de finalizacion"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/LayoutKilometros"
-                >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/TVTotalKilometros"
                     android:layout_width="0dp"
@@ -135,15 +134,15 @@
                     android:layout_weight="1"
                     android:gravity="right"
                     android:text="Total de kilometros"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/LayoutPrecio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/LayoutPrecio"
 
                 >
 
@@ -157,9 +156,30 @@
                     android:gravity="right"
                     android:text="Precio total"
                     android:textColor="@color/azulito"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LayoutMotivoCancelacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvMoyivoCancelacion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="Motivo de cancelacion"
+                    android:textSize="22sp" />
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -177,12 +197,14 @@
                     android:textSize="22sp" />
 
             </LinearLayout>
+
             <LinearLayout
+                android:id="@+id/LayouttodasLasRutas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/LayouttodasLasRutas"
-                android:background="@drawable/textview_outlinegris">
+                android:background="@drawable/textview_outlinegris"
+                android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -196,11 +218,11 @@
                         android:layout_marginEnd="10dp"
                         android:adjustViewBounds="true"
                         android:scaleType="centerCrop"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         android:src="@drawable/baseline_location_on_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
 
                         />
 
@@ -210,6 +232,7 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:padding="16dp">
+
                         <TextView
 
                             android:layout_width="match_parent"
@@ -217,8 +240,7 @@
                             android:gravity="left"
                             android:text="Mostrar todas las rutas"
                             android:textColor="@color/black"
-                            android:textSize="15sp"
-                            />
+                            android:textSize="15sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -267,18 +289,18 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/LayoutFinalizar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/LayoutFinalizar"
-                >
+                android:visibility="visible">
+
                 <Button
+                    android:id="@+id/BotonFinalizarArrastre"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:id="@+id/BotonFinalizarArrastre"
-                    android:text="Finalizar Arrastre"
                     android:backgroundTint="@color/azulito"
-                    />
+                    android:text="Finalizar Arrastre" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

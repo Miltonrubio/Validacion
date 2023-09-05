@@ -21,16 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="2"> <!-- Dividir el espacio en dos partes iguales -->
-
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/botonDesplegable2"
-                android:src="@drawable/baseline_build_24"
-                android:contentDescription="Ícono" />
-
+            android:weightSum="2">
             <TextView
                 android:id="@+id/textFecha2"
                 android:layout_width="0dp"
@@ -41,7 +32,7 @@
                 android:gravity="right"
                 android:textColor="@color/azulito"
                 android:textSize="15sp"
-                android:layout_marginBottom="5dp" />
+               />
         </LinearLayout>
 
         <!-- Image and textMarca LinearLayout -->
@@ -67,6 +58,7 @@
                     android:layout_gravity="end"
                     android:hint="ESTADO"
                     android:padding="5dp"
+                    android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -76,8 +68,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:hint="Cliente"
-                    android:layout_marginBottom="5dp"
-                    android:textColor="@color/azulito"
+                   android:textColor="@color/azulito"
                     android:textStyle="bold"
                     android:textSize="19sp" />
 
@@ -86,7 +77,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Direccion"
-                    android:layout_marginBottom="5dp"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -105,27 +95,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:orientation="vertical"
-                android:layout_marginTop="5dp"
                 android:padding="5dp">
 
-                    <TextView
-                        android:id="@+id/textTelefono"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Telefono Cliente"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingBottom="10dp"
-                        android:textColor="@color/black"
-                        android:textSize="15dp"
-                        android:visibility="gone"
-                        android:textStyle="bold" />
-
+                <TextView
+                    android:id="@+id/textTelefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Telefono Cliente"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                   android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Parte derecha para textModelo -->
 
         </LinearLayout>
-
     </LinearLayout>
 </FrameLayout>

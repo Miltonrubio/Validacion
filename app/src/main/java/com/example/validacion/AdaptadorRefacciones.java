@@ -62,6 +62,7 @@ public class AdaptadorRefacciones extends RecyclerView.Adapter<AdaptadorRefaccio
         return listaRefacciones.isEmpty() ? 1 : listaRefacciones.size();
     }
 
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nombreRefaccion, precioRefaccion, cantidadRefacciones;
 

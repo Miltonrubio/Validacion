@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,9 +41,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -89,7 +94,6 @@ public class DetalleFragment extends Fragment {
         TextView textMarca = rootView.findViewById(R.id.tv1);
         TextView textmotivo = rootView.findViewById(R.id.tv3);
         TextView textfecha = rootView.findViewById(R.id.tv4);
-        TextView texthora = rootView.findViewById(R.id.tv5);
         TextView textstatus = rootView.findViewById(R.id.tvstatus);
 
         recyclerViewRefacciones = rootView.findViewById(R.id.recyclerViewRefacciones);
@@ -113,26 +117,95 @@ public class DetalleFragment extends Fragment {
             CargarMecanicos(idventa);
             CargarImagenes(idventa);
 
+            textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
+            // textstatus.setText("Estatus: " + status);
+            textmotivo.setText(motivo);
 
-            //Texto del fragment con validaciones
 
-            if (status.equals("pendiente")) {
-                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
-            } else if (status.equals("entrega")) {
-                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
-            } else if (status.equals("en espera")) {
-                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.amarillo));
-            } else if (status.equals("preparado")) {
-                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.verde));
-            } else {
-                textstatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
+
+            if (fecha.equals("null") || fecha.isEmpty() || hora.isEmpty() || hora.equals("null")){
+
+                textfecha.setText("No hay fecha estimada");
+            }else {
+                try {
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = inputFormat.parse(fecha);
+
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
+                    String fecha_formateada = outputFormat.format(date);
+
+                    SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                    Date time = inputFormatHora.parse(hora);
+
+                    SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                    String hora_formateada = outputFormatHora.format(time);
+
+                    textfecha.setText("Ingresado: " + "el " + fecha_formateada + " a las " + hora_formateada);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
-            textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
-            textstatus.setText("Estatus: " + status);
-            textmotivo.setText(motivo);
-            textfecha.setText(fecha);
-            texthora.setText(hora);
+            int colorBlanco = ContextCompat.getColor(requireContext(), R.color.white);
+            int colorAmarillo = ContextCompat.getColor(requireContext(), R.color.amarillo);
+            int colorVerde = ContextCompat.getColor(requireContext(), R.color.verde);
+            int colorRojo = ContextCompat.getColor(requireContext(), R.color.rojo);
+            int colorAzulito = ContextCompat.getColor(requireContext(), R.color.azulitoSuave);
+            int colorNegro = ContextCompat.getColor(requireContext(), R.color.black);
+            int colorGris = ContextCompat.getColor(requireContext(), R.color.gris);
+
+
+
+
+            if (!status.equals("null") || status.isEmpty()) {
+                textstatus.setText("Estatus: " + status.toUpperCase());
+
+
+                if (status.equalsIgnoreCase("pendiente")) {
+                    textstatus.setTextColor(colorAmarillo);
+
+                } else if (status.equalsIgnoreCase("Finalizado")) {
+
+                    textstatus.setTextColor(colorVerde);
+                } else if (status.equalsIgnoreCase("Servicios programado")) {
+
+                    textstatus.setTextColor(colorVerde);
+                } else if (status.equalsIgnoreCase("Cita programada")) {
+
+                    textstatus.setTextColor(colorAzulito);
+                } else if (status.equalsIgnoreCase("Diagnostico")) {
+
+                    textstatus.setTextColor(colorRojo);
+                } else if (status.equalsIgnoreCase("En espera")) {
+
+                    textstatus.setTextColor(colorGris);
+                } else if (status.equalsIgnoreCase("En servicio")) {
+
+                    textstatus.setTextColor(colorAmarillo);
+                } else if (status.equalsIgnoreCase("Prueba de ruta")) {
+
+
+                    textstatus.setTextColor(colorNegro);
+
+                } else if (status.equalsIgnoreCase("Lavado y detallado")) {
+
+                    textstatus.setTextColor(colorAzulito);
+                } else if (status.equalsIgnoreCase("Listo para entrega")) {
+
+                    textstatus.setTextColor(colorVerde);
+                } else if (status.equalsIgnoreCase("Entregado")) {
+
+                    textstatus.setTextColor(colorVerde);
+                } else {
+
+                    textstatus.setTextColor(colorAzulito);
+                }
+            } else {
+                textstatus.setText("Status no disponible");
+                textstatus.setTextColor(colorRojo);
+            }
+
+
         }
         return rootView;
     }
@@ -154,7 +227,7 @@ public class DetalleFragment extends Fragment {
                                     String id_ser_venta = fotoObj.getString("id_ser_venta");
                                     String fotoUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/";
 
-                                   slideItems.add(new SlideItem(fotoUrl + foto, id_ser_venta));
+                                    slideItems.add(new SlideItem(fotoUrl + foto, id_ser_venta));
                                 }
 
                                 SlideAdapter slideAdapter = new SlideAdapter(slideItems, viewPager2);
@@ -236,10 +309,22 @@ public class DetalleFragment extends Fragment {
                                     listaMecanicos.add(mecanicos);
                                 }
 
+
+                                if (listaMecanicos.isEmpty()) {
+                                    recyclerViewMecanicos.setVisibility(View.GONE);
+                                    LinearLayout LayoutNoMecanicos = requireView().findViewById(R.id.LayoutNoMecanicos);
+                                    LayoutNoMecanicos.setVisibility(View.VISIBLE);
+                                } else {
+                                    recyclerViewMecanicos.setVisibility(View.VISIBLE);
+                                    LinearLayout LayoutNoMecanicos = requireView().findViewById(R.id.LayoutNoMecanicos);
+                                    LayoutNoMecanicos.setVisibility(View.GONE);
+                                }
+
                                 AdaptadorMecanicos adaptadorMecanicos = new AdaptadorMecanicos(listaMecanicos);
                                 LinearLayoutManager layoutManager2 = new LinearLayoutManager(requireContext());
                                 recyclerViewMecanicos.setLayoutManager(layoutManager2);
                                 recyclerViewMecanicos.setAdapter(adaptadorMecanicos);
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -293,11 +378,19 @@ public class DetalleFragment extends Fragment {
                                     listaRefacciones.add(refaccion);
                                 }
 
-                                AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(listaRefacciones);
-                                recyclerViewRefacciones.setLayoutManager(new LinearLayoutManager(requireContext()));
-                                recyclerViewRefacciones.setAdapter(adaptadorRefacciones);
+                                if (listaRefacciones.isEmpty()) {
+                                    recyclerViewRefacciones.setVisibility(View.GONE);
+                                    LinearLayout LayoutNoRefacciones = requireView().findViewById(R.id.LayoutNoRefacciones);
+                                    LayoutNoRefacciones.setVisibility(View.VISIBLE);
+                                } else {
+                                    recyclerViewRefacciones.setVisibility(View.VISIBLE);
+                                    LinearLayout LayoutNoRefacciones = requireView().findViewById(R.id.LayoutNoRefacciones);
+                                    LayoutNoRefacciones.setVisibility(View.GONE);
 
-
+                                    AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(listaRefacciones);
+                                    recyclerViewRefacciones.setLayoutManager(new LinearLayoutManager(requireContext()));
+                                    recyclerViewRefacciones.setAdapter(adaptadorRefacciones);
+                                }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
