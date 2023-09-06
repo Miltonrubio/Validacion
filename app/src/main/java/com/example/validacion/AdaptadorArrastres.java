@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -163,7 +164,9 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                 }
 
                 setTextViewText(holder.textStatus, estatus.toUpperCase(), "Estado no disponible");
+                int colorVerde = ContextCompat.getColor(context, R.color.verde);
 
+                int fondoPersonalizado = R.drawable.rounded_backgroundgris;
                 if (estatus.equals("pendiente")) {
                     int colorAmarillo = ContextCompat.getColor(context, R.color.amarillo);
                     holder.textStatus.setTextColor(colorAmarillo);
@@ -171,14 +174,15 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
                     int colorNegro = ContextCompat.getColor(context, R.color.black);
                     holder.textStatus.setTextColor(colorNegro);
                 } else if (estatus.equals("finalizado")) {
-                    int colorVerde = ContextCompat.getColor(context, R.color.verde);
                     holder.textStatus.setTextColor(colorVerde);
                 } else if (estatus.equals("cancelado")) {
                     int colorRojo = ContextCompat.getColor(context, R.color.rojo);
                     holder.textStatus.setTextColor(colorRojo);
+                    holder.FrameArrastres.setBackgroundResource(fondoPersonalizado);
                 } else {
                     int colorRojo = ContextCompat.getColor(context, R.color.rojo);
                     holder.textStatus.setTextColor(colorRojo);
+                    holder.FrameArrastres.setBackgroundResource(fondoPersonalizado);
                 }
 
                 setTextViewText(holder.textTelefono, telefono, "Telefono no disponible");
@@ -229,6 +233,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textFecha2, textStatus, textTelefono, textDueño2, textDireccion;
+        FrameLayout FrameArrastres;
 
         ImageView IVNoInternet;
 
@@ -242,6 +247,7 @@ public class AdaptadorArrastres extends RecyclerView.Adapter<AdaptadorArrastres.
             textTelefono = itemView.findViewById(R.id.textTelefono);
             textDueño2 = itemView.findViewById(R.id.textDueño2);
             textDireccion = itemView.findViewById(R.id.textDireccionDestino);
+            FrameArrastres= itemView.findViewById(R.id.FrameArrastres);
         }
     }
 

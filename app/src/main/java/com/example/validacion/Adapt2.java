@@ -224,8 +224,6 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             textStatus = itemView.findViewById(R.id.textStatus);
             imageViewCoches = itemView.findViewById(R.id.imageViewCoches);
             IVNoInternet = itemView.findViewById(R.id.IVNoInternet);
-         //   IconoMecanico = itemView.findViewById(R.id.IconoMecanico);
-        //    IconoCamara = itemView.findViewById(R.id.IconoCamara);
             botonDesplegable = itemView.findViewById(R.id.botonDesplegable);
         }
     }
@@ -237,7 +235,6 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             filteredData.addAll(data);
         } else {
             String[] keywords = query.toLowerCase().split(" ");
-
             for (JSONObject item : data) {
                 String marca = item.optString("marcaI", "").toLowerCase();
                 String modelo = item.optString("modeloI", "").toLowerCase();
@@ -245,7 +242,6 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 String status = item.optString("estatus", "").toLowerCase();
                 String placa = item.optString("placasI", "").toLowerCase();
                 String fecha = item.optString("fecha_ingreso", "").toLowerCase();
-
                 String hora = item.optString("hora_ingreso", "").toLowerCase();
 
                 boolean matchesAllKeywords = true;
@@ -254,7 +250,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                     if (!(marca.contains(keyword) || modelo.contains(keyword) || placa.contains(keyword) || fecha.contains(keyword) || hora.contains(keyword) ||
                             nombre.contains(keyword) || status.contains(keyword))) {
                         matchesAllKeywords = false;
-                        break; // Si alguna palabra clave no coincide, no es necesario verificar más
+                        break;
                     }
                 }
 
@@ -319,9 +315,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 }
             }
         });
-
         popupMenu.show();
-
         try {
             Field mPopup = PopupMenu.class.getDeclaredField("mPopup");
             mPopup.setAccessible(true);
