@@ -33,7 +33,7 @@
             android:id="@+id/NavigationBottomPrueba"
             android:layout_marginRight="16dp"
             android:background="@drawable/back_transparente"
-            app:menu="@menu/manu2" />
+            app:menu="@menu/menu2" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

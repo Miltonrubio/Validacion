@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_backgroundgris">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+        <Spinner
+            android:id="@+id/SpinnerClientes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/rounded_background"
+            android:padding="16dp"
+            android:textSize="18dp" />
+
+        <Spinner
+            android:id="@+id/SpinnerUnidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/rounded_background"
+            android:padding="16dp"
+            android:textSize="18dp" />
+
+        <EditText
+            android:id="@+id/editTextkm"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/rounded_background"
+            android:hint="Kilometraje:"
+            android:padding="16dp"
+            android:textSize="18dp"
+            android:inputType="number"
+            android:digits="0123456789" />
+
+
+        <Spinner
+            android:id="@+id/spinnerGas"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/rounded_background"
+            android:hint="Gas de unidad:"
+            android:padding="16dp"
+            android:textSize="18dp" />
+
+
+        <EditText
+            android:id="@+id/editTextmotivo"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/rounded_background"
+            android:hint="Motivo de ingreso:"
+            android:padding="16dp"
+            android:textSize="18dp" />
+
+
+        <Button
+            android:id="@+id/mondongo"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="25dp"
+            android:text="Mondongo" />
+
+
+        <!--
+
+
+
+                <EditText
+                    android:id="@+id/editTextmarca"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/rounded_background"
+                    android:hint="Marca del vehiculo:"
+                    android:padding="16dp"
+                    android:textSize="18dp" />
+
+                <EditText
+                    android:id="@+id/editTextmodelo"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/rounded_background"
+                    android:hint="Modelo del vehiculo:"
+                    android:padding="16dp"
+                    android:textSize="18dp" />
+
+                <EditText
+                    android:id="@+id/editTextmotor"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/rounded_background"
+                    android:hint="Motor del vehiculo:"
+                    android:padding="16dp"
+                    android:textSize="18dp" />
+
+                <EditText
+                    android:id="@+id/editTextvin"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/rounded_background"
+                    android:hint="Vin del vehiculo:"
+                    android:padding="16dp"
+                    android:textSize="18dp" />
+
+                <EditText
+                    android:id="@+id/editTextplacas"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/rounded_background"
+                    android:hint="Placas del vehiculo:"
+                    android:padding="16dp"
+                    android:textSize="18dp" />
+
+                <EditText
+                    android:id="@+id/editTextanio"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/rounded_background"
+                    android:hint="Año del vehiculo:"
+                    android:padding="16dp"
+                    android:textSize="18dp" />
+        -->
+
+    </LinearLayout>
+</ScrollView>

@@ -12,7 +12,7 @@
         android:id="@+id/frame_layoutCoches"
         android:layout_width="0dp"
         android:layout_height="0dp"
-android:background="@color/azulitoSuave"
+        android:background="@color/azulitoSuave"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -23,26 +23,24 @@ android:background="@color/azulitoSuave"
     </FrameLayout>
 
 
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-
         android:background="@color/gris"
+        android:outlineAmbientShadowColor="@color/azulitoSuave"
+        android:outlineSpotShadowColor="@color/azulitoSuave"
         app:itemIconTint="@color/azulito"
-        app:menu="@menu/menu"
-        app:labelVisibilityMode="unlabeled"
-        app:itemTextAppearanceActive="@style/CustomBottomNavigationLabel"
 
         app:itemRippleColor="@color/azulitoSuave"
-        android:outlineSpotShadowColor="@color/azulitoSuave"
-        android:outlineAmbientShadowColor="@color/azulitoSuave"
-        />
+        app:itemTextAppearanceActive="@style/CustomBottomNavigationLabel"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

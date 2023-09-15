@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.validacion.databinding.ActivityBindingBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -38,22 +39,39 @@ public class Activity_Binding extends AppCompatActivity {
         binding = ActivityBindingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if(permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("MECANICO")|| permisosUsuario.equals("MECANICOS")){
+        if (permisosUsuario.equals("MECANICO") || permisosUsuario.equals("MECANICOS")) {
 
-                replaceFragment(new HomeFragment());
-                binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-                    switch (item.getItemId()) {
+            replaceFragment(new HomeFragment());
+            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+                switch (item.getItemId()) {
 
-                        case (R.id.menu_home):
-                            replaceFragment(new HomeFragment());
-                            break;
-                        case (R.id.menu_usuario):
-                            replaceFragment(new UsuariosFragment());
-                            break;
-                    }
+                    case (R.id.menu_home):
+                        replaceFragment(new HomeFragment());
+                        break;
+                    case (R.id.menu_usuario):
+                        replaceFragment(new UsuariosFragment());
+                        break;
+                }
                 return true;
             });
-        }else{
+        } else if (permisosUsuario.equals("SUPERADMIN")) {
+       /*     binding.bottomNavigationView.getMenu().clear();
+            binding.bottomNavigationView.inflateMenu(R.menu.menu2);
+            */
+            replaceFragment(new HomeFragment());
+            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+                switch (item.getItemId()) {
+
+                    case (R.id.menu_home):
+                        replaceFragment(new HomeFragment());
+                        break;
+                    case (R.id.menu_usuario):
+                        replaceFragment(new UsuariosFragment());
+                        break;
+                }
+                return true;
+            });
+        } else {
             replaceFragment(new ArrastresFragment());
             binding.bottomNavigationView.setOnItemSelectedListener(item -> {
                 switch (item.getItemId()) {
@@ -73,17 +91,12 @@ public class Activity_Binding extends AppCompatActivity {
     }
 
 
-
-
-
-
     private void replaceFragment(Fragment fragment) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layoutCoches, fragment);
         fragmentTransaction.commit();
-
 
 
     }

@@ -94,13 +94,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cerrar Sesion"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:layout_gravity="center"/>
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_gravity="center"/>
+
+
 
     </LinearLayout>
 
-
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/botonMandarAPrueba"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="Mandar a prueba"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_gravity="center"/>
 </LinearLayout>
 
 
