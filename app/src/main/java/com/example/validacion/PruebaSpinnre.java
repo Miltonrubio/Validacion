@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,12 +34,15 @@ import java.util.Map;
 
 public class PruebaSpinnre extends AppCompatActivity {
 
+
+    JSONArray jsonArrayNombreUnidades=null;
+    String valorGas;
+    private String selectedIDCliente="";
     ArrayList<String> opciones = new ArrayList<>();
 
     String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
     JSONObject jsonObjectUnidades;
     private ArrayAdapter<String> spinnerAdapterUnidades;
-
     private ArrayList<String> nombresClientes = new ArrayList<>();
 
 
@@ -48,7 +52,8 @@ public class PruebaSpinnre extends AppCompatActivity {
     private List<JSONObject> dataList = new ArrayList<>();
     private EditText editTextBusqueda;
 
-    String id_serv_unidad, Marca, Modelo, anio, placas, motor, vin;
+    String Marca, Modelo, anio, placas, motor, vin;
+    String id_serv_unidad = null;
     FloatingActionButton botonAgregarActividad;
 
     @Override
@@ -74,6 +79,9 @@ public class PruebaSpinnre extends AppCompatActivity {
                 LayoutInflater inflater = getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.insertar_actividad, null);
                 builder.setView(dialogView);
+
+                // Mostrar el AlertDialog
+                AlertDialog dialog = builder.create();
                 final Button mondongo = dialogView.findViewById(R.id.mondongo);
                 final Spinner spinnerClientes = dialogView.findViewById(R.id.SpinnerClientes);
                 final Spinner SpinnerUnidades = dialogView.findViewById(R.id.SpinnerUnidades);
@@ -98,20 +106,30 @@ public class PruebaSpinnre extends AppCompatActivity {
 
 
                 unidadesVehiculos.add(0, "Selecciona la unidad");
-
                 spinnerAdapterUnidades = new ArrayAdapter<>(PruebaSpinnre.this, android.R.layout.simple_spinner_item, unidadesVehiculos);
                 spinnerAdapterUnidades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 SpinnerUnidades.setAdapter(spinnerAdapterUnidades);
-
-
                 SpinnerUnidades.setSelection(0);
+
+
+                SpinnerGas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        valorGas = parent.getItemAtPosition(position).toString();
+                    }
+
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+
+                });
 
                 spinnerClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         String nombreCliente = parent.getItemAtPosition(position).toString();
                         if (!nombreCliente.isEmpty()) {
-                            String selectedIDCliente = obtenerIDDesdeNombre(nombreCliente);
+                            selectedIDCliente = obtenerIDDesdeNombre(nombreCliente);
                             VerNombresUnidades(selectedIDCliente);
                             spinnerAdapterUnidades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             SpinnerUnidades.setAdapter(spinnerAdapterUnidades);
@@ -129,27 +147,77 @@ public class PruebaSpinnre extends AppCompatActivity {
 
 
                 SpinnerUnidades.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         mondongo.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
                                 String nombreUnidad = parent.getItemAtPosition(position).toString();
-
                                 String km = editTextkm.getText().toString();
                                 String motivoIngreso = editTextmotivo.getText().toString();
 
+                                // Buscar el objeto JSON correspondiente al nombreUnidad
+                                JSONObject unidadSeleccionada = null;
+                                for (int i = 0; i < jsonArrayNombreUnidades.length(); i++) {
+                                    try {
+                                        JSONObject jsonObject = jsonArrayNombreUnidades.getJSONObject(i);
+                                        String id_serv_unidad = jsonObject.getString("id_serv_unidad");
+                                        if (nombreUnidad.contains(id_serv_unidad)) {
+                                            unidadSeleccionada = jsonObject;
+                                            break; // Terminar el bucle una vez que se haya encontrado la unidad
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
 
-                                List<JSONObject> unidadesFiltradas = filtrarUnidadesPorID(jsonObjectUnidades, "24");
+                                if (unidadSeleccionada != null) {
+                                    // Aquí puedes acceder a los datos de la unidad seleccionada
+
+                                    try {
+                                        id_serv_unidad = unidadSeleccionada.getString("id_serv_unidad");
+                                        String Marca = unidadSeleccionada.getString("Marca");
+                                        String Modelo = unidadSeleccionada.getString("Modelo");
+                                        String anio = unidadSeleccionada.getString("anio");
+                                        String placas = unidadSeleccionada.getString("placas");
+                                        String motor = unidadSeleccionada.getString("motor");
+                                        String vin = unidadSeleccionada.getString("vin");
 
 
+                                        if (km.isEmpty() || motivoIngreso.isEmpty()) {
+                                            Toast.makeText(PruebaSpinnre.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        } else {
 
-                                Toast.makeText(PruebaSpinnre.this, nombreUnidad + " " + km + " " + motivoIngreso + " "+ id_serv_unidad+" "+ Marca+" "+ " ", Toast.LENGTH_SHORT).show();
+                                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(PruebaSpinnre.this);
+                                            alertDialogBuilder.setMessage("Marca: "+Marca +"\nModelo: "+Modelo+"\nGas:"+ valorGas +"\nKilometraje: "+ km + "\nMotivo De Ingreso: " + motivoIngreso +"\n\n¿Estas seguro de mandar este servicio?");
+                                            alertDialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                    AgregarServicio(selectedIDCliente, id_serv_unidad, km, valorGas, motivoIngreso, Marca, Modelo,motor,vin,placas, anio);
+                                                    dialog.dismiss();
+                                                    dialogInterface.dismiss();
+                                                }
+                                            });
+                                            alertDialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.dismiss();
+                                                }
+                                            });
+
+                                            AlertDialog alertDialog = alertDialogBuilder.create();
+                                            alertDialog.show();
+                                        }
+
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
+
+                                }
                             }
                         });
-
                     }
 
                     @Override
@@ -158,16 +226,6 @@ public class PruebaSpinnre extends AppCompatActivity {
                 });
 
 
-                builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                builder.setNegativeButton("Cancelar", null);
-
-                // Mostrar el AlertDialog
-                AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });
@@ -230,7 +288,7 @@ public class PruebaSpinnre extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 try {
-                    JSONArray jsonArrayNombreUnidades = new JSONArray(response);
+                    jsonArrayNombreUnidades = new JSONArray(response);
                     unidadesVehiculos.clear(); // Limpia la lista antes de agregar los nuevos nombres
                     for (int i = 0; i < jsonArrayNombreUnidades.length(); i++) {
                         jsonObjectUnidades = jsonArrayNombreUnidades.getJSONObject(i);
@@ -284,12 +342,13 @@ public class PruebaSpinnre extends AppCompatActivity {
     }
 
 
-    private void AgregarServicio(String id_ser_cliente, String idunidad,String km,String gas,String motivo,String marca,String modelo,String motor,String vin,String placas,String anio) {
+    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 Toast.makeText(PruebaSpinnre.this, "Servicio Agregado", Toast.LENGTH_SHORT).show();
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -317,27 +376,6 @@ public class PruebaSpinnre extends AppCompatActivity {
         };
 
         Volley.newRequestQueue(PruebaSpinnre.this).add(postrequest);
-    }
-
-    private List<JSONObject> filtrarUnidadesPorID(JSONObject jsonObjectUnidades, String idFiltrar) {
-        List<JSONObject> unidadesFiltradas = new ArrayList<>();
-
-        try {
-            JSONArray jsonArrayUnidades = jsonObjectUnidades.getJSONArray("tu_arreglo_de_unidades"); // Reemplaza "tu_arreglo_de_unidades" con el nombre real de tu arreglo en jsonObjectUnidades
-            for (int i = 0; i < jsonArrayUnidades.length(); i++) {
-                JSONObject unidad = jsonArrayUnidades.getJSONObject(i);
-                String idServUnidad = unidad.getString("ID_serv_unidad");
-
-                // Compara el valor de ID_serv_unidad con el valor deseado (en este caso, "24")
-                if (idServUnidad.equals(idFiltrar)) {
-                    unidadesFiltradas.add(unidad); // Agrega la unidad a la lista de resultados
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return unidadesFiltradas;
     }
 
 }

@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -48,11 +49,21 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment {
 
+
+
+    JSONArray jsonArrayNombreUnidades= null;
+    String valorGas= null;
+    private String selectedIDCliente="1";
+    ArrayList<String> opciones = new ArrayList<>();
+
     String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
     JSONObject jsonObjectUnidades;
     private ArrayAdapter<String> spinnerAdapterUnidades;
-
     private ArrayList<String> nombresClientes = new ArrayList<>();
+
+    String Marca, Modelo, anio, placas, motor, vin;
+    String id_serv_unidad = null;
+
 
     private ArrayList<String> unidadesVehiculos = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -73,114 +84,15 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        VerNombresClientes();
         ImageView LectorQr = view.findViewById(R.id.LectorQr);
-
+        opciones.add("Lleno");
+        opciones.add("3/4");
+        opciones.add("1/2");
+        opciones.add("1/4");
+        opciones.add("Reserva");
 
         botonAgregarActividad = view.findViewById(R.id.botonAgregarActividad);
-
-
-        botonAgregarActividad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                VerNombresClientes();
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-
-                LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.insertar_actividad, null);
-                builder.setView(dialogView);
-
-                final Spinner spinnerClientes = dialogView.findViewById(R.id.SpinnerClientes);
-                final Spinner SpinnerUnidades = dialogView.findViewById(R.id.SpinnerUnidades);
-
-                final EditText editTextkm = dialogView.findViewById(R.id.editTextkm);
-                final EditText editTextmotivo = dialogView.findViewById(R.id.editTextmotivo);
-
-                /*
-                final EditText editTextmarca = dialogView.findViewById(R.id.editTextmarca);
-
-                final EditText editTextvin = dialogView.findViewById(R.id.editTextvin);
-                final EditText editTextmodelo = dialogView.findViewById(R.id.editTextmodelo);
-                final EditText editTextmotor = dialogView.findViewById(R.id.editTextmotor);
-                final EditText editTextplacas = dialogView.findViewById(R.id.editTextplacas);
-                final EditText editTextanio = dialogView.findViewById(R.id.editTextanio);
-*/
-                nombresClientes.add(0, "Selecciona al cliente");
-                unidadesVehiculos.add(0, "Selecciona la unidad");
-
-                ArrayAdapter<String> spinnerAdapterClientes = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, nombresClientes);
-                spinnerAdapterClientes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinnerClientes.setAdapter(spinnerAdapterClientes);
-
-
-                spinnerAdapterUnidades = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, unidadesVehiculos);
-                spinnerAdapterUnidades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                SpinnerUnidades.setAdapter(spinnerAdapterUnidades);
-
-                spinnerClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String nombreCliente = parent.getItemAtPosition(position).toString();
-                        if (!nombreCliente.equals("Selecciona al cliente")) {
-                            String selectedIDCliente = obtenerIDDesdeNombre(nombreCliente);
-                            VerNombresUnidades(selectedIDCliente);
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        SpinnerUnidades.setVisibility(View.GONE);
-                    }
-                });
-
-
-                SpinnerUnidades.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                        String nombreUnidad = parent.getItemAtPosition(position).toString();
-                        if (!nombreUnidad.equals("Selecciona la unidad")) {
-
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-
-
-                builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Obtener el valor del Spinner después de que el usuario haya hecho una selección
-                        String nombreCliente = spinnerClientes.getSelectedItem().toString();
-                        String selectedIDCliente = obtenerIDDesdeNombre(nombreCliente);
-
-                        String nombreUnidad = SpinnerUnidades.getSelectedItem().toString();
-                        String selectedIDUnidad = obtenerIDDesdeNombreVehiculo(nombreUnidad);
-
-                        // Verificar si se seleccionó el hint
-                        if (!nombreUnidad.equals("Selecciona la unidad")) {
-                            String kilometrajeVehiculo = editTextkm.getText().toString();
-                            String motivoDeIngresoVehiculo = editTextmotivo.getText().toString();
-
-
-                            //    AgregarActividad(selectedID, descripcionActividad, ID_usuario);
-                        } else {
-                            // Mostrar un mensaje de error o realizar la acción deseada
-                            Toast.makeText(requireContext(), "Debes seleccionar una actividad válida.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancelar", null);
-
-                // Mostrar el AlertDialog
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
 
 
         LectorQr.setOnClickListener(new View.OnClickListener() {
@@ -197,37 +109,195 @@ public class HomeFragment extends Fragment {
         });
 
         recyclerView = view.findViewById(R.id.recyclerViewFragment);
-        recyclerView.setLayoutManager(new
-
-                LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         dataList = new ArrayList<>();
-        adapter2 = new
-
-                Adapt2(dataList, requireContext());
+        adapter2 = new Adapt2(dataList, requireContext());
         recyclerView.setAdapter(adapter2);
 
         editTextBusqueda = view.findViewById(R.id.searchEditText);
 
-        editTextBusqueda.addTextChangedListener(new
+        editTextBusqueda.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                                                        TextWatcher() {
-                                                            @Override
-                                                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-                                                            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter2.filter(s.toString().toLowerCase());
+            }
 
-                                                            @Override
-                                                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                                                adapter2.filter(s.toString().toLowerCase());
-                                                            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
-                                                            @Override
-                                                            public void afterTextChanged(Editable s) {
-                                                            }
-                                                        });
+        VisualizarServicios();
 
-        EnviarWS();
+
+
+        botonAgregarActividad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.insertar_actividad, null);
+                builder.setView(dialogView);
+
+                // Mostrar el AlertDialog
+                AlertDialog dialog = builder.create();
+                final Button mondongo = dialogView.findViewById(R.id.mondongo);
+                final Spinner spinnerClientes = dialogView.findViewById(R.id.SpinnerClientes);
+                final Spinner SpinnerUnidades = dialogView.findViewById(R.id.SpinnerUnidades);
+                final Spinner SpinnerGas = dialogView.findViewById(R.id.spinnerGas);
+
+                final EditText editTextkm = dialogView.findViewById(R.id.editTextkm);
+                final EditText editTextmotivo = dialogView.findViewById(R.id.editTextmotivo);
+
+
+                ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, opciones);
+                adaptadorGas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                SpinnerGas.setAdapter(adaptadorGas);
+                SpinnerGas.setSelection(0);
+
+
+                ArrayAdapter<String> spinnerAdapterClientes = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, nombresClientes);
+                spinnerAdapterClientes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerClientes.setAdapter(spinnerAdapterClientes);
+                String primerCliente = nombresClientes.get(0);
+                int posicionCliente = spinnerAdapterClientes.getPosition(primerCliente);
+                spinnerClientes.setSelection(posicionCliente);
+
+
+                unidadesVehiculos.add(0, "Selecciona la unidad");
+                spinnerAdapterUnidades = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, unidadesVehiculos);
+                spinnerAdapterUnidades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                SpinnerUnidades.setAdapter(spinnerAdapterUnidades);
+                SpinnerUnidades.setSelection(0);
+
+
+                SpinnerGas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        valorGas = parent.getItemAtPosition(position).toString();
+                    }
+
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+
+                });
+
+                spinnerClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String nombreCliente = parent.getItemAtPosition(position).toString();
+                        if (!nombreCliente.isEmpty()) {
+                            selectedIDCliente = obtenerIDDesdeNombre(nombreCliente);
+                            VerNombresUnidades(selectedIDCliente);
+                            spinnerAdapterUnidades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            SpinnerUnidades.setAdapter(spinnerAdapterUnidades);
+                            // Agregar esta línea para seleccionar automáticamente el primer elemento al cambiar la selección en el Spinner de clientes
+                            SpinnerUnidades.setSelection(0);
+
+                        }
+                    }
+
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+
+
+                SpinnerUnidades.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        mondongo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String nombreUnidad = parent.getItemAtPosition(position).toString();
+                                String km = editTextkm.getText().toString();
+                                String motivoIngreso = editTextmotivo.getText().toString();
+
+                                // Buscar el objeto JSON correspondiente al nombreUnidad
+                                JSONObject unidadSeleccionada = null;
+                                for (int i = 0; i < jsonArrayNombreUnidades.length(); i++) {
+                                    try {
+                                        JSONObject jsonObject = jsonArrayNombreUnidades.getJSONObject(i);
+                                        String id_serv_unidad = jsonObject.getString("id_serv_unidad");
+                                        if (nombreUnidad.contains(id_serv_unidad)) {
+                                            unidadSeleccionada = jsonObject;
+                                            break; // Terminar el bucle una vez que se haya encontrado la unidad
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                if (unidadSeleccionada != null) {
+                                    // Aquí puedes acceder a los datos de la unidad seleccionada
+
+                                    try {
+                                        id_serv_unidad = unidadSeleccionada.getString("id_serv_unidad");
+                                        String Marca = unidadSeleccionada.getString("Marca");
+                                        String Modelo = unidadSeleccionada.getString("Modelo");
+                                        String anio = unidadSeleccionada.getString("anio");
+                                        String placas = unidadSeleccionada.getString("placas");
+                                        String motor = unidadSeleccionada.getString("motor");
+                                        String vin = unidadSeleccionada.getString("vin");
+
+
+                                        if (km.isEmpty() || motivoIngreso.isEmpty()) {
+                                            Toast.makeText(requireContext(), "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        } else {
+
+                                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
+                                            alertDialogBuilder.setMessage("Marca: "+Marca +"\nModelo: "+Modelo+"\nGas:"+ valorGas +"\nKilometraje: "+ km + "\nMotivo De Ingreso: " + motivoIngreso +"\n\n¿Estas seguro de mandar este servicio?");
+                                            alertDialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                    AgregarServicio(selectedIDCliente, id_serv_unidad, km, valorGas, motivoIngreso, Marca, Modelo,motor,vin,placas, anio);
+                                                    dialog.dismiss();
+                                                    dialogInterface.dismiss();
+                                                }
+                                            });
+                                            alertDialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.dismiss();
+                                                }
+                                            });
+
+                                            AlertDialog alertDialog = alertDialogBuilder.create();
+                                            alertDialog.show();
+                                        }
+
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
+
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+
+
+                dialog.show();
+            }
+        });
+
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -242,7 +312,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void EnviarWS() {
+    private void VisualizarServicios() {
         String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -330,21 +400,28 @@ public class HomeFragment extends Fragment {
         return null; // Si no se encuentra el ID, puedes devolver null o un valor predeterminado
     }
 
-
     private void VerNombresUnidades(String id_ser_cliente) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    JSONArray jsonArrayNombreUnidades = new JSONArray(response);
+                    jsonArrayNombreUnidades = new JSONArray(response);
                     unidadesVehiculos.clear(); // Limpia la lista antes de agregar los nuevos nombres
                     for (int i = 0; i < jsonArrayNombreUnidades.length(); i++) {
                         jsonObjectUnidades = jsonArrayNombreUnidades.getJSONObject(i);
-                        String id_serv_unidad = jsonObjectUnidades.getString("id_serv_unidad");
-                        String Marca = jsonObjectUnidades.getString("Marca");
-                        String Modelo = jsonObjectUnidades.getString("Modelo");
+                        id_serv_unidad = jsonObjectUnidades.getString("id_serv_unidad");
+                        Marca = jsonObjectUnidades.getString("Marca");
+                        Modelo = jsonObjectUnidades.getString("Modelo");
+                        anio = jsonObjectUnidades.getString("anio");
+                        placas = jsonObjectUnidades.getString("placas");
+                        motor = jsonObjectUnidades.getString("motor");
+                        vin = jsonObjectUnidades.getString("vin");
                         unidadesVehiculos.add(id_serv_unidad + ": " + Marca + " " + Modelo); // Agrega el ID y nombre de la unidad a la lista
                     }
+
+                    // Notificar al adaptador que los datos han cambiado
+                    spinnerAdapterUnidades.notifyDataSetChanged();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -367,6 +444,7 @@ public class HomeFragment extends Fragment {
         Volley.newRequestQueue(requireContext()).add(postrequest);
     }
 
+
     private String obtenerIDDesdeNombreVehiculo(String nombreSeleccionado) {
         for (String vehiculos : unidadesVehiculos) {
             if (vehiculos.equals(nombreSeleccionado)) {
@@ -378,6 +456,43 @@ public class HomeFragment extends Fragment {
             }
         }
         return null; // Si no se encuentra el ID, puedes devolver null o un valor predeterminado
+    }
+
+
+    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                VisualizarServicios();
+                Toast.makeText(requireContext(), "Servicio Agregado", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "21");
+                params.put("id_ser_cliente", id_ser_cliente);
+                params.put("idunidad", idunidad);
+                params.put("km", km);
+                params.put("gas", gas);
+                params.put("motivo", motivo);
+                params.put("marca", marca);
+                params.put("modelo", modelo);
+                params.put("motor", motor);
+                params.put("vin", vin);
+                params.put("placas", placas);
+                params.put("anio", anio);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(requireContext()).add(postrequest);
     }
 
 }

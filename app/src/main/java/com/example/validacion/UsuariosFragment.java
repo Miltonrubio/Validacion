@@ -130,7 +130,7 @@ public class UsuariosFragment extends Fragment {
 
     private void IrASlider() {
 
-        Intent intent = new Intent(requireContext(), PruebaSpinnre.class);
+        Intent intent = new Intent(requireContext(), Prueba.class);
         startActivity(intent);
         requireActivity().finish();
     }

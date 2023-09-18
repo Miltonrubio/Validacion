@@ -50,11 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link DetalleFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class DetalleFragment extends Fragment {
 
 
@@ -72,7 +68,7 @@ public class DetalleFragment extends Fragment {
 
     private Handler sliderHandler = new Handler();
 
-    // TODO: Rename and change types and number of parameters
+
     public static DetalleFragment newInstance(String param1, String param2) {
         DetalleFragment fragment = new DetalleFragment();
 

@@ -1,14 +1,18 @@
 package com.example.validacion;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +21,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -64,7 +69,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Prueba extends AppCompatActivity{
+public class Prueba extends AppCompatActivity {
 
     private Handler sliderHandler = new Handler();
 
@@ -72,39 +77,118 @@ public class Prueba extends AppCompatActivity{
 
     ViewPager2 viewPager2;
     private CameraManager cameraManager;
-    Button btnGuardarFoto;
+    Button btnGuardarFoto, fotoDesdeGaleria;
     String rutaImagen;
     String idSerVenta;
     Context context;
+
+
+    //Para api
+    Bitmap bitmapDesdeGaleria;
+    int PICK_IMAGE_REQUEST = 2;
+    String url = "http://192.168.1.114/milton/bitacoraPHP/mostrar2.php";
+    String imageKey = "fotoImagen";
+
+    String nombreImagenKey = "nombreFoto";
+
+
+    ImageView imagenDesdeGaleriaIM;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         context = this;
         setContentView(R.layout.activity_prueba);
         btnGuardarFoto = findViewById(R.id.guardarFoto);
         TextView txtId = findViewById(R.id.txtId);
-
+        fotoDesdeGaleria = findViewById(R.id.fotoDesdeGaleria);
         viewPager2 = findViewById(R.id.ViewPagerImagenes);
+        imagenDesdeGaleriaIM = findViewById(R.id.imagenDesdeGaleriaIM);
+
 
         Intent intent = getIntent();
         idSerVenta = intent.getStringExtra("id_ser_venta");
         txtId.setText("Id de venta: " + idSerVenta);
-
-
         CargarImagenes(idSerVenta);
 
+
+        fotoDesdeGaleria.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+             //   showFileChooser();
+                AbrirGaleria();
+            }
+        });
 
         btnGuardarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 AbrirCamara();
+
             }
         });
 
     }
 
+/*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+
+            try {
+                bitmapDesdeGaleria = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                imagenDesdeGaleriaIM.setImageBitmap(bitmapDesdeGaleria);
+                imagenDesdeGaleriaIM.setVisibility(View.VISIBLE);
+                subirFotoDesdeGaleria.setVisibility(View.VISIBLE);
+                viewPager2.setVisibility(View.GONE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            // Llamamos a MandarFoto2 pasando la imagen capturada
+            Bitmap imgBitmap = BitmapFactory.decodeFile(rutaImagen);
+            MandarFoto2(imgBitmap);
+        }
+
+    }
+
+
+ */
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 2 && resultCode == RESULT_OK && data != null) {
+            // La imagen seleccionada desde la galería está en 'data.getData()'
+            Uri selectedImageUri = data.getData();
+
+            try {
+                Bitmap selectedBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+
+                // Luego puedes procesar 'selectedBitmap' y enviarlo al servidor
+                MandarFoto2(selectedBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            // Llamamos a MandarFoto2 pasando la imagen capturada
+            Bitmap imgBitmap = BitmapFactory.decodeFile(rutaImagen);
+            MandarFoto2(imgBitmap);
+        }
+
+    }
 
     private void AbrirCamara() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -123,14 +207,13 @@ public class Prueba extends AppCompatActivity{
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Llamamos a MandarFoto2 pasando la imagen capturada
-            Bitmap imgBitmap = BitmapFactory.decodeFile(rutaImagen);
-            MandarFoto2(imgBitmap);
-        }
+
+    private void AbrirGaleria() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, 2);
     }
+
+
 
     private void MandarFoto2(Bitmap imageBitmap) {
         new SendImageTask().execute(imageBitmap);
@@ -204,8 +287,9 @@ public class Prueba extends AppCompatActivity{
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-         //   imageFoto.setImageBitmap(null); // Limpia la imagen mostrada en ImageView
             Toast.makeText(Prueba.this, "Imagen "+ idSerVenta +" Enviada al servidor", Toast.LENGTH_SHORT).show();
+            Intent intent= new Intent(Prueba.this, Activity_Binding.class);
+            startActivity(intent);
         }
     }
 
@@ -301,6 +385,5 @@ public class Prueba extends AppCompatActivity{
         super.onResume();
         sliderHandler.postDelayed(sliderRunnable, 3000);
     }
-
 
 }
