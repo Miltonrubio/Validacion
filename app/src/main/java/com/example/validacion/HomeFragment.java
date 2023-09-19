@@ -1,8 +1,10 @@
 package com.example.validacion;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -49,14 +51,12 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment {
 
-
-
     JSONArray jsonArrayNombreUnidades= null;
     String valorGas= null;
     private String selectedIDCliente="1";
     ArrayList<String> opciones = new ArrayList<>();
 
-    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
     JSONObject jsonObjectUnidades;
     private ArrayAdapter<String> spinnerAdapterUnidades;
     private ArrayList<String> nombresClientes = new ArrayList<>();
@@ -93,6 +93,20 @@ public class HomeFragment extends Fragment {
         opciones.add("Reserva");
 
         botonAgregarActividad = view.findViewById(R.id.botonAgregarActividad);
+
+
+
+
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        String permisosUsuario = sharedPreferences.getString("permisos", "");
+
+        if(permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")){
+            botonAgregarActividad.setVisibility(View.VISIBLE);
+        }else {
+            botonAgregarActividad.setVisibility(View.GONE);
+        }
+
+
 
 
         LectorQr.setOnClickListener(new View.OnClickListener() {
@@ -252,7 +266,10 @@ public class HomeFragment extends Fragment {
 
 
                                         if (km.isEmpty() || motivoIngreso.isEmpty()) {
-                                            Toast.makeText(requireContext(), "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+                                            if (isAdded()) {
+                                                Toast.makeText(requireContext(), "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+                                            }
+
                                             return;
                                         } else {
 
@@ -308,7 +325,9 @@ public class HomeFragment extends Fragment {
             String scanResult = result.getContents();
             editTextBusqueda.setText(scanResult);
         } else {
-            Toast.makeText(getContext(), "Escaneo cancelado", Toast.LENGTH_SHORT).show();
+            if (isAdded()) {
+                Toast.makeText(getContext(), "Escaneo cancelado", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -374,7 +393,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                }
             }
         }) {
             protected Map<String, String> getParams() {
@@ -430,7 +451,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                }
             }
         }) {
             protected Map<String, String> getParams() {
@@ -464,14 +487,18 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 VisualizarServicios();
-                Toast.makeText(requireContext(), "Servicio Agregado", Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Servicio Agregado", Toast.LENGTH_SHORT).show();
+                }
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                }
             }
         }) {
             protected Map<String, String> getParams() {

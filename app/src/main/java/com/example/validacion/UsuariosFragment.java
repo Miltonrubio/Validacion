@@ -69,7 +69,6 @@ public class UsuariosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
-        Button botonMandarAPrueba= view.findViewById(R.id.botonMandarAPrueba);
         ImageView coronaImg = view.findViewById(R.id.corona);
 
         TextView tvNombreMecanico = view.findViewById(R.id.tvNombreMecanico);
@@ -104,13 +103,6 @@ public class UsuariosFragment extends Fragment {
             }
         });
 
-
-        botonMandarAPrueba.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                IrASlider();
-            }
-        });
 
         return view;
     }

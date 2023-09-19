@@ -86,7 +86,6 @@ public class Prueba extends AppCompatActivity {
     //Para api
     Bitmap bitmapDesdeGaleria;
     int PICK_IMAGE_REQUEST = 2;
-    String url = "http://192.168.1.114/milton/bitacoraPHP/mostrar2.php";
     String imageKey = "fotoImagen";
 
     String nombreImagenKey = "nombreFoto";
