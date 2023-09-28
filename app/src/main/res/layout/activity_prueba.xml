@@ -59,6 +59,7 @@
                 android:layout_height="60dp"
                 android:backgroundTint="@color/gris"
                 android:text="Abrir galeria"
+                android:visibility="gone"
                 android:layout_margin="15dp"/>
 
         </LinearLayout>

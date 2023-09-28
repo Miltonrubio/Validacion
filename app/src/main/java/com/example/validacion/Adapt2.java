@@ -110,25 +110,11 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             bundle.putString("marca", marca);
             bundle.putString("modelo", modelo);
             bundle.putString("motivo", motivo);
-            bundle.putString("fecha", fecha_ingreso);
+            bundle.putString("fecha_ingreso", fecha_ingreso);
             bundle.putString("status", estatus);
-            bundle.putString("hora", hora_ingreso);
+            bundle.putString("hora_ingreso", hora_ingreso);
             bundle.putString("idventa", id_ser_venta);
 
-/*
-            if (TextUtils.isEmpty(foto) || foto.equals("null")) {
-                holder.IconoCamara.setVisibility(View.VISIBLE);
-            } else {
-               holder.IconoCamara.setVisibility(View.GONE);
-            }
-
-            if (TextUtils.isEmpty(id_check_mecanico) || id_check_mecanico.equals("null") || id_check_mecanico.equals("0")) {
-
-                holder.IconoMecanico.setVisibility(View.VISIBLE);
-            } else {
-                holder.IconoMecanico.setVisibility(View.GONE);
-            }
-*/
             setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");
             setTextViewText(holder.textModelo, motivo.toUpperCase(), "Motivo no disponible");
             setTextViewText(holder.textPlaca, placa, "Placa no disponible");
@@ -142,15 +128,24 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
                 SimpleDateFormat outputFormatFecha = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
                 String fecha_formateada = outputFormatFecha.format(date_inicio);
 
-                SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
-                Date time = inputFormatHora.parse(hora_ingreso);
+                try {
+                    SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                    Date time = inputFormatHora.parse(hora_ingreso);
 
-                SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
-                String hora_formateada_inicio = outputFormatHora.format(time);
-                setTextViewText(holder.textFecha, fecha_formateada + ". A las " + hora_formateada_inicio, "Fecha no disponible");
+                    SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                    String hora_formateada_inicio = outputFormatHora.format(time);
+
+                    setTextViewText(holder.textFecha, fecha_formateada + ". A las " + hora_formateada_inicio, "Fecha no disponible");
+                }catch (Exception e){
+
+                    setTextViewText(holder.textFecha, fecha_formateada, "Fecha no disponible");
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
 
             loadImage(holder.imageViewCoches, imageUrl);
 

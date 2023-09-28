@@ -74,15 +74,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            app:endIconDrawable="@drawable/baseline_email_24"
+            app:endIconDrawable="@drawable/baseline_phone_enabled_24"
             app:endIconMode="custom">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/correoET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="CORREO"
-                android:inputType="textEmailAddress"
+                android:hint="TELEFONO"
+                android:inputType="number"
                 android:textColor="#1A237E"
                 android:textColorHint="@color/azulito"
                 android:textSize="16sp"
@@ -120,7 +120,7 @@
             android:clickable="true"
             android:onClick="IniciarSession"
             android:paddingBottom="15dp"
-            android:text="Iniciar Sesiòn"
+            android:text="Iniciar Sesión"
             android:textColor="@android:color/white"
             android:textSize="20dp"
             android:textStyle="bold" />

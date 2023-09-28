@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment {
     private String selectedIDCliente="1";
     ArrayList<String> opciones = new ArrayList<>();
 
-    String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
+    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
     JSONObject jsonObjectUnidades;
     private ArrayAdapter<String> spinnerAdapterUnidades;
     private ArrayList<String> nombresClientes = new ArrayList<>();
@@ -93,21 +93,6 @@ public class HomeFragment extends Fragment {
         opciones.add("Reserva");
 
         botonAgregarActividad = view.findViewById(R.id.botonAgregarActividad);
-
-
-
-
-        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-        String permisosUsuario = sharedPreferences.getString("permisos", "");
-
-        if(permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")){
-            botonAgregarActividad.setVisibility(View.VISIBLE);
-        }else {
-            botonAgregarActividad.setVisibility(View.GONE);
-        }
-
-
-
 
         LectorQr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,8 +132,18 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        VisualizarServicios();
 
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        String permisosUsuario = sharedPreferences.getString("permisos", "");
+        String idusuario = sharedPreferences.getString("idusuario", "");
+
+        if(permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")){
+            botonAgregarActividad.setVisibility(View.VISIBLE);
+            VisualizarServicios();
+        }else {
+            botonAgregarActividad.setVisibility(View.GONE);
+            VisualizarServiciosPorMecanicos(idusuario);
+        }
 
 
         botonAgregarActividad.setOnClickListener(new View.OnClickListener() {
@@ -331,8 +326,9 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
+
     private void VisualizarServicios() {
-        String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -367,6 +363,48 @@ public class HomeFragment extends Fragment {
 
         Volley.newRequestQueue(requireContext()).add(postrequest);
     }
+
+
+    private void VisualizarServiciosPorMecanicos(String idmecanico) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    dataList.clear();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        dataList.add(jsonObject); // Agrega cada objeto JSON a la lista
+                    }
+                    adapter2.notifyDataSetChanged();
+                    adapter2.setFilteredData(dataList);
+                    adapter2.filter("");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                editTextBusqueda.setText("");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "25");
+                params.put("idmecanico", idmecanico);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(requireContext()).add(postrequest);
+    }
+
+
+
+
 
 
     private void VerNombresClientes() {

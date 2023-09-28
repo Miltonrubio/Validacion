@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     String personalToken;
 
 
-    String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
+    String url =  "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     private RequestQueue rq;
     Context context;
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
                 params.put("opcion", "1");
-                params.put("email", Username);
+                params.put("telefono", Username);
                 params.put("password", Password);
                 return params;
             }

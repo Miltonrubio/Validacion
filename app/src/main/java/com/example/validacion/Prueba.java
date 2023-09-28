@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -73,7 +74,9 @@ public class Prueba extends AppCompatActivity {
 
     private Handler sliderHandler = new Handler();
 
-    private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
+    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+
+    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     ViewPager2 viewPager2;
     private CameraManager cameraManager;
@@ -113,10 +116,19 @@ public class Prueba extends AppCompatActivity {
         CargarImagenes(idSerVenta);
 
 
+        SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+
+        String permisosUsuario = sharedPreferences.getString("permisos", "");
+
+if(permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("RECEPCIONISTA")){
+    fotoDesdeGaleria.setVisibility(View.VISIBLE);
+}else {
+    fotoDesdeGaleria.setVisibility(View.GONE);
+}
+
         fotoDesdeGaleria.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             //   showFileChooser();
                 AbrirGaleria();
             }
         });
@@ -131,37 +143,6 @@ public class Prueba extends AppCompatActivity {
         });
 
     }
-
-/*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri filePath = data.getData();
-
-            try {
-                bitmapDesdeGaleria = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                imagenDesdeGaleriaIM.setImageBitmap(bitmapDesdeGaleria);
-                imagenDesdeGaleriaIM.setVisibility(View.VISIBLE);
-                subirFotoDesdeGaleria.setVisibility(View.VISIBLE);
-                viewPager2.setVisibility(View.GONE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Llamamos a MandarFoto2 pasando la imagen capturada
-            Bitmap imgBitmap = BitmapFactory.decodeFile(rutaImagen);
-            MandarFoto2(imgBitmap);
-        }
-
-    }
-
-
- */
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -252,7 +233,6 @@ public class Prueba extends AppCompatActivity {
             Bitmap imageBitmap = bitmaps[0];
 
             OkHttpClient client = new OkHttpClient();
-            String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
             String nombreArchivo = "imagen" + System.currentTimeMillis() + ".jpg";
             File imageFile = bitmapToFile(imageBitmap, "image.jpg");

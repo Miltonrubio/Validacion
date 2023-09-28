@@ -54,7 +54,7 @@ import java.util.Map;
 public class DetalleFragment extends Fragment {
 
 
-    private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
+    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     ViewPager2 viewPager2;
     RecyclerView recyclerViewRefacciones;
@@ -103,8 +103,8 @@ public class DetalleFragment extends Fragment {
         if (bundle != null) {
             String marca = bundle.getString("marca", "");
             String modelo = bundle.getString("modelo", "");
-            String fecha = bundle.getString("fecha", "");
-            String hora = bundle.getString("hora", "");
+            String fecha = bundle.getString("fecha_ingreso", "");
+            String hora = bundle.getString("hora_ingreso", "");
             String status = bundle.getString("status", "");
             String motivo = bundle.getString("motivo", "");
             String idventa = bundle.getString("idventa", "");
@@ -119,7 +119,7 @@ public class DetalleFragment extends Fragment {
 
 
 
-            if (fecha.equals("null") || fecha.isEmpty() || hora.isEmpty() || hora.equals("null")){
+            if (fecha.equals("null") || fecha.isEmpty() ){
 
                 textfecha.setText("No hay fecha estimada");
             }else {
@@ -130,14 +130,23 @@ public class DetalleFragment extends Fragment {
                     SimpleDateFormat outputFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
                     String fecha_formateada = outputFormat.format(date);
 
-                    SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
-                    Date time = inputFormatHora.parse(hora);
 
-                    SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
-                    String hora_formateada = outputFormatHora.format(time);
+                    try {
 
-                    textfecha.setText("Ingresado: " + "el " + fecha_formateada + " a las " + hora_formateada);
-                } catch (Exception e) {
+                        SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                        Date time = inputFormatHora.parse(hora);
+
+                        SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                        String hora_formateada = outputFormatHora.format(time);
+
+                        textfecha.setText("Ingresado: " + "el " + fecha_formateada + " a las " + hora_formateada);
+
+                    }catch (Exception e){
+
+                        textfecha.setText("Ingresado: " + "el " + fecha_formateada);
+                    }
+
+                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -299,7 +308,7 @@ public class DetalleFragment extends Fragment {
                                     String foto = jsonObject.getString("foto");
                                     String nombre = jsonObject.getString("nombre");
                                     String motivoingreso = jsonObject.getString("motivoingreso");
-                                    String fecha_programada = jsonObject.getString("fecha_programada");
+                                    String fecha_programada = jsonObject.getString("fecha");
 
                                     Mecanicos mecanicos = new Mecanicos(foto, nombre, motivoingreso, fecha_programada);
                                     listaMecanicos.add(mecanicos);

@@ -88,7 +88,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
     LinearLayout LayoutKilometros, LayoutPrecio, LayoutFinalizar, LayouttodasLasRutas, LayoutMotivoCancelacion;
 
     Button BotonFinalizarArrastre;
-    private String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
+    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     RecyclerView recyclerViewChoferes, recyclerViewRutas;
     ScrollView scrollView;
@@ -460,7 +460,6 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         clearRoutePolylines();
 
         if (selectedRouteIndex < 0 || selectedRouteIndex >= markerList.size()) {
-            // Verificar si el índice seleccionado es válido
             drawRoute();
             return;
         }
@@ -512,7 +511,6 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                                     Polyline polyline = googleMap.addPolyline(polylineOptions);
                                     routePolylines.add(polyline);
 
-                                    // Crear un nuevo builder para incluir todos los puntos de la ruta
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                     for (LatLng point : decodedPath) {
                                         builder.include(point);

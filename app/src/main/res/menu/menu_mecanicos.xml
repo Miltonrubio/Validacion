@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Coches"
+        android:id="@+id/menu_home"
+        android:icon="@drawable/baseline_car_repair_24"
+        android:iconTint="@color/azulito"
+        />
+    <item android:title="Actividades"
+        android:id="@+id/menu_actividades"
+        android:icon="@drawable/baseline_post_add_24"
+        android:iconTint="@color/azulito"
+        />
+    <item android:title="Usuario"
+        android:id="@+id/menu_usuario"
+        android:icon="@drawable/baseline_person_24"
+        android:iconTint="@color/azulito"
+        />
+
+</menu>
