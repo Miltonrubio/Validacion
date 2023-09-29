@@ -1,0 +1,110 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:id="@+id/LayoutIniciar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_play_arrow_24" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Iniciar Actividad"
+            android:textSize="23sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutPausar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        >
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_pause_24" />
+
+        <TextView
+            android:layout_width="299dp"
+            android:layout_height="54dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Pausar Actividad"
+            android:textSize="23sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutFinalizarActividad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        >
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_done_24" />
+
+        <TextView
+            android:layout_width="287dp"
+            android:layout_height="53dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Terminar Actividad"
+            android:textSize="23sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutCancelar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        >
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_delete_forever_24" />
+
+        <TextView
+            android:layout_width="287dp"
+            android:layout_height="53dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Cancelar Actividad"
+            android:textSize="23sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

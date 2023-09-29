@@ -1,47 +1,60 @@
 package com.example.validacion;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ActividadesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ActividadesFragment extends Fragment {
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ActividadesFragment extends Fragment implements AdaptadorActividades.OnActivityActionListener {
+
+
+    private List<JSONObject> dataList = new ArrayList<>();
+
+
+    private List<JSONObject> datosFiltrados = new ArrayList<>();
+    private AdaptadorActividades adaptadorActividades;
+    RecyclerView recyclerViewActividades;
+    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+
+    EditText searchEditTextActividades;
+    String idusuario;
 
     public ActividadesFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ActividadesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ActividadesFragment newInstance(String param1, String param2) {
         ActividadesFragment fragment = new ActividadesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,15 +63,131 @@ public class ActividadesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_actividades, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_actividades, container, false);
+
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        idusuario = sharedPreferences.getString("idusuario", "");
+
+
+        recyclerViewActividades = view.findViewById(R.id.recyclerViewActividades);
+
+        searchEditTextActividades = view.findViewById(R.id.searchEditTextActividades);
+        recyclerViewActividades.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        if (isAdded()) {
+            adaptadorActividades = new AdaptadorActividades(dataList, requireContext(), this);
+        }
+        recyclerViewActividades.setAdapter(adaptadorActividades);
+
+
+        TomarActividadesDesdeApi(idusuario);
+        return view;
     }
+
+
+
+    private void mostrarDatosFiltrados() {
+        datosFiltrados.clear();
+        for (JSONObject jsonObject : dataList) {
+            try {
+                String estatus = jsonObject.getString("estatus");
+
+                if (!estatus.equals("cancelado") || !estatus.equals("finalizado")) {
+                    datosFiltrados.add(jsonObject);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        adaptadorActividades.setFilteredData(datosFiltrados);
+        adaptadorActividades.notifyDataSetChanged();
+
+    }
+
+
+
+    public void TomarActividadesDesdeApi(String idmecanico) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    dataList.clear();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        dataList.add(jsonObject);
+                    }
+                    adaptadorActividades.notifyDataSetChanged();
+                    adaptadorActividades.setFilteredData(dataList);
+                    adaptadorActividades.filter("");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                searchEditTextActividades.setText("");
+                mostrarDatosFiltrados();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "23");
+                params.put("idmecanico", idmecanico);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(requireContext()).add(postrequest);
+    }
+
+
+    @Override
+    public void onActualizarEstadoActividadesActivity(String idbitacora, String estatus) {
+        ActualizarEstadoActividades(idbitacora, estatus);
+    }
+
+
+    public void ActualizarEstadoActividades(String idbitacora, String estatus) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                TomarActividadesDesdeApi(idusuario);
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Se actualizo el estado de la actividad", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(requireContext(), "Error al actualizar el estado de la actividad", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "24");
+                params.put("idbitacora", idbitacora);
+                params.put("estatus", estatus);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(requireContext()).add(postrequest);
+    }
+
+
 }

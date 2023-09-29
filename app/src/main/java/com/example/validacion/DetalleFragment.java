@@ -57,10 +57,9 @@ public class DetalleFragment extends Fragment {
     private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     ViewPager2 viewPager2;
-    RecyclerView recyclerViewRefacciones;
-    RecyclerView recyclerViewMecanicos;
+    RecyclerView recyclerViewMecanicos, recyclerViewRefacciones, recyclerViewBitacora;
 
-    TextView tvRefacciones;
+    TextView tvRefacciones, tvBitacora;
 
     public DetalleFragment() {
         // Required empty public constructor
@@ -92,9 +91,12 @@ public class DetalleFragment extends Fragment {
         TextView textfecha = rootView.findViewById(R.id.tv4);
         TextView textstatus = rootView.findViewById(R.id.tvstatus);
 
-        recyclerViewRefacciones = rootView.findViewById(R.id.recyclerViewRefacciones);
+        tvBitacora = rootView.findViewById(R.id.tvBitacora);
 
+        recyclerViewRefacciones = rootView.findViewById(R.id.recyclerViewRefacciones);
         recyclerViewMecanicos = rootView.findViewById(R.id.recyclerViewMecanicos);
+        recyclerViewBitacora = rootView.findViewById(R.id.recyclerViewBitacora);
+
 
         viewPager2 = rootView.findViewById(R.id.ViewPager);
 
@@ -112,17 +114,17 @@ public class DetalleFragment extends Fragment {
             CargarRefacciones(idventa);
             CargarMecanicos(idventa);
             CargarImagenes(idventa);
+            CargarBitacora(idventa);
 
             textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
             // textstatus.setText("Estatus: " + status);
             textmotivo.setText(motivo);
 
 
-
-            if (fecha.equals("null") || fecha.isEmpty() ){
+            if (fecha.equals("null") || fecha.isEmpty()) {
 
                 textfecha.setText("No hay fecha estimada");
-            }else {
+            } else {
                 try {
                     SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Date date = inputFormat.parse(fecha);
@@ -141,12 +143,12 @@ public class DetalleFragment extends Fragment {
 
                         textfecha.setText("Ingresado: " + "el " + fecha_formateada + " a las " + hora_formateada);
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                         textfecha.setText("Ingresado: " + "el " + fecha_formateada);
                     }
 
-                 } catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -158,8 +160,6 @@ public class DetalleFragment extends Fragment {
             int colorAzulito = ContextCompat.getColor(requireContext(), R.color.azulitoSuave);
             int colorNegro = ContextCompat.getColor(requireContext(), R.color.black);
             int colorGris = ContextCompat.getColor(requireContext(), R.color.gris);
-
-
 
 
             if (!status.equals("null") || status.isEmpty()) {
@@ -423,6 +423,74 @@ public class DetalleFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(stringRequest);
     }
+
+
+    private void CargarBitacora(String idservicio) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlApi,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        List<ActividadadesUnidad> listaActividadesUnidad = new ArrayList<>();
+                        if (!TextUtils.isEmpty(response)) {
+                            Toast.makeText(requireContext(), response, Toast.LENGTH_SHORT).show();
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                    String horainicio = jsonObject.getString("horainicio");
+                                    String horafin = jsonObject.getString("horafin");
+                                    String fecha = jsonObject.getString("fecha");
+                                    String id_servicio = jsonObject.getString("id_servicio");
+                                    String id_personal = jsonObject.getString("id_personal");
+                                    String obsservaciones = jsonObject.getString("obsservaciones");
+                                    String estatus = jsonObject.getString("estatus");
+                                    ActividadadesUnidad actividadadesUnidad = new ActividadadesUnidad(horainicio, horafin, fecha, id_servicio, id_personal, obsservaciones, estatus);
+                                    listaActividadesUnidad.add(actividadadesUnidad);
+                                }
+
+                                if (listaActividadesUnidad.isEmpty()) {
+                                    recyclerViewBitacora.setVisibility(View.GONE);
+                                    LinearLayout LayoutNoActividades = requireView().findViewById(R.id.LayoutNoActividades);
+                                    LayoutNoActividades.setVisibility(View.VISIBLE);
+                                } else {
+                                    recyclerViewBitacora.setVisibility(View.VISIBLE);
+                                    LinearLayout LayoutNoActividades = requireView().findViewById(R.id.LayoutNoActividades);
+                                    LayoutNoActividades.setVisibility(View.GONE);
+
+                                    AdaptadorActividadesUnidad adaptadorActividadesUnidad = new AdaptadorActividadesUnidad(listaActividadesUnidad);
+                                    recyclerViewBitacora.setLayoutManager(new LinearLayoutManager(requireContext()));
+                                    recyclerViewBitacora.setAdapter(adaptadorActividadesUnidad);
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            tvBitacora.setText("No hay Actividades para esta unidad");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "26");
+                params.put("idservicio", idservicio);
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        requestQueue.add(stringRequest);
+    }
+
 
     private Runnable sliderRunnable = new Runnable() {
         @Override

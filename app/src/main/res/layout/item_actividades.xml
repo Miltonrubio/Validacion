@@ -8,72 +8,70 @@
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="9dp"
     android:elevation="4dp"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="@drawable/rounded_background"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
+        <TextView
+            android:id="@+id/estadoActividad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Estado de actividad"
+            android:textColor="@color/azulito"
+            android:textSize="15sp"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imageViewChofer"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+            <ImageView
+                android:id="@+id/imageViewActividad"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_marginEnd="10dp"
                 android:adjustViewBounds="true"
-                android:padding="8dp"
+                android:padding="2dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
-
-
-            />
-
-            <!-- Parte derecha para textMarca y textStatus -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="16dp">
-
+                android:src="@drawable/actividades"
+                />
 
                 <TextView
-                    android:id="@+id/nombreChofer"
+                    android:id="@+id/nombreActividad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:hint="Chofer"
-                    android:layout_marginBottom="12dp"
+                    android:gravity="center"
+                    android:hint="Nombre de actividad"
                     android:textColor="@color/black"
                     android:textSize="17sp"
                     android:textStyle="bold"
                     />
 
-                <TextView
-                    android:id="@+id/unidadChofer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Unidad: "
-
-                    android:textColor="@color/azulito"
-                    android:textSize="14sp"/>
-
-            </LinearLayout>
 
         </LinearLayout>
 
+
+        <TextView
+            android:id="@+id/fechaInicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="Fecha Inicio"
+            android:textColor="@color/azulito"
+            android:textSize="14dp"
+            />
 
     </LinearLayout>
 </FrameLayout>

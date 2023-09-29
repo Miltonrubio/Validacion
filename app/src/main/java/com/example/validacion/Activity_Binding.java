@@ -44,7 +44,6 @@ public class Activity_Binding extends AppCompatActivity {
 
             replaceFragment(new HomeFragment());
             getMenuInflater().inflate(R.menu.menu_mecanicos, binding.bottomNavigationView.getMenu());
-
             binding.bottomNavigationView.setOnItemSelectedListener(item -> {
                 switch (item.getItemId()) {
                     case (R.id.menu_home):
@@ -92,70 +91,6 @@ public class Activity_Binding extends AppCompatActivity {
                 return true;
             });
         }
-
-
-
-
-
-
-
-        /*
-
-        SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-
-        String permisosUsuario = sharedPreferences.getString("permisos", "");
-
-        binding = ActivityBindingBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        if (permisosUsuario.equals("MECANICO") || permisosUsuario.equals("MECANICOS")|| permisosUsuario.equals("MECANICOS")|| permisosUsuario.equals("RECEPCION")) {
-
-            replaceFragment(new HomeFragment());
-            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-                switch (item.getItemId()) {
-
-                    case (R.id.menu_home):
-                        replaceFragment(new HomeFragment());
-                        break;
-                    case (R.id.menu_usuario):
-                        replaceFragment(new UsuariosFragment());
-                        break;
-                }
-                return true;
-            });
-
-        } else if (permisosUsuario.equals("SUPERADMIN")) {
-
-            replaceFragment(new HomeFragment());
-            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-                switch (item.getItemId()) {
-
-                    case (R.id.menu_home):
-                        replaceFragment(new HomeFragment());
-                        break;
-                    case (R.id.menu_usuario):
-                        replaceFragment(new UsuariosFragment());
-                        break;
-                }
-                return true;
-            });
-        } else {
-            replaceFragment(new ArrastresFragment());
-            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-                switch (item.getItemId()) {
-
-                    case (R.id.menu_home):
-                        replaceFragment(new ArrastresFragment());
-                        break;
-                    case (R.id.menu_usuario):
-                        replaceFragment(new UsuariosFragment());
-                        break;
-                }
-                return true;
-            });
-        }
-*/
-
     }
 
 
