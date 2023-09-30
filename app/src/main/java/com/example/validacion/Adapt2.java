@@ -97,12 +97,14 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             String marca = jsonObject2.optString("marcaI", "");
             String modelo = jsonObject2.optString("modeloI", "");
             String placa = jsonObject2.optString("placasI", "");
-            String dueño = jsonObject2.optString("nombre", "");
             String motivo = jsonObject2.optString("motivoingreso", "");
             String estatus = jsonObject2.optString("estatus", "");
             String fecha_ingreso = jsonObject2.optString("fecha_ingreso", "");
             String hora_ingreso = jsonObject2.optString("hora_ingreso", "");
             String id_ser_venta = jsonObject2.optString("id_ser_venta", "");
+            String nombre = jsonObject2.optString("nombre", "");
+            String email = jsonObject2.optString("email", "");
+            String telefono = jsonObject2.optString("telefono", "");
 
             String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
 
@@ -115,10 +117,15 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             bundle.putString("hora_ingreso", hora_ingreso);
             bundle.putString("idventa", id_ser_venta);
 
+            bundle.putString("nombre", nombre);
+            bundle.putString("email", email);
+            bundle.putString("telefono", telefono);
+
+
             setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");
             setTextViewText(holder.textModelo, motivo.toUpperCase(), "Motivo no disponible");
             setTextViewText(holder.textPlaca, placa, "Placa no disponible");
-            setTextViewText(holder.textDueño, dueño, "Dueño no disponible");
+            setTextViewText(holder.textDueño, nombre, "Dueño no disponible");
             setStatusTextView(holder.textStatus, estatus);
 
             try {

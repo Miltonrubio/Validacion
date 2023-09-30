@@ -2,10 +2,10 @@ package com.example.validacion;
 
 public class ActividadadesUnidad {
 
-    String horainicio, horafin, fecha, id_servicio, idpersonal, observaciones, estatus;
+    String horainicio, horafin, fecha, id_servicio, idpersonal, observaciones, estatus, nombre, telefono, area, foto;
 
 
-    public ActividadadesUnidad(String horainicio, String horafin, String fecha, String id_servicio, String idpersonal, String observaciones, String estatus) {
+    public ActividadadesUnidad(String horainicio, String horafin, String fecha, String id_servicio, String idpersonal, String observaciones, String estatus, String nombre, String telefono, String area, String foto) {
         this.horainicio = horainicio;
         this.horafin = horafin;
         this.fecha = fecha;
@@ -13,6 +13,10 @@ public class ActividadadesUnidad {
         this.idpersonal = idpersonal;
         this.observaciones = observaciones;
         this.estatus = estatus;
+        this.nombre = nombre;
+        this.telefono = telefono;
+        this.area = area;
+        this.foto = foto;
     }
 
     public String getHorainicio() {
@@ -69,5 +73,37 @@ public class ActividadadesUnidad {
 
     public void setEstatus(String estatus) {
         this.estatus = estatus;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 }

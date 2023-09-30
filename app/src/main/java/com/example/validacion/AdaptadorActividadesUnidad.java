@@ -35,10 +35,12 @@ public class AdaptadorActividadesUnidad extends RecyclerView.Adapter<AdaptadorAc
         ActividadadesUnidad actividadadesUnidad = listaActividades.get(position);
 
         String observaciones= actividadadesUnidad.getObservaciones();
+        String estatus= actividadadesUnidad.getEstatus();
 
 
         holder.nombreActividad.setText(observaciones);
         holder.fechaInicio.setText(actividadadesUnidad.getFecha());
+        holder.estadoActividad.setText(estatus);
 
 
     }
