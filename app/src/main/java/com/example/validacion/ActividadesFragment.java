@@ -101,7 +101,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
             try {
                 String estatus = jsonObject.getString("estatus");
 
-                if (!estatus.equals("cancelado") || !estatus.equals("finalizado")) {
+                if (estatus.equals("activo") || estatus.equals("pendiente") || estatus.equals("pausada")) {
                     datosFiltrados.add(jsonObject);
                 }
             } catch (JSONException e) {

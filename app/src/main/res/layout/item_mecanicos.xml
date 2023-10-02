@@ -8,7 +8,8 @@
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="9dp"
     android:elevation="4dp"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="@drawable/textview_outlinegris">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,36 +47,19 @@
                 app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
 
 
-            />
-
-            <!-- Parte derecha para textMarca y textStatus -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="16dp">
 
 
                 <TextView
                     android:id="@+id/nombreMecanico"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
+                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:hint="Mecanico"
-                    android:layout_marginBottom="12dp"
                     android:textColor="@color/azulito"
                     android:textSize="16sp"
                     android:textStyle="bold"/>
 
-                <TextView
-                    android:id="@+id/reparacionMecanico"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Reparando: "
-                   android:textSize="14sp" />
-
-            </LinearLayout>
 
         </LinearLayout>
 

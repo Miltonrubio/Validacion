@@ -67,8 +67,6 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
                     .into(holder.imageViewMecanico);
         }
 
-        holder.reparacionMecanico.setText(mecanicos.getMotivoingreso());
-
 
     }
 
@@ -79,7 +77,7 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView reparacionMecanico, nombreMecanico, fechaMecanico;
+        TextView nombreMecanico, fechaMecanico;
 
         ImageView imageViewMecanico;
 
@@ -88,7 +86,6 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
             imageViewMecanico = itemView.findViewById(R.id.imageViewMecanico);
             fechaMecanico=itemView.findViewById(R.id.fechaMecanico);
             nombreMecanico = itemView.findViewById(R.id.nombreMecanico);
-            reparacionMecanico=  itemView.findViewById(R.id.reparacionMecanico);
         }
     }
 

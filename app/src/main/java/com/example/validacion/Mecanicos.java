@@ -2,13 +2,13 @@ package com.example.validacion;
 
 public class Mecanicos {
 
-    String foto, nombre, motivoingreso, fecha_programada;
+    String foto, nombre, fecha_programada, idusuario;
 
-    public Mecanicos(String foto, String nombre, String motivoingreso, String fecha_programada) {
+    public Mecanicos(String foto, String nombre, String fecha_programada, String idusuario) {
         this.foto = foto;
         this.nombre = nombre;
-        this.motivoingreso = motivoingreso;
         this.fecha_programada = fecha_programada;
+        this.idusuario = idusuario;
     }
 
     public String getFoto() {
@@ -27,19 +27,19 @@ public class Mecanicos {
         this.nombre = nombre;
     }
 
-    public String getMotivoingreso() {
-        return motivoingreso;
-    }
-
-    public void setMotivoingreso(String motivoingreso) {
-        this.motivoingreso = motivoingreso;
-    }
-
     public String getFecha_programada() {
         return fecha_programada;
     }
 
     public void setFecha_programada(String fecha_programada) {
         this.fecha_programada = fecha_programada;
+    }
+
+    public String getIdusuario() {
+        return idusuario;
+    }
+
+    public void setIdusuario(String idusuario) {
+        this.idusuario = idusuario;
     }
 }

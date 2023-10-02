@@ -247,8 +247,11 @@ public class DetalleFragment extends Fragment {
         btnImprimirPdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                generarPDF(listaActividadesUnidad, listaRefacciones);
+                if ((listaMecanicos.isEmpty() || listaMecanicos.equals("null") || listaMecanicos.equals(null)) && (listaRefacciones.isEmpty() || listaRefacciones.equals("null") || listaRefacciones.equals(null)) && (listaActividadesUnidad.isEmpty() || listaActividadesUnidad.equals("null") || listaActividadesUnidad.equals(null))) {
+                    Toast.makeText(requireContext(), "No hay suficientes datos para generar un reporte", Toast.LENGTH_SHORT).show();
+                } else {
+                    generarPDF(listaMecanicos, listaRefacciones, listaActividadesUnidad);
+                }
             }
         });
 
@@ -256,7 +259,15 @@ public class DetalleFragment extends Fragment {
         return rootView;
     }
 
-    private void generarPDF(List<ActividadadesUnidad> listaActividade, List<Refacciones> listRef) {
+    class PageEventHandler extends PdfPageEventHelper {
+        @Override
+        public void onStartPage(PdfWriter writer, Document document) {
+            document.newPage();
+        }
+    }
+
+
+    private void generarPDF(List<Mecanicos> listaMec, List<Refacciones> listRef, List<ActividadadesUnidad> listaActividade) {
         Document document = new Document();
 
         try {
@@ -264,7 +275,11 @@ public class DetalleFragment extends Fragment {
             File pdfFile = new File(requireContext().getExternalCacheDir() + File.separator + "Servicio Automotriz para " + marca + " " + modelo + ".pdf");
             FileOutputStream fileOutputStream = new FileOutputStream(pdfFile);
 
-            PdfWriter.getInstance(document, fileOutputStream);
+            PdfWriter pdfWriter = PdfWriter.getInstance(document, fileOutputStream);
+            PageEventHandler eventHandler = new PageEventHandler();
+            pdfWriter.setPageEvent(eventHandler);
+
+
             document.open();
 
             Drawable drawable = getResources().getDrawable(R.drawable.logo);
@@ -307,15 +322,20 @@ public class DetalleFragment extends Fragment {
             nameCell.setPadding(cellPaddingUser);
             userInfoTable.addCell(nameCell);
 
-            userInfoTable.addCell("Correo:");
-            PdfPCell emailCell = new PdfPCell(new Paragraph(emailusuario));
-            emailCell.setPadding(cellPaddingUser);
-            userInfoTable.addCell(emailCell);
-
             userInfoTable.addCell("Teléfono:");
             PdfPCell phoneCell = new PdfPCell(new Paragraph(telefonousuario));
             phoneCell.setPadding(cellPaddingUser);
             userInfoTable.addCell(phoneCell);
+
+            userInfoTable.addCell("Marca del vehiculo:");
+            PdfPCell marcaCell = new PdfPCell(new Paragraph(marca));
+            marcaCell.setPadding(cellPaddingUser);
+            userInfoTable.addCell(marcaCell);
+
+            userInfoTable.addCell("Modelo del vehiculo:");
+            PdfPCell modeloCell = new PdfPCell(new Paragraph(modelo));
+            modeloCell.setPadding(cellPaddingUser);
+            userInfoTable.addCell(modeloCell);
 
             document.add(userInfoTable);
 
@@ -324,48 +344,64 @@ public class DetalleFragment extends Fragment {
             document.add(spaceBelowTitle);
 
 
-            PdfPTable table = new PdfPTable(3);
-            table.setWidthPercentage(100);
+                PdfPTable table = new PdfPTable(3);
+                table.setWidthPercentage(100);
 
-            PdfPCell headerCell1 = new PdfPCell(new Paragraph("Nombre del mecanico"));
-            headerCell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            headerCell1.setPadding(cellPadding);
-            table.addCell(headerCell1);
+                PdfPCell headerCell1 = new PdfPCell(new Paragraph("Nombre del mecanico"));
+                headerCell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                headerCell1.setPadding(cellPadding);
+                table.addCell(headerCell1);
 
-            PdfPCell headerCell2 = new PdfPCell(new Paragraph("Descripción del servicio"));
-            headerCell2.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            headerCell2.setPadding(cellPadding);
-            table.addCell(headerCell2);
+                PdfPCell headerCell2 = new PdfPCell(new Paragraph("Descripción del servicio realizado"));
+                headerCell2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                headerCell2.setPadding(cellPadding);
+                table.addCell(headerCell2);
 
-            PdfPCell headerCell3 = new PdfPCell(new Paragraph("Foto del mecánico"));
-            headerCell3.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            headerCell3.setPadding(cellPadding);
-            table.addCell(headerCell3);
+                PdfPCell headerCell3 = new PdfPCell(new Paragraph("Foto del mecánico"));
+                headerCell3.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                headerCell3.setPadding(cellPadding);
+                table.addCell(headerCell3);
 
-            for (ActividadadesUnidad actividadadesUnidad : listaActividade) {
-                String nombre = actividadadesUnidad.getNombre();
-                String observaciones = actividadadesUnidad.getObservaciones();
-                String fotoPath = actividadadesUnidad.getFoto(); // Suponemos que 'getFoto()' devuelve la ruta de la foto
+                Map<String, String> idPersonalToIdUsuarioMap = new HashMap<>();
 
-                PdfPCell cell1 = new PdfPCell(new Paragraph(nombre));
-                cell1.setPadding(cellPadding);
-                table.addCell(cell1);
+                for (Mecanicos mecanicos : listaMec) {
+                    idPersonalToIdUsuarioMap.put(mecanicos.getIdusuario(), mecanicos.getIdusuario());
+                }
 
-                PdfPCell cell2 = new PdfPCell(new Paragraph(observaciones));
-                cell2.setPadding(cellPadding);
-                table.addCell(cell2);
+                for (Mecanicos mecanicos : listaMec) {
+                    String nombre = mecanicos.getNombre();
+                    String fotoPath = mecanicos.getFoto();
 
-                PdfPCell cell3 = new PdfPCell(new Paragraph(fotoPath));
-                cell3.setPadding(cellPadding);
-                table.addCell(cell3);
+                    PdfPCell cell1 = new PdfPCell(new Paragraph(nombre));
+                    cell1.setPadding(cellPadding);
+                    table.addCell(cell1);
 
+                    StringBuilder cell2Content = new StringBuilder();
 
-            }
+                    for (ActividadadesUnidad actividad : listaActividadesUnidad) {
+                        String idPersonalActividad = actividad.getIdpersonal();
+                        String idUsuarioMecanico = idPersonalToIdUsuarioMap.get(idPersonalActividad);
 
-            document.add(table);
+                        if (idUsuarioMecanico != null && idUsuarioMecanico.equals(mecanicos.getIdusuario())) {
+                            cell2Content.append("Reparacion: ").append(actividad.getObservaciones()).append("\n");
+                            cell2Content.append("Hora de Inicio: ").append(actividad.getHorainicio()).append("\n");
+                            cell2Content.append("Hora de Fin: ").append(actividad.getHorafin()).append("\n");
+                            cell2Content.append("\n\n");
+                        }
+                    }
 
+                    PdfPCell cell2 = new PdfPCell(new Paragraph(cell2Content.toString()));
+                    cell2.setPadding(cellPadding);
+                    table.addCell(cell2);
 
-            document.add(new Paragraph(" "));
+                    PdfPCell cell3 = new PdfPCell(new Paragraph(fotoPath));
+                    cell3.setPadding(cellPadding);
+                    table.addCell(cell3);
+                }
+
+                document.add(table);
+                document.add(new Paragraph(" "));
+
 
 
             if (!listRef.isEmpty()) {
@@ -429,7 +465,6 @@ public class DetalleFragment extends Fragment {
 
         Uri pdfUri = FileProvider.getUriForFile(requireContext(), "com.example.validacion.fileprovider", file);
 
-        // Crear una intención para compartir el archivo PDF
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("application/pdf");
         intent.putExtra(Intent.EXTRA_STREAM, pdfUri);
@@ -527,10 +562,9 @@ public class DetalleFragment extends Fragment {
 
                                     String foto = jsonObject.getString("foto");
                                     String nombre = jsonObject.getString("nombre");
-                                    String motivoingreso = jsonObject.getString("motivoingreso");
+                                    String idusuario = jsonObject.getString("idusuario");
                                     String fecha_programada = jsonObject.getString("fecha");
-
-                                    Mecanicos mecanicos = new Mecanicos(foto, nombre, motivoingreso, fecha_programada);
+                                    Mecanicos mecanicos = new Mecanicos(foto, nombre, fecha_programada, idusuario);
                                     listaMecanicos.add(mecanicos);
                                 }
 

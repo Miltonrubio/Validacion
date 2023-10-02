@@ -49,7 +49,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
             return new ViewHolder(view);
         } else {
 
-            View errorView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout_error, parent, false);
+            View errorView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_noactividades, parent, false);
             return new ViewHolder(errorView);
         }
     }
