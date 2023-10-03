@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -94,7 +95,6 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
     }
 
 
-
     private void mostrarDatosFiltrados() {
         datosFiltrados.clear();
         for (JSONObject jsonObject : dataList) {
@@ -113,7 +113,6 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         adaptadorActividades.notifyDataSetChanged();
 
     }
-
 
 
     public void TomarActividadesDesdeApi(String idmecanico) {
@@ -157,6 +156,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
 
     @Override
     public void onActualizarEstadoActividadesActivity(String idbitacora, String estatus) {
+        //   ActualizarEstadoActividades(idbitacora, estatus);
         ActualizarEstadoActividades(idbitacora, estatus);
     }
 
@@ -165,9 +165,15 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+
                 TomarActividadesDesdeApi(idusuario);
-                if (isAdded()) {
-                    Toast.makeText(requireContext(), "Se actualizo el estado de la actividad", Toast.LENGTH_SHORT).show();
+                if (response.equals("\"esta activo\"")) {
+
+                    Toast.makeText(requireContext(), "Ya tienes una actividad iniciada", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    Toast.makeText(requireContext(), "Se actualizo la actividad", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -179,9 +185,10 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("opcion", "24");
+                params.put("opcion", "27");
                 params.put("idbitacora", idbitacora);
                 params.put("estatus", estatus);
+                params.put("idmecanico", idusuario);
                 return params;
             }
         };

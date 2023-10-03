@@ -73,7 +73,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
 
 
                 setTextViewText(holder.nombreActividad, observaciones, "Esta actividad NO tiene observaciones");
-                setTextViewText(holder.estadoActividad, estatus, "Estatus NO disponible");
+                setTextViewText(holder.estadoActividad, estatus , "Estatus NO disponible");
                 setTextViewText(holder.fechaInicio, horainicio, "Hora NO disponible");
 
 
