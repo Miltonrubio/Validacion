@@ -1,169 +1,310 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="@color/azulito">
 
-    <!-- Contenedor clickeable para todos los elementos -->
-    <LinearLayout
-        android:id="@+id/contenedorClickeable"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/gris"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/corona"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="140dp"
-            android:src="@drawable/baseline_star_24"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:layout_gravity="center"
-            android:src="@drawable/usuarios" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="360dp"
+        android:layout_height="705dp"
+        android:background="@drawable/rounded_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.497">
 
         <TextView
-            android:id="@+id/tvNombreMecanico"
-            android:layout_width="match_parent"
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:text="Usuario"
-            android:textColor="@color/azulito"
-            android:textSize="36dp"
-            android:textStyle="bold" />
+            android:layout_marginTop="24dp"
+            android:text="Perfil de usuario"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.509"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="144dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.509"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+            <TextView
+                android:id="@+id/textNombreUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="72dp"
+                android:text="Nombre del usuario"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.505"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textTelefonoUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Telelfono del usuario"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textNombreUsuario" />
+
+            <TextView
+                android:id="@+id/textRol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:text="Rol del usuario"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textNombreUsuario" />
+
+            <Button
+                android:id="@+id/cerrarSesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:backgroundTint="@color/gris"
+                android:gravity="center"
+                android:text="Cerrar sesión"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.53"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textTelefonoUsuario" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginBottom="192dp"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+            app:layout_constraintStart_toStartOf="@+id/constraintLayout">
+
+            <ImageView
+                android:id="@+id/iconImageView"
+                android:layout_width="match_parent"
+                android:src="@drawable/baseline_person_24"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/tvCorreoMecanico"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Correo"
-        android:textColor="@color/azulito"
-        android:textSize="26dp"
-        tools:ignore="NotSibling" />
-
-
-    <TextView
-        android:id="@+id/tvEstadoMecanico"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvCorreoMecanico"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Estado"
-        android:textColor="@color/azulito"
-        android:textSize="26dp"
-        tools:ignore="NotSibling" />
-
-
-    <LinearLayout
-        android:id="@+id/ContenedorCerrarSesion"
+</androidx.constraintlayout.widget.ConstraintLayout>
+    <!--
+    <?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="20dp"
-        android:elevation="25dp"
-        >
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/customButton"
+
+        <LinearLayout
+            android:id="@+id/contenedorClickeable"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:backgroundTint="@color/azul"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:id="@+id/ImagenSesionIniciada"
+                android:src="@drawable/baseline_person_24" />
+
+            <LinearLayout
+                android:id="@+id/contenedorNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+
+                <EditText
+                    android:id="@+id/tvNombreMecanico"
+                    style="@style/EditTextNoBorder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:enabled="false"
+                    android:text="Usuario"
+                    android:textColor="@color/naranjita"
+                    android:textSize="32dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+        <EditText
+            android:id="@+id/tvCorreo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cerrar Sesion"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:layout_gravity="center"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            style="@style/EditTextNoBorder"
+            android:layout_marginEnd="10dp"
+            android:enabled="false"
+            android:layout_marginBottom="10dp"
+            android:text="Correo"
+            android:textColor="@color/azulito"
+            android:textSize="26dp"
+            tools:ignore="NotSibling" />
 
 
+        <EditText
+            android:id="@+id/tvRol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvCorreo"
+            android:layout_centerHorizontal="true"
+            android:enabled="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Rol"
+            android:textColor="@color/azulito"
+            style="@style/EditTextNoBorder"
+            android:textSize="26dp"
+            tools:ignore="NotSibling" />
+
+        <EditText
+            android:id="@+id/tvTel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvCorreo"
+            android:layout_centerHorizontal="true"
+            android:enabled="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Telefono"
+            android:textColor="@color/azulito"
+            style="@style/EditTextNoBorder"
+            android:textSize="26dp"
+            tools:ignore="NotSibling" />
+
+
+        <LinearLayout
+            android:id="@+id/ContenedorCerrarSesion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="25dp"
+            >
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/customButton"
+                android:layout_width="match_parent"
+                android:backgroundTint="@color/naranjita"
+                android:layout_height="wrap_content"
+                android:text="Cerrar Sesion"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
 
     </LinearLayout>
-</LinearLayout>
+    -->
 
 
 
-<!--
+    <!--
 
     <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:id="@+id/contenedorUsuario"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/gris"
-        android:gravity="center"
+        android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/corona"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="140dp"
-            android:src="@drawable/baseline_star_24"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:layout_gravity="center"
-            android:src="@drawable/usuarios" />
-
-        <TextView
-            android:id="@+id/tvNombreMecanico"
+        <LinearLayout
+            android:id="@+id/contenedorClickeable"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/gris"
             android:gravity="center"
-            android:text="Usuario"
-            android:textColor="@color/azulito"
-            android:textSize="36dp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/corona"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="140dp"
+                android:src="@drawable/baseline_star_24"
+                android:visibility="invisible" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+            <ImageView
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:src="@drawable/usuarios" />
+
+            <TextView
+                android:id="@+id/tvNombreMecanico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="Usuario"
+                android:textColor="@color/azulito"
+                android:textSize="36dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
 
 
         <TextView
             android:id="@+id/tvCorreoMecanico"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/contenedorUsuario"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
@@ -195,40 +336,162 @@
             android:id="@+id/ContenedorCerrarSesion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-android:clickable="true"
+            android:clickable="true"
             android:focusable="true"
-            android:layout_below="@id/tvEstadoMecanico"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="20dp"
             android:elevation="25dp"
             >
 
-            <com.google.android.material.textfield.TextInputLayout
-
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/customButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                app:endIconDrawable="@drawable/baseline_output_24"
-                app:endIconMode="custom"
-                tools:ignore="NotSibling">
+                android:text="Cerrar Sesion"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_gravity="center"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/cerrarSesion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:editable="false"
-                    android:text="CERRAR SESIÒN"
-                    android:textColor="#1A237E"
-                    android:textColorHint="@color/azulito"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
 
-            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
-    </RelativeLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mandaraPrueba"
+            android:text="mandar a prueba"
+            android:backgroundTint="@color/black"
+            />
+    </LinearLayout>
 
-</LinearLayout>
--->
+
+     Comentario:
+
+
+        <?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/contenedorUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/gris"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/corona"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="140dp"
+                android:src="@drawable/baseline_star_24"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:src="@drawable/usuarios" />
+
+            <TextView
+                android:id="@+id/tvNombreMecanico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="Usuario"
+                android:textColor="@color/azulito"
+                android:textSize="36dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+
+            <TextView
+                android:id="@+id/tvCorreoMecanico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/contenedorUsuario"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Correo"
+                android:textColor="@color/azulito"
+                android:textSize="26dp"
+                tools:ignore="NotSibling" />
+
+
+            <TextView
+                android:id="@+id/tvEstadoMecanico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvCorreoMecanico"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Estado"
+                android:textColor="@color/azulito"
+                android:textSize="26dp"
+                tools:ignore="NotSibling" />
+
+
+            <LinearLayout
+                android:id="@+id/ContenedorCerrarSesion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+    android:clickable="true"
+                android:focusable="true"
+                android:layout_below="@id/tvEstadoMecanico"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="25dp"
+                >
+
+                <com.google.android.material.textfield.TextInputLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    app:endIconDrawable="@drawable/baseline_output_24"
+                    app:endIconMode="custom"
+                    tools:ignore="NotSibling">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/cerrarSesion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:editable="false"
+                        android:text="CERRAR SESIÒN"
+                        android:textColor="#1A237E"
+                        android:textColorHint="@color/azulito"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    -->

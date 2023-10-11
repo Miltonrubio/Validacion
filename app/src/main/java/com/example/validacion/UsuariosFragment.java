@@ -57,13 +57,16 @@ public class UsuariosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
-        ImageView coronaImg = view.findViewById(R.id.corona);
+        TextView tvNombreMecanico = view.findViewById(R.id.textNombreUsuario);
+        TextView tvCorreoMecanico = view.findViewById(R.id.textTelefonoUsuario);
+        TextView tvEstadoMecanico = view.findViewById(R.id.textRol);
 
-        TextView tvNombreMecanico = view.findViewById(R.id.tvNombreMecanico);
-        TextView tvCorreoMecanico = view.findViewById(R.id.tvCorreoMecanico);
-        TextView tvEstadoMecanico = view.findViewById(R.id.tvEstadoMecanico);
+         Button cerrarSesion= view.findViewById(R.id.cerrarSesion);
 
-        Button customButton= view.findViewById(R.id.customButton);
+        /*
+        Button customButton = view.findViewById(R.id.customButton);
+        Button mandaraPrueba = view.findViewById(R.id.mandaraPrueba);
+*/
 
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
@@ -72,26 +75,38 @@ public class UsuariosFragment extends Fragment {
         String nombre = sharedPreferences.getString("nombre", "");
         String estado = sharedPreferences.getString("estado", "");
         String correo = sharedPreferences.getString("email", "");
+        String telefono = sharedPreferences.getString("telefono", "");
         String permisos = sharedPreferences.getString("permisos", "");
 
-        if (permisos.equals("SUPERADMIN")) {
-            coronaImg.setVisibility(View.VISIBLE);
-        }
 
-        tvEstadoMecanico.setText(estado);
-        tvCorreoMecanico.setText(correo);
-        tvNombreMecanico.setText( idusuario + " - " +nombre);
+        tvEstadoMecanico.setText(permisos);
+        tvCorreoMecanico.setText(telefono);
+        tvNombreMecanico.setText(idusuario + " - " + nombre);
+
+/*
+        mandaraPrueba.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IrASlider();
+            }
+        });
 
 
         customButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cerrarSesion();
-         //  IrASlider();
+                //  IrASlider();
             }
         });
+*/
 
-
+        cerrarSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cerrarSesion();
+            }
+        });
         return view;
     }
 
@@ -108,10 +123,4 @@ public class UsuariosFragment extends Fragment {
         requireActivity().finish();
     }
 
-    private void IrASlider() {
-
-        Intent intent = new Intent(requireContext(), Prueba.class);
-        startActivity(intent);
-        requireActivity().finish();
-    }
 }

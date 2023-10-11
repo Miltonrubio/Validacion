@@ -44,22 +44,20 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.code.gson:gson:2.8.9")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation ("com.google.zxing:core:3.4.1")
-implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.android.support:support-annotations:28.0.0")
 
-    implementation ("com.squareup.okhttp3:okhttp:4.9.1");
-    implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1");
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("com.google.firebase:firebase-messaging:23.2.1")
     implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
     implementation("com.google.android.gms:play-services-maps:18.1.0")
 
-    implementation ("com.google.maps:google-maps-services:0.17.0")
-    implementation ("com.google.maps.android:android-maps-utils:2.2.4")
+    implementation("com.google.maps:google-maps-services:0.17.0")
+    implementation("com.google.maps.android:android-maps-utils:2.2.4")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
@@ -70,7 +68,6 @@ implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
 
-    implementation ("androidx.viewpager2:viewpager2:1.0")
     implementation("com.makeramen:roundedimageview:2.3.0")
 
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
@@ -81,8 +78,14 @@ implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("com.google.guava:guava:32.1.2-jre")
-    implementation ("com.itextpdf:itextg:5.5.10")
 
+    implementation("com.itextpdf:itextg:5.5.10")
+
+
+    implementation("androidx.appcompat:appcompat:1.6.1")
+
+    implementation("androidx.viewpager2:viewpager2:1.0")
+    implementation("com.squareup.picasso:picasso:2.8")
 
 }
 

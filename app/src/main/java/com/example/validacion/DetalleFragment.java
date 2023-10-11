@@ -1,34 +1,68 @@
 package com.example.validacion;
 
-import android.Manifest;
 
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
-
-import static java.security.AccessController.checkPermission;
-
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BadPdfFormatException;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfReader;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -40,8 +74,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,32 +85,37 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
-import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfDocument;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.DateFormatSymbols;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,14 +127,17 @@ import java.util.Map;
 
 public class DetalleFragment extends Fragment {
 
-    private static final int REQUEST_CODE_PERMISSION = 123;
     private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
 
     List<SlideItem> slideItems = new ArrayList<>();
+    List<SlideItem> slideItemsPrueba = new ArrayList<>();
     List<Mecanicos> listaMecanicos = new ArrayList<>();
     List<Refacciones> listaRefacciones = new ArrayList<>();
 
     List<ActividadadesUnidad> listaActividadesUnidad = new ArrayList<>();
+
+
+    private File pdfFileImagenes;
 
 
     ViewPager2 viewPager2;
@@ -108,6 +148,8 @@ public class DetalleFragment extends Fragment {
 
     String marca, modelo, fecha, hora, status, motivo, idventa, telefonousuario, emailusuario, nombreusuario;
 
+
+    Context context;
 
     public DetalleFragment() {
         // Required empty public constructor
@@ -135,6 +177,14 @@ public class DetalleFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detalle, container, false);
 
 
+        slideItemsPrueba.clear();
+        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/010517b32ac5b640cd134d6c4503ff27.jpg", "1"));
+        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/010aca7e324f9966ab767c0128d63a96.jpg", "1"));
+        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/bf8a73d0b93408399677aac957b77ada.jpg", "1"));
+        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/6a59df1b0be0b163a706ee0b752cc78d.jpg", "1"));
+
+
+        context = requireContext();
         FloatingActionButton btnImprimirPdf = rootView.findViewById(R.id.btnImprimirPdf);
         TextView textMarca = rootView.findViewById(R.id.tv1);
         TextView textmotivo = rootView.findViewById(R.id.tv3);
@@ -247,11 +297,17 @@ public class DetalleFragment extends Fragment {
         btnImprimirPdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 if ((listaMecanicos.isEmpty() || listaMecanicos.equals("null") || listaMecanicos.equals(null)) && (listaRefacciones.isEmpty() || listaRefacciones.equals("null") || listaRefacciones.equals(null)) && (listaActividadesUnidad.isEmpty() || listaActividadesUnidad.equals("null") || listaActividadesUnidad.equals(null))) {
                     Toast.makeText(requireContext(), "No hay suficientes datos para generar un reporte", Toast.LENGTH_SHORT).show();
                 } else {
-                    generarPDF(listaMecanicos, listaRefacciones, listaActividadesUnidad);
+                    //  generarPDF(listaMecanicos, listaRefacciones, listaActividadesUnidad);
+                    generarPDFChecks();
+
                 }
+
+
             }
         });
 
@@ -259,20 +315,297 @@ public class DetalleFragment extends Fragment {
         return rootView;
     }
 
+
+    private void generarPDFChecks() {
+        Document document = new Document();
+
+        try {
+            File pdfFile = new File(requireContext().getExternalFilesDir(null), "mi_archivoCheck.pdf");
+            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+            document.open();
+            Drawable drawable = getResources().getDrawable(R.drawable.logo);
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+            File tempFile = new File(requireContext().getCacheDir(), "temp_image.png");
+            try {
+                FileOutputStream fos = new FileOutputStream(tempFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 80, fos);
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Image image = Image.getInstance(tempFile.getAbsolutePath());
+
+            image.setAlignment(Element.ALIGN_LEFT);
+            image.scaleAbsolute(45, 45);
+
+            Paragraph paragraphNombre = new Paragraph("SERVICIO TECNICO AUTOMOTRIZ GEORGIO S.A DE C.V", new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD));
+            Paragraph paragraphCalle = new Paragraph("CALLE 17 SUR #704", new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD));
+            Paragraph paragraphColonia = new Paragraph("COL. LA PURISIMA, CP:75784", new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD));
+            Paragraph paragraphEstado = new Paragraph("TEHUACAN PUEBLA", new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD));
+
+            paragraphNombre.setAlignment(Element.ALIGN_CENTER);
+            paragraphCalle.setAlignment(Element.ALIGN_CENTER);
+            paragraphColonia.setAlignment(Element.ALIGN_CENTER);
+            paragraphEstado.setAlignment(Element.ALIGN_CENTER);
+
+            document.add(image);
+            document.add(paragraphNombre);
+            document.add(paragraphCalle);
+            document.add(paragraphColonia);
+            document.add(paragraphEstado);
+            tempFile.delete();
+
+            document.add(Chunk.NEWLINE);
+
+            PdfPTable table = new PdfPTable(2);
+            float[] columnWidths = {2f, 2f};
+            table.setWidths(columnWidths);
+
+            PdfPCell headerCell1 = new PdfPCell(new Phrase("Datos de cliente", new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.WHITE)));
+            PdfPCell headerCell2 = new PdfPCell(new Phrase("Orden de trabajo", new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.WHITE)));
+
+            headerCell1.setBackgroundColor(BaseColor.BLACK);
+            headerCell2.setBackgroundColor(BaseColor.BLACK);
+            headerCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerCell1.setBorder(Rectangle.NO_BORDER);
+            headerCell2.setBorder(Rectangle.NO_BORDER);
+
+            table.addCell(headerCell1);
+            table.addCell(headerCell2);
+
+            PdfPCell cell1 = new PdfPCell(new Phrase("Nombre del cliente: " + nombreusuario + "\nTelefono: " + telefonousuario + "\nCorreo: " + emailusuario));
+            PdfPCell cell2 = new PdfPCell(new Phrase("Orden de trabajo: #12345"));
+
+            cell1.setBackgroundColor(BaseColor.WHITE);
+            cell2.setBackgroundColor(BaseColor.WHITE);
+            cell1.setBorder(Rectangle.NO_BORDER);
+            cell2.setBorder(Rectangle.NO_BORDER);
+            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.addCell(cell1);
+            table.addCell(cell2);
+            document.add(table);
+
+
+            //Segunda tabla
+
+            document.add(Chunk.NEWLINE);
+
+
+            float cellPadding = 10f;
+            float cellPaddingUser = 5f;
+
+            PdfPTable userInfoTable = new PdfPTable(5);
+            userInfoTable.setWidthPercentage(90);
+            BaseColor backgroundColor = new BaseColor(0, 0, 0);
+
+            PdfPCell headerCellInfoUnidad = new PdfPCell(new Paragraph("Información de la unidad"));
+            headerCellInfoUnidad.setBackgroundColor(backgroundColor);
+            headerCellInfoUnidad.setPadding(cellPaddingUser);
+            headerCellInfoUnidad.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerCellInfoUnidad.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            headerCellInfoUnidad.setColspan(5);
+            headerCellInfoUnidad.setPaddingBottom(20);
+            headerCellInfoUnidad.setPaddingTop(20);
+            headerCellInfoUnidad.setPaddingLeft(20);
+            headerCellInfoUnidad.setPaddingRight(20);
+            headerCellInfoUnidad.setBackgroundColor(BaseColor.BLACK);
+            headerCellInfoUnidad.setBorderColor(BaseColor.WHITE);
+            headerCellInfoUnidad.setBorder(Rectangle.NO_BORDER);
+            Font whiteFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.WHITE);
+            Paragraph headerParagraph = new Paragraph("Información de la unidad", whiteFont);
+            headerParagraph.setAlignment(Element.ALIGN_CENTER);
+            headerCellInfoUnidad.setPhrase(headerParagraph);
+
+            userInfoTable.addCell(headerCellInfoUnidad);
+
+            userInfoTable.addCell("MARCA");
+            PdfPCell userIdCell = new PdfPCell(new Paragraph("marca"));
+            userIdCell.setPadding(cellPaddingUser);
+            userInfoTable.addCell(userIdCell);
+
+            userInfoTable.addCell("MODELO");
+            PdfPCell permissionsCell = new PdfPCell(new Paragraph("modelo"));
+            permissionsCell.setPadding(cellPaddingUser);
+            userInfoTable.addCell(permissionsCell);
+
+            userInfoTable.addCell("AÑO:");
+            PdfPCell nameCell = new PdfPCell(new Paragraph("2000"));
+            nameCell.setPadding(cellPaddingUser);
+            userInfoTable.addCell(nameCell);
+
+            userInfoTable.addCell("PLACAS:");
+            PdfPCell emailCell = new PdfPCell(new Paragraph("placas"));
+            emailCell.setPadding(cellPaddingUser);
+            userInfoTable.addCell(emailCell);
+
+            userInfoTable.addCell("VIN:");
+            PdfPCell phoneCell = new PdfPCell(new Paragraph("vin"));
+            phoneCell.setPadding(cellPaddingUser);
+            userInfoTable.addCell(phoneCell);
+
+
+            document.add(userInfoTable);
+
+
+
+
+            document.close();
+            Uri pdfUri = FileProvider.getUriForFile(requireContext(), "com.example.validacion.fileprovider", pdfFile);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("application/pdf");
+            intent.putExtra(Intent.EXTRA_STREAM, pdfUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(intent, "Enviar PDF usando:"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static PdfPCell createGrayCell(String text, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBorder(Rectangle.NO_BORDER);
+        return cell;
+    }
     class PageEventHandler extends PdfPageEventHelper {
         @Override
         public void onStartPage(PdfWriter writer, Document document) {
             document.newPage();
         }
+
     }
 
+
+    private void generatePdfFromUrls(List<SlideItem> slideImagenes, File pdfDetalles) {
+        PdfDocument pdfDocument = new PdfDocument();
+
+        for (int i = 0; i < slideImagenes.size(); i++) {
+            final int position = i;
+            SlideItem slideItem = slideImagenes.get(i);
+            String imageUrl = slideItem.getImage();
+
+            Picasso.get().load(imageUrl).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(bitmap.getWidth(), bitmap.getHeight(), position + 2).create();
+                    PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+
+                    Canvas canvas = page.getCanvas();
+                    Paint paint = new Paint();
+                    paint.setColor(Color.BLACK);
+                    canvas.drawBitmap(bitmap, 0, 0, paint);
+
+                    pdfDocument.finishPage(page);
+
+                    if (position == slideImagenes.size() - 1) {
+                        pdfFileImagenes = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "images_to_pdf.pdf");
+                        try {
+                            pdfDocument.writeTo(new FileOutputStream(pdfFileImagenes));
+                            pdfDocument.close();
+
+                            if (pdfFileImagenes != null && pdfFileImagenes.exists()) {
+                                //compartirPDFDeImagnes();
+                                // PDFUtils.combinarYCompartirPDFs(context, pdfDetalles, pdfFileImagenes);
+
+
+                                combinarPDFs(pdfDetalles, pdfFileImagenes, context);
+
+                            } else {
+                                Toast.makeText(requireContext(), "PDF file not found.", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                    Toast.makeText(requireContext(), "No se pudo cargar la imagen desde el url ", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            });
+        }
+    }
+
+    public static void combinarPDFs(File archivoPDF1, File archivoPDF2, Context context) {
+        try {
+            Document documento = new Document();
+            File archivoResultado = new File(context.getCacheDir(), "resultado.pdf");
+
+            FileOutputStream fos = new FileOutputStream(archivoResultado);
+            PdfCopy copiaPDF = new PdfCopy(documento, fos);
+            documento.open();
+
+            // Agregar páginas del primer archivo PDF
+            PdfReader lectorPDF1 = new PdfReader(new FileInputStream(archivoPDF1));
+            int numPaginas1 = lectorPDF1.getNumberOfPages();
+            for (int i = 1; i <= numPaginas1; i++) {
+                copiaPDF.addPage(copiaPDF.getImportedPage(lectorPDF1, i));
+            }
+
+            // Agregar páginas del segundo archivo PDF
+            PdfReader lectorPDF2 = new PdfReader(new FileInputStream(archivoPDF2));
+            int numPaginas2 = lectorPDF2.getNumberOfPages();
+            for (int i = 1; i <= numPaginas2; i++) {
+                copiaPDF.addPage(copiaPDF.getImportedPage(lectorPDF2, i));
+            }
+
+            documento.close();
+            fos.close();
+            lectorPDF1.close();
+            lectorPDF2.close();
+
+            // Generar URI para el archivo resultante
+            String authority = "com.example.validacion.fileprovider"; // Reemplaza con tu autoridad
+            Uri pdfUri = FileProvider.getUriForFile(context, authority, archivoResultado);
+
+            // Compartir el PDF resultante
+            Intent compartirIntent = new Intent();
+            compartirIntent.setAction(Intent.ACTION_SEND);
+            compartirIntent.setType("application/pdf");
+            compartirIntent.putExtra(Intent.EXTRA_STREAM, pdfUri);
+            compartirIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            context.startActivity(Intent.createChooser(compartirIntent, "Compartir PDF"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BadPdfFormatException e) {
+            throw new RuntimeException(e);
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private void compartirPDFDeImagnes() {
+
+        Uri pdfUri = FileProvider.getUriForFile(context,
+                "com.example.validacion.fileprovider", pdfFileImagenes);
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("application/pdf");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, pdfUri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(shareIntent, "Share PDF"));
+    }
+
+    File pdfFile;
 
     private void generarPDF(List<Mecanicos> listaMec, List<Refacciones> listRef, List<ActividadadesUnidad> listaActividade) {
         Document document = new Document();
 
         try {
 
-            File pdfFile = new File(requireContext().getExternalCacheDir() + File.separator + "Servicio Automotriz para " + marca + " " + modelo + ".pdf");
+            pdfFile = new File(requireContext().getExternalCacheDir() + File.separator + "Servicio Automotriz para " + marca + " " + modelo + ".pdf");
             FileOutputStream fileOutputStream = new FileOutputStream(pdfFile);
 
             PdfWriter pdfWriter = PdfWriter.getInstance(document, fileOutputStream);
@@ -344,64 +677,60 @@ public class DetalleFragment extends Fragment {
             document.add(spaceBelowTitle);
 
 
-                PdfPTable table = new PdfPTable(3);
-                table.setWidthPercentage(100);
+            Paragraph motivodelingresovehiculo = new Paragraph("MOTIVO DEL INGRESO: " + motivo);
+            document.add(new Paragraph(" "));
+            document.add(motivodelingresovehiculo);
+            document.add(spaceBelowTitle);
 
-                PdfPCell headerCell1 = new PdfPCell(new Paragraph("Nombre del mecanico"));
-                headerCell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                headerCell1.setPadding(cellPadding);
-                table.addCell(headerCell1);
 
-                PdfPCell headerCell2 = new PdfPCell(new Paragraph("Descripción del servicio realizado"));
-                headerCell2.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                headerCell2.setPadding(cellPadding);
-                table.addCell(headerCell2);
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
 
-                PdfPCell headerCell3 = new PdfPCell(new Paragraph("Foto del mecánico"));
-                headerCell3.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                headerCell3.setPadding(cellPadding);
-                table.addCell(headerCell3);
+            PdfPCell headerCell1 = new PdfPCell(new Paragraph("Nombre del mecanico"));
+            headerCell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            headerCell1.setPadding(cellPadding);
+            table.addCell(headerCell1);
 
-                Map<String, String> idPersonalToIdUsuarioMap = new HashMap<>();
+            PdfPCell headerCell2 = new PdfPCell(new Paragraph("Descripción del servicio realizado"));
+            headerCell2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            headerCell2.setPadding(cellPadding);
+            table.addCell(headerCell2);
 
-                for (Mecanicos mecanicos : listaMec) {
-                    idPersonalToIdUsuarioMap.put(mecanicos.getIdusuario(), mecanicos.getIdusuario());
-                }
+            Map<String, String> idPersonalToIdUsuarioMap = new HashMap<>();
 
-                for (Mecanicos mecanicos : listaMec) {
-                    String nombre = mecanicos.getNombre();
-                    String fotoPath = mecanicos.getFoto();
+            for (Mecanicos mecanicos : listaMec) {
+                idPersonalToIdUsuarioMap.put(mecanicos.getIdusuario(), mecanicos.getIdusuario());
+            }
 
-                    PdfPCell cell1 = new PdfPCell(new Paragraph(nombre));
-                    cell1.setPadding(cellPadding);
-                    table.addCell(cell1);
+            for (Mecanicos mecanicos : listaMec) {
+                String nombre = mecanicos.getNombre();
 
-                    StringBuilder cell2Content = new StringBuilder();
+                PdfPCell cell1 = new PdfPCell(new Paragraph(nombre));
+                cell1.setPadding(cellPadding);
+                table.addCell(cell1);
 
-                    for (ActividadadesUnidad actividad : listaActividadesUnidad) {
-                        String idPersonalActividad = actividad.getIdpersonal();
-                        String idUsuarioMecanico = idPersonalToIdUsuarioMap.get(idPersonalActividad);
+                StringBuilder cell2Content = new StringBuilder();
 
-                        if (idUsuarioMecanico != null && idUsuarioMecanico.equals(mecanicos.getIdusuario())) {
-                            cell2Content.append("Reparacion: ").append(actividad.getObservaciones()).append("\n");
-                            cell2Content.append("Hora de Inicio: ").append(actividad.getHorainicio()).append("\n");
-                            cell2Content.append("Hora de Fin: ").append(actividad.getHorafin()).append("\n");
-                            cell2Content.append("\n\n");
-                        }
+                for (ActividadadesUnidad actividad : listaActividadesUnidad) {
+                    String idPersonalActividad = actividad.getIdpersonal();
+                    String idUsuarioMecanico = idPersonalToIdUsuarioMap.get(idPersonalActividad);
+
+                    if (idUsuarioMecanico != null && idUsuarioMecanico.equals(mecanicos.getIdusuario())) {
+                        cell2Content.append("Reparacion: ").append(actividad.getObservaciones()).append("\n");
+                        cell2Content.append("Hora de Inicio: ").append(actividad.getHorainicio()).append("\n");
+                        cell2Content.append("Hora de Fin: ").append(actividad.getHorafin()).append("\n");
+                        cell2Content.append("\n\n");
                     }
-
-                    PdfPCell cell2 = new PdfPCell(new Paragraph(cell2Content.toString()));
-                    cell2.setPadding(cellPadding);
-                    table.addCell(cell2);
-
-                    PdfPCell cell3 = new PdfPCell(new Paragraph(fotoPath));
-                    cell3.setPadding(cellPadding);
-                    table.addCell(cell3);
                 }
 
-                document.add(table);
-                document.add(new Paragraph(" "));
+                PdfPCell cell2 = new PdfPCell(new Paragraph(cell2Content.toString()));
+                cell2.setPadding(cellPadding);
+                table.addCell(cell2);
 
+            }
+
+            document.add(table);
+            document.add(new Paragraph(" "));
 
 
             if (!listRef.isEmpty()) {
@@ -451,7 +780,9 @@ public class DetalleFragment extends Fragment {
 
             document.close();
 
-            compartirPDF(pdfFile);
+            // compartirPDF(pdfFile);
+
+            generatePdfFromUrls(slideItemsPrueba, pdfFile);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -474,6 +805,7 @@ public class DetalleFragment extends Fragment {
 
         startActivity(Intent.createChooser(intent, "Enviar PDF usando:"));
     }
+
 
     private void CargarImagenes(String idventa) {
         StringRequest stringRequest3 = new StringRequest(Request.Method.POST, urlApi,
