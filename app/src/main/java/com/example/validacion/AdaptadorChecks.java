@@ -37,6 +37,9 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
     private List<Cheks> listaChecks;
 
     public int valoresVaciosChecks = 0;
+    String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
+
+
 
 
     public AdaptadorChecks(List<Cheks> listaChecks) {
@@ -75,19 +78,27 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
         holder.textPendiente.setVisibility(View.INVISIBLE);
         if ("R".equals(valorCheck)) {
             holder.regularRadioButton.setChecked(true);
-
+            holder.naRadioButton.setChecked(false);
+            holder.maloRadioButton.setChecked(false);
+            holder.buenoRadioButton.setChecked(false);
             // valoresVaciosChecks--;
         } else if ("B".equals(valorCheck)) {
             holder.buenoRadioButton.setChecked(true);
-
+            holder.regularRadioButton.setChecked(false);
+            holder.naRadioButton.setChecked(false);
+            holder.maloRadioButton.setChecked(false);
             //    valoresVaciosChecks--;
         } else if ("M".equals(valorCheck)) {
             holder.maloRadioButton.setChecked(true);
-
+            holder.regularRadioButton.setChecked(false);
+            holder.naRadioButton.setChecked(false);
+            holder.buenoRadioButton.setChecked(false);
             //   valoresVaciosChecks--;
         } else if ("NA".equals(valorCheck)) {
             holder.naRadioButton.setChecked(true);
-
+            holder.regularRadioButton.setChecked(false);
+            holder.maloRadioButton.setChecked(false);
+            holder.buenoRadioButton.setChecked(false);
             //  valoresVaciosChecks--;
         } else {
 
@@ -169,10 +180,7 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
 
 
     private void ActualizarChecks(String valorCheck, String idcheck, Context context, String descripcion, int position) {
-        String urlApi = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlApi,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

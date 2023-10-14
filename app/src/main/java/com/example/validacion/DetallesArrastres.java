@@ -67,21 +67,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
-
+public class DetallesArrastres extends Fragment /* implements OnMapReadyCallback */ {
+/*
     private MapView mapView;
     private GoogleMap googleMap;
     private Polyline selectedPolyline;
 
+ */
+
     private List<Polyline> routePolylines = new ArrayList<>();
     private ArrayList<MarkerInfo> markerList = new ArrayList<>();
 
+    /*
 
     private double LATITUD;
     private double LONGITUD;
 
     private double DEST_LATITUDE;
     private double DEST_LONGITUDE;
+
+     */
 
     TextView tvstatus2, tvClienteArrastre, tvFechaInicioArrastre, tvFechaFinalArrastre, TVTotalKilometros, TVPrecio, tvTelefonoCliente, tvMoyivoCancelacion;
 
@@ -131,7 +136,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         LayouttodasLasRutas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawRoute();
+              //  drawRoute();
             }
         });
 
@@ -142,7 +147,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             String observaciones = bundle.getString("observaciones", "");
             String id = bundle.getString("id", "");
             String telefono = bundle.getString("telefono", "");
-            CargarRutas(id);
+      //      CargarRutas(id);
 
             if(telefono.equals("")|| telefono.equals("null")|| telefono.equals(null) || telefono.isEmpty()){
                 tvTelefonoCliente.setText("Telefono no disponible");
@@ -160,7 +165,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
             BotonFinalizarArrastre.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FinalizarArrastre(id);
+             //       FinalizarArrastre(id);
                 }
             });
 
@@ -184,11 +189,11 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
                 LayoutFinalizar.setVisibility(View.GONE);
                 tvstatus2.setTextColor(ContextCompat.getColor(requireContext(), R.color.rojo));
             }
-
+/*
             CargarArrastre(id, observaciones, estatus);
             mapView = rootView.findViewById(R.id.mapViewArrastres);
             mapView.onCreate(savedInstanceState);
-            mapView.getMapAsync(this);
+            mapView.getMapAsync(this); */
         }
         return rootView;
     }
@@ -267,7 +272,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
 
 
     }
-
+/*
     private void CargarArrastre(String id_arrastre, String observaciones, String estatus) {
         StringRequest stringRequest3 = new StringRequest(Request.Method.POST, urlApi,
                 new Response.Listener<String>() {
@@ -698,5 +703,7 @@ public class DetallesArrastres extends Fragment implements OnMapReadyCallback {
         }
     }
 
+
+ */
 
 }

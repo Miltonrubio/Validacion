@@ -73,26 +73,13 @@ import org.json.JSONObject;
 public class Prueba extends AppCompatActivity {
 
     private Handler sliderHandler = new Handler();
-
-    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
-
-    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    String url;
 
     ViewPager2 viewPager2;
-    private CameraManager cameraManager;
     Button btnGuardarFoto, fotoDesdeGaleria;
     String rutaImagen;
     String idSerVenta;
     Context context;
-
-
-    //Para api
-    Bitmap bitmapDesdeGaleria;
-    int PICK_IMAGE_REQUEST = 2;
-    String imageKey = "fotoImagen";
-
-    String nombreImagenKey = "nombreFoto";
-
 
     ImageView imagenDesdeGaleriaIM;
 
@@ -101,7 +88,8 @@ public class Prueba extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        context = this;
+        context= this;
+        url = context.getResources().getString(R.string.ApiBack);
         setContentView(R.layout.activity_prueba);
         btnGuardarFoto = findViewById(R.id.guardarFoto);
         TextView txtId = findViewById(R.id.txtId);
@@ -120,11 +108,11 @@ public class Prueba extends AppCompatActivity {
 
         String permisosUsuario = sharedPreferences.getString("permisos", "");
 
-if(permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("RECEPCIONISTA")){
-    fotoDesdeGaleria.setVisibility(View.VISIBLE);
-}else {
-    fotoDesdeGaleria.setVisibility(View.GONE);
-}
+        if (permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("RECEPCIONISTA")) {
+            fotoDesdeGaleria.setVisibility(View.VISIBLE);
+        } else {
+            fotoDesdeGaleria.setVisibility(View.GONE);
+        }
 
         fotoDesdeGaleria.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +182,6 @@ if(permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("RECEPCIONISTA
     }
 
 
-
     private void MandarFoto2(Bitmap imageBitmap) {
         new SendImageTask().execute(imageBitmap);
     }
@@ -240,7 +227,7 @@ if(permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("RECEPCIONISTA
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("opcion", "9")
-                    .addFormDataPart("idventa",idSerVenta)
+                    .addFormDataPart("idventa", idSerVenta)
                     .addFormDataPart("image", nombreArchivo,
                             RequestBody.create(MediaType.parse("image/jpeg"), imageFile))
                     .build();
@@ -266,17 +253,16 @@ if(permisosUsuario.equals("SUPERADMIN") || permisosUsuario.equals("RECEPCIONISTA
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Toast.makeText(Prueba.this, "Imagen "+ idSerVenta +" Enviada al servidor", Toast.LENGTH_SHORT).show();
-            Intent intent= new Intent(Prueba.this, Activity_Binding.class);
+            Toast.makeText(Prueba.this, "Imagen " + idSerVenta + " Enviada al servidor", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Prueba.this, Activity_Binding.class);
             startActivity(intent);
         }
     }
 
 
-
     private void CargarImagenes(String idventa) {
 
-        StringRequest stringRequest3 = new StringRequest(com.android.volley.Request.Method.POST, urlApi,
+        StringRequest stringRequest3 = new StringRequest(com.android.volley.Request.Method.POST, url,
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

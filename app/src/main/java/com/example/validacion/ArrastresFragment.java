@@ -1,6 +1,7 @@
 package com.example.validacion;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -41,7 +42,8 @@ import java.util.Map;
 
 public class ArrastresFragment extends Fragment {
 
-    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    String url;
+    Context context;
     private RecyclerView recyclerView;
     private AdaptadorArrastres adapter2;
     private List<JSONObject> dataList = new ArrayList<>();
@@ -52,6 +54,11 @@ public class ArrastresFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_arrastres, container, false);
+
+        context= requireContext();
+        url = context.getResources().getString(R.string.ApiBack);
+
+
         return view;
     }
 
@@ -77,7 +84,7 @@ public class ArrastresFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         dataList = new ArrayList<>();
-        adapter2 = new AdaptadorArrastres(dataList, requireContext());
+        adapter2 = new AdaptadorArrastres(dataList, context);
         recyclerView.setAdapter(adapter2);
 
         editTextBusqueda = view.findViewById(R.id.searchEditTextArrastres);
@@ -144,7 +151,7 @@ public class ArrastresFragment extends Fragment {
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 }

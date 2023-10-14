@@ -89,8 +89,6 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                         LinearLayout LayoutCancelar= customView.findViewById(R.id.LayoutCancelar);
 
 
-
-
                         if(estatus.equalsIgnoreCase("Pendiente")){
                             if (actividadIniciada) {
                                 LayoutIniciar.setVisibility(View.GONE); // Si hay una actividad iniciada, oculta el botón "Iniciar".

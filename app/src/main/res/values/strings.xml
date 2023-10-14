@@ -5,5 +5,5 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="ApiBack">http://192.168.1.252/georgioapi/Controllers/Apiback.php</string>
+    <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php</string>
 </resources>

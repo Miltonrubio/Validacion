@@ -40,11 +40,11 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
 
     private List<JSONObject> dataList = new ArrayList<>();
 
-
+Context context;
     private List<JSONObject> datosFiltrados = new ArrayList<>();
     private AdaptadorActividades adaptadorActividades;
     RecyclerView recyclerViewActividades;
-    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    String url;
 
     EditText searchEditTextActividades;
     String idusuario;
@@ -74,6 +74,8 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
 
         View view = inflater.inflate(R.layout.fragment_actividades, container, false);
 
+        url = context.getResources().getString(R.string.ApiBack);
+        context= requireContext();
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
         idusuario = sharedPreferences.getString("idusuario", "");
@@ -85,7 +87,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         recyclerViewActividades.setLayoutManager(new LinearLayoutManager(getContext()));
 
         if (isAdded()) {
-            adaptadorActividades = new AdaptadorActividades(dataList, requireContext(), this);
+            adaptadorActividades = new AdaptadorActividades(dataList, context, this);
         }
         recyclerViewActividades.setAdapter(adaptadorActividades);
 
@@ -150,7 +152,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 
@@ -169,18 +171,18 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
                 TomarActividadesDesdeApi(idusuario);
                 if (response.equals("\"esta activo\"")) {
 
-                    Toast.makeText(requireContext(), "Ya tienes una actividad iniciada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Ya tienes una actividad iniciada", Toast.LENGTH_SHORT).show();
 
                 } else {
 
-                    Toast.makeText(requireContext(), "Se actualizo la actividad", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Se actualizo la actividad", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(requireContext(), "Error al actualizar el estado de la actividad", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Error al actualizar el estado de la actividad", Toast.LENGTH_SHORT).show();
             }
         }) {
             protected Map<String, String> getParams() {
@@ -193,7 +195,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 

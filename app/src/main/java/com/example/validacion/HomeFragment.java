@@ -56,7 +56,8 @@ public class HomeFragment extends Fragment {
     private String selectedIDCliente="1";
     ArrayList<String> opciones = new ArrayList<>();
 
-    String url = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    String url;
+    Context context;
     JSONObject jsonObjectUnidades;
     private ArrayAdapter<String> spinnerAdapterUnidades;
     private ArrayList<String> nombresClientes = new ArrayList<>();
@@ -77,6 +78,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        context= requireContext();
+        url = context.getResources().getString(R.string.ApiBack);
+
         return view;
     }
 
@@ -111,7 +115,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         dataList = new ArrayList<>();
-        adapter2 = new Adapt2(dataList, requireContext());
+        adapter2 = new Adapt2(dataList, context);
         recyclerView.setAdapter(adapter2);
 
         editTextBusqueda = view.findViewById(R.id.searchEditText);
@@ -167,13 +171,13 @@ public class HomeFragment extends Fragment {
                 final EditText editTextmotivo = dialogView.findViewById(R.id.editTextmotivo);
 
 
-                ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, opciones);
+                ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, opciones);
                 adaptadorGas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 SpinnerGas.setAdapter(adaptadorGas);
                 SpinnerGas.setSelection(0);
 
 
-                ArrayAdapter<String> spinnerAdapterClientes = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, nombresClientes);
+                ArrayAdapter<String> spinnerAdapterClientes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, nombresClientes);
                 spinnerAdapterClientes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerClientes.setAdapter(spinnerAdapterClientes);
                 String primerCliente = nombresClientes.get(0);
@@ -182,7 +186,7 @@ public class HomeFragment extends Fragment {
 
 
                 unidadesVehiculos.add(0, "Selecciona la unidad");
-                spinnerAdapterUnidades = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, unidadesVehiculos);
+                spinnerAdapterUnidades = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, unidadesVehiculos);
                 spinnerAdapterUnidades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 SpinnerUnidades.setAdapter(spinnerAdapterUnidades);
                 SpinnerUnidades.setSelection(0);
@@ -262,7 +266,7 @@ public class HomeFragment extends Fragment {
 
                                         if (km.isEmpty() || motivoIngreso.isEmpty()) {
                                             if (isAdded()) {
-                                                Toast.makeText(requireContext(), "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
                                             }
 
                                             return;
@@ -361,7 +365,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 
@@ -399,7 +403,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 
@@ -432,7 +436,7 @@ public class HomeFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Hubo un error", Toast.LENGTH_SHORT).show();
                 }
             }
         }) {
@@ -443,7 +447,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
     private String obtenerIDDesdeNombre(String nombreSeleccionado) {
@@ -490,7 +494,7 @@ public class HomeFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Hubo un error", Toast.LENGTH_SHORT).show();
                 }
             }
         }) {
@@ -502,7 +506,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 
@@ -526,7 +530,7 @@ public class HomeFragment extends Fragment {
             public void onResponse(String response) {
                 VisualizarServicios();
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Servicio Agregado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Servicio Agregado", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -535,7 +539,7 @@ public class HomeFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Hubo un error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Hubo un error", Toast.LENGTH_SHORT).show();
                 }
             }
         }) {
@@ -557,7 +561,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        Volley.newRequestQueue(requireContext()).add(postrequest);
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 }

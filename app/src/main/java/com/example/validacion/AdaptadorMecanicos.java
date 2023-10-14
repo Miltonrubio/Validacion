@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.ObjectKey;
 
 import java.util.List;
 
@@ -55,17 +57,16 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
         }
 
 
-        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/mecanico/" + fotoMecanico;
-        if (!TextUtils.isEmpty(fotoMecanico)) {
-            Glide.with(holder.itemView.getContext())
-                    .load(imageUrl)
-                    .error(R.drawable.mecanico)
-                    .into(holder.imageViewMecanico);
-        } else {
-            Glide.with(holder.itemView.getContext())
-                    .load(R.drawable.mecanico)
-                    .into(holder.imageViewMecanico);
-        }
+        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + fotoMecanico;
+
+
+        Glide.with(holder.itemView.getContext())
+                .load(imageUrl)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.mecanico)
+                .error(R.drawable.mecanico)
+                .into(holder.imageViewMecanico);
 
 
     }

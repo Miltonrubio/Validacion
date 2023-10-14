@@ -20,15 +20,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.style.BackgroundColorSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.annotations.concurrent.Background;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BadPdfFormatException;
@@ -127,12 +130,13 @@ import java.util.Map;
 
 public class DetalleFragment extends Fragment {
 
-    private String urlApi = "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    private String url;
 
     List<SlideItem> slideItems = new ArrayList<>();
     List<SlideItem> slideItemsPrueba = new ArrayList<>();
     List<Mecanicos> listaMecanicos = new ArrayList<>();
     List<Refacciones> listaRefacciones = new ArrayList<>();
+
 
     List<ActividadadesUnidad> listaActividadesUnidad = new ArrayList<>();
 
@@ -148,6 +152,7 @@ public class DetalleFragment extends Fragment {
 
     String marca, modelo, fecha, hora, status, motivo, idventa, telefonousuario, emailusuario, nombreusuario;
 
+    String motorI, vinI, placasI, domicilio, gasolina, anioI, kilometraje;
 
     Context context;
 
@@ -183,8 +188,9 @@ public class DetalleFragment extends Fragment {
         slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/bf8a73d0b93408399677aac957b77ada.jpg", "1"));
         slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/6a59df1b0be0b163a706ee0b752cc78d.jpg", "1"));
 
-
         context = requireContext();
+        url = context.getResources().getString(R.string.ApiBack);
+
         FloatingActionButton btnImprimirPdf = rootView.findViewById(R.id.btnImprimirPdf);
         TextView textMarca = rootView.findViewById(R.id.tv1);
         TextView textmotivo = rootView.findViewById(R.id.tv3);
@@ -206,15 +212,23 @@ public class DetalleFragment extends Fragment {
             status = bundle.getString("status", "");
             motivo = bundle.getString("motivo", "");
             idventa = bundle.getString("idventa", "");
+            motorI = bundle.getString("motorI", "");
+            vinI = bundle.getString("vinI", "");
+            placasI = bundle.getString("placasI", "");
+            gasolina = bundle.getString("gasolina", "");
+            anioI = bundle.getString("anioI", "");
+            kilometraje = bundle.getString("kilometraje", "");
 
             nombreusuario = bundle.getString("nombre", "");
             telefonousuario = bundle.getString("telefono", "");
             emailusuario = bundle.getString("email", "");
+            domicilio = bundle.getString("domicilio", "");
 
             CargarRefacciones(idventa);
             CargarMecanicos(idventa);
             CargarImagenes(idventa);
             CargarBitacora(idventa);
+            //   CargarChecks(idventa);
 
             textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
             textmotivo.setText(motivo);
@@ -300,11 +314,10 @@ public class DetalleFragment extends Fragment {
 
 
                 if ((listaMecanicos.isEmpty() || listaMecanicos.equals("null") || listaMecanicos.equals(null)) && (listaRefacciones.isEmpty() || listaRefacciones.equals("null") || listaRefacciones.equals(null)) && (listaActividadesUnidad.isEmpty() || listaActividadesUnidad.equals("null") || listaActividadesUnidad.equals(null))) {
-                    Toast.makeText(requireContext(), "No hay suficientes datos para generar un reporte", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "No hay suficientes datos para generar un reporte", Toast.LENGTH_SHORT).show();
                 } else {
-                    //  generarPDF(listaMecanicos, listaRefacciones, listaActividadesUnidad);
-                    generarPDFChecks();
-
+                    //  generarPDFChecks(listaChecks);
+                    generarPDF(listaMecanicos, listaRefacciones, listaActividadesUnidad);
                 }
 
 
@@ -316,17 +329,21 @@ public class DetalleFragment extends Fragment {
     }
 
 
-    private void generarPDFChecks() {
+    private void generarPDFChecks(List<Object> listaChekList) {
         Document document = new Document();
 
         try {
             File pdfFile = new File(requireContext().getExternalFilesDir(null), "mi_archivoCheck.pdf");
             PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
             document.open();
+
+            float cellPadding = 5f;
+            float cellPaddingUser = 2f;
+
             Drawable drawable = getResources().getDrawable(R.drawable.logo);
             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
-            File tempFile = new File(requireContext().getCacheDir(), "temp_image.png");
+            File tempFile = new File(context.getCacheDir(), "temp_image.png");
             try {
                 FileOutputStream fos = new FileOutputStream(tempFile);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 80, fos);
@@ -357,6 +374,48 @@ public class DetalleFragment extends Fragment {
             document.add(paragraphEstado);
             tempFile.delete();
 
+            //Tabla info de usuario
+
+
+            document.add(new Paragraph(" "));
+            PdfPTable tableInfoUsuario = new PdfPTable(2);
+            tableInfoUsuario.setWidthPercentage(100);
+
+            PdfPCell headerCellDatosCliente = new PdfPCell(new Paragraph("DATOS DEL CLIENTE ", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.WHITE)));
+            headerCellDatosCliente.setBackgroundColor(BaseColor.BLACK); // Establecer el color de fondo a negro
+            headerCellDatosCliente.setPadding(cellPadding);
+            headerCellDatosCliente.setBorderColor(BaseColor.BLACK);
+            headerCellDatosCliente.setBorderWidth(0f);
+            tableInfoUsuario.addCell(headerCellDatosCliente);
+
+            PdfPCell headerCellOrdenTrabajo = new PdfPCell(new Paragraph("ORDEN DE TRABAJO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.WHITE)));
+            headerCellOrdenTrabajo.setBackgroundColor(BaseColor.BLACK); // Establecer el color de fondo a negro
+            headerCellOrdenTrabajo.setPadding(cellPadding);
+            headerCellOrdenTrabajo.setBorderColor(BaseColor.BLACK);
+            headerCellOrdenTrabajo.setBorderWidth(0f);
+            tableInfoUsuario.addCell(headerCellOrdenTrabajo);
+
+
+            PdfPCell cellDatosUsu = new PdfPCell(new Paragraph("Nombre: " + nombreusuario + "\nDireccion: " + domicilio + "\nTelefono:" + telefonousuario + "\nCorreo" + emailusuario));
+            cellDatosUsu.setBackgroundColor(BaseColor.WHITE);
+            cellDatosUsu.setBorderColor(BaseColor.WHITE);
+            cellDatosUsu.setBorderWidth(0f);
+            cellDatosUsu.setPadding(cellPadding);
+            tableInfoUsuario.addCell(cellDatosUsu);
+
+            PdfPCell cellOrden = new PdfPCell(new Paragraph("Orden de trabajo"));
+            cellOrden.setBackgroundColor(BaseColor.WHITE);
+            cellOrden.setBorderColor(BaseColor.WHITE);
+            cellOrden.setBorderWidth(0f);
+            cellOrden.setPadding(cellPadding);
+            tableInfoUsuario.addCell(cellOrden);
+
+
+            document.add(tableInfoUsuario);
+
+
+
+            /*
             document.add(Chunk.NEWLINE);
 
             PdfPTable table = new PdfPTable(2);
@@ -388,69 +447,422 @@ public class DetalleFragment extends Fragment {
             table.addCell(cell1);
             table.addCell(cell2);
             document.add(table);
+*/
+
+            //Tabla informacion de la unidad
 
 
-            //Segunda tabla
+            document.add(new Paragraph(" "));
+            document.add(new Paragraph("DATOS DE LA UNIDAD", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.WHITE)));
+            PdfPTable tableInfoUnidad = new PdfPTable(8);
+            tableInfoUnidad.setWidthPercentage(100);
 
-            document.add(Chunk.NEWLINE);
+            PdfPCell headerCellMarca = new PdfPCell(new Paragraph("MARCA", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellMarca.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellMarca.setPadding(cellPadding);
+            headerCellMarca.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellMarca.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellMarca);
 
+            PdfPCell headerCellModelo = new PdfPCell(new Paragraph("MODELO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellModelo.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellModelo.setPadding(cellPadding);
+            headerCellModelo.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellModelo.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellModelo);
 
-            float cellPadding = 10f;
-            float cellPaddingUser = 5f;
+            PdfPCell headerCellAnioUnidad = new PdfPCell(new Paragraph("AÑO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellAnioUnidad.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellAnioUnidad.setPadding(cellPadding);
+            headerCellAnioUnidad.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellAnioUnidad.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellAnioUnidad);
 
-            PdfPTable userInfoTable = new PdfPTable(5);
-            userInfoTable.setWidthPercentage(90);
-            BaseColor backgroundColor = new BaseColor(0, 0, 0);
-
-            PdfPCell headerCellInfoUnidad = new PdfPCell(new Paragraph("Información de la unidad"));
-            headerCellInfoUnidad.setBackgroundColor(backgroundColor);
-            headerCellInfoUnidad.setPadding(cellPaddingUser);
-            headerCellInfoUnidad.setHorizontalAlignment(Element.ALIGN_CENTER);
-            headerCellInfoUnidad.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            headerCellInfoUnidad.setColspan(5);
-            headerCellInfoUnidad.setPaddingBottom(20);
-            headerCellInfoUnidad.setPaddingTop(20);
-            headerCellInfoUnidad.setPaddingLeft(20);
-            headerCellInfoUnidad.setPaddingRight(20);
-            headerCellInfoUnidad.setBackgroundColor(BaseColor.BLACK);
-            headerCellInfoUnidad.setBorderColor(BaseColor.WHITE);
-            headerCellInfoUnidad.setBorder(Rectangle.NO_BORDER);
-            Font whiteFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.WHITE);
-            Paragraph headerParagraph = new Paragraph("Información de la unidad", whiteFont);
-            headerParagraph.setAlignment(Element.ALIGN_CENTER);
-            headerCellInfoUnidad.setPhrase(headerParagraph);
-
-            userInfoTable.addCell(headerCellInfoUnidad);
-
-            userInfoTable.addCell("MARCA");
-            PdfPCell userIdCell = new PdfPCell(new Paragraph("marca"));
-            userIdCell.setPadding(cellPaddingUser);
-            userInfoTable.addCell(userIdCell);
-
-            userInfoTable.addCell("MODELO");
-            PdfPCell permissionsCell = new PdfPCell(new Paragraph("modelo"));
-            permissionsCell.setPadding(cellPaddingUser);
-            userInfoTable.addCell(permissionsCell);
-
-            userInfoTable.addCell("AÑO:");
-            PdfPCell nameCell = new PdfPCell(new Paragraph("2000"));
-            nameCell.setPadding(cellPaddingUser);
-            userInfoTable.addCell(nameCell);
-
-            userInfoTable.addCell("PLACAS:");
-            PdfPCell emailCell = new PdfPCell(new Paragraph("placas"));
-            emailCell.setPadding(cellPaddingUser);
-            userInfoTable.addCell(emailCell);
-
-            userInfoTable.addCell("VIN:");
-            PdfPCell phoneCell = new PdfPCell(new Paragraph("vin"));
-            phoneCell.setPadding(cellPaddingUser);
-            userInfoTable.addCell(phoneCell);
+            PdfPCell headerCellPlacas = new PdfPCell(new Paragraph("PLACAS", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellPlacas.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellPlacas.setPadding(cellPadding);
+            headerCellPlacas.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellPlacas.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellPlacas);
 
 
-            document.add(userInfoTable);
+            PdfPCell headerCellVin = new PdfPCell(new Paragraph("VIN", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellVin.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellVin.setPadding(cellPadding);
+            headerCellVin.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellVin.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellVin);
+
+            PdfPCell headerCellMotor = new PdfPCell(new Paragraph("MOTOR", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellMotor.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellMotor.setPadding(cellPadding);
+            headerCellMotor.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellMotor.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellMotor);
 
 
+            PdfPCell headerCellKm = new PdfPCell(new Paragraph("KM", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellKm.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellKm.setPadding(cellPadding);
+            headerCellKm.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellKm.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellKm);
+
+
+            PdfPCell headerCellCombustible = new PdfPCell(new Paragraph("COMBUSTIBLE", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellCombustible.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellCombustible.setPadding(cellPadding);
+            headerCellCombustible.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellCombustible.setBorderWidth(0f);
+            tableInfoUnidad.addCell(headerCellCombustible);
+
+
+            PdfPCell cellMarca = new PdfPCell(new Paragraph(marca));
+            cellMarca.setBackgroundColor(BaseColor.WHITE);
+            cellMarca.setBorderColor(BaseColor.WHITE);
+            cellMarca.setBorderWidth(0f);
+            cellMarca.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellMarca);
+
+            PdfPCell cellModelo = new PdfPCell(new Paragraph(modelo));
+            cellModelo.setBackgroundColor(BaseColor.WHITE);
+            cellModelo.setBorderColor(BaseColor.WHITE);
+            cellModelo.setBorderWidth(0f);
+            cellModelo.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellModelo);
+
+
+            PdfPCell cellAnio = new PdfPCell(new Paragraph(anioI));
+            cellAnio.setBackgroundColor(BaseColor.WHITE);
+            cellAnio.setBorderColor(BaseColor.WHITE);
+            cellAnio.setBorderWidth(0f);
+            cellAnio.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellAnio);
+
+
+            PdfPCell cellPlaca = new PdfPCell(new Paragraph(placasI));
+            cellPlaca.setBackgroundColor(BaseColor.WHITE);
+            cellPlaca.setBorderColor(BaseColor.WHITE);
+            cellPlaca.setBorderWidth(0f);
+            cellPlaca.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellPlaca);
+
+
+            PdfPCell cellVin = new PdfPCell(new Paragraph(vinI));
+            cellVin.setBackgroundColor(BaseColor.WHITE);
+            cellVin.setBorderColor(BaseColor.WHITE);
+            cellVin.setBorderWidth(0f);
+            cellVin.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellVin);
+
+
+            PdfPCell cellMotor = new PdfPCell(new Paragraph(motorI));
+            cellMotor.setBackgroundColor(BaseColor.WHITE);
+            cellMotor.setBorderColor(BaseColor.WHITE);
+            cellMotor.setBorderWidth(0f);
+            cellMotor.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellMotor);
+
+
+            PdfPCell cellkm = new PdfPCell(new Paragraph(kilometraje));
+            cellkm.setBackgroundColor(BaseColor.WHITE);
+            cellkm.setBorderColor(BaseColor.WHITE);
+            cellkm.setBorderWidth(0f);
+            cellkm.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellkm);
+
+
+            PdfPCell cellCombustible = new PdfPCell(new Paragraph(gasolina));
+            cellCombustible.setBackgroundColor(BaseColor.WHITE);
+            cellCombustible.setBorderColor(BaseColor.WHITE);
+            cellCombustible.setBorderWidth(0f);
+            cellCombustible.setPadding(cellPadding);
+            tableInfoUnidad.addCell(cellCombustible);
+
+            document.add(tableInfoUnidad);
+
+
+            //Tabla de Diagnostico
+
+            document.add(new Paragraph(" "));
+            document.add(new Paragraph("MOTIVO DE INGRESO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.WHITE)));
+
+            PdfPTable tableDiagnostico = new PdfPTable(3);
+            tableDiagnostico.setWidthPercentage(100);
+
+            PdfPCell headerCellFechaIngreso = new PdfPCell(new Paragraph("FECHA", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellFechaIngreso.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellFechaIngreso.setPadding(cellPadding);
+            headerCellFechaIngreso.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellFechaIngreso.setBorderWidth(0f);
+            tableDiagnostico.addCell(headerCellFechaIngreso);
+
+            PdfPCell headerCellDescipcion = new PdfPCell(new Paragraph("DESCRIPCION", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellDescipcion.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellDescipcion.setPadding(cellPadding);
+            headerCellDescipcion.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellDescipcion.setBorderWidth(0f);
+            tableDiagnostico.addCell(headerCellDescipcion);
+
+            PdfPCell headerCellTipoServicio = new PdfPCell(new Paragraph("TIPO DE SERVICIO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellTipoServicio.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellTipoServicio.setPadding(cellPadding);
+            headerCellTipoServicio.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellTipoServicio.setBorderWidth(0f);
+            tableDiagnostico.addCell(headerCellTipoServicio);
+
+            PdfPCell cellFechaIngreso = new PdfPCell(new Paragraph(fecha));
+            cellFechaIngreso.setBackgroundColor(BaseColor.WHITE);
+            cellFechaIngreso.setBorderColor(BaseColor.WHITE);
+            cellFechaIngreso.setBorderWidth(0f);
+            cellFechaIngreso.setPadding(cellPadding);
+            tableDiagnostico.addCell(cellFechaIngreso);
+
+            PdfPCell cellMotivoIngreso = new PdfPCell(new Paragraph(motivo));
+            cellMotivoIngreso.setBackgroundColor(BaseColor.WHITE);
+            cellMotivoIngreso.setBorderColor(BaseColor.WHITE);
+            cellMotivoIngreso.setBorderWidth(0f);
+            cellMotivoIngreso.setPadding(cellPadding);
+            tableDiagnostico.addCell(cellMotivoIngreso);
+
+            PdfPCell cellTipoServicio = new PdfPCell(new Paragraph(status.toUpperCase()));
+            cellTipoServicio.setBackgroundColor(BaseColor.WHITE);
+            cellTipoServicio.setBorderColor(BaseColor.WHITE);
+            cellTipoServicio.setBorderWidth(0f);
+            cellTipoServicio.setPadding(cellPadding);
+
+            tableDiagnostico.addCell(cellTipoServicio);
+
+            document.add(tableDiagnostico);
+
+
+            //Tabla refacciones
+            document.add(new Paragraph(" "));
+            PdfPCell titleCell = new PdfPCell(new Phrase("REFACCIONES", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.WHITE)));
+            titleCell.setBackgroundColor(BaseColor.BLACK);
+            titleCell.setBorder(Rectangle.NO_BORDER); // Para eliminar el borde de la celda
+            document.add(titleCell);
+
+
+            PdfPTable tableRefa = new PdfPTable(5);
+            tableRefa.setWidthPercentage(100);
+
+            PdfPCell headerCellClaveRef = new PdfPCell(new Paragraph("CLAVE", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellClaveRef.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellClaveRef.setPadding(cellPadding);
+            headerCellClaveRef.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellClaveRef.setBorderWidth(0f);
+            tableRefa.addCell(headerCellClaveRef);
+
+            PdfPCell headerCellCantidad = new PdfPCell(new Paragraph("CANTIDAD", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellCantidad.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellCantidad.setPadding(cellPadding);
+            headerCellCantidad.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellCantidad.setBorderWidth(0f);
+            tableRefa.addCell(headerCellCantidad);
+
+            PdfPCell headerCellUnidades = new PdfPCell(new Paragraph("UNIDADES", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellUnidades.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellUnidades.setPadding(cellPadding);
+            headerCellUnidades.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellCantidad.setBorderWidth(0f);
+            tableRefa.addCell(headerCellUnidades);
+
+            PdfPCell headerCellDescripcion = new PdfPCell(new Paragraph("DESCRIPCION", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellDescripcion.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellDescripcion.setPadding(cellPadding);
+            headerCellDescripcion.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellCantidad.setBorderWidth(0f);
+            tableRefa.addCell(headerCellDescripcion);
+
+            PdfPCell headerCellPrecioRef = new PdfPCell(new Paragraph("PRECIO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellPrecioRef.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellPrecioRef.setPadding(cellPadding);
+            headerCellPrecioRef.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellCantidad.setBorderWidth(0f);
+            tableRefa.addCell(headerCellPrecioRef);
+
+
+
+/*
+            JSONArray jsonArray = new JSONArray(listaRefacciones);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                String clave = jsonObject.getString("clave");
+                String cantidad = jsonObject.getString("cantidad");
+                String unidad = jsonObject.getString("unidad");
+                String descripcion = jsonObject.getString("descripcion");
+                String precio = jsonObject.getString("precio");
+*/
+
+            PdfPCell cellClave = new PdfPCell(new Paragraph("clave"));
+            cellClave.setBackgroundColor(BaseColor.WHITE);
+            cellClave.setBorderColor(BaseColor.WHITE);
+            cellClave.setBorderWidth(0f);
+            cellClave.setPadding(cellPadding);
+            tableRefa.addCell(cellClave);
+
+            PdfPCell cellCantidad = new PdfPCell(new Paragraph("cantidad"));
+            cellCantidad.setBackgroundColor(BaseColor.WHITE);
+            cellCantidad.setBorderColor(BaseColor.WHITE);
+            cellCantidad.setBorderWidth(0f);
+            cellCantidad.setPadding(cellPadding);
+            tableRefa.addCell(cellCantidad);
+
+
+            PdfPCell cellUnidad = new PdfPCell(new Paragraph("unidad"));
+            cellUnidad.setBackgroundColor(BaseColor.WHITE);
+            cellUnidad.setBorderColor(BaseColor.WHITE);
+            cellUnidad.setBorderWidth(0f);
+            cellUnidad.setPadding(cellPadding);
+            tableRefa.addCell(cellUnidad);
+
+
+            PdfPCell cellDescripcion = new PdfPCell(new Paragraph("descripcion"));
+            cellDescripcion.setBackgroundColor(BaseColor.WHITE);
+            cellDescripcion.setBorderColor(BaseColor.WHITE);
+            cellDescripcion.setBorderWidth(0f);
+            cellDescripcion.setPadding(cellPadding);
+            tableRefa.addCell(cellDescripcion);
+
+
+            PdfPCell cellPrecio = new PdfPCell(new Paragraph("precio"));
+            cellPrecio.setBackgroundColor(BaseColor.WHITE);
+            cellPrecio.setBorderColor(BaseColor.WHITE);
+            cellPrecio.setBorderWidth(0f);
+            cellPrecio.setPadding(cellPadding);
+            tableRefa.addCell(cellPrecio);
+
+//            }
+
+            document.add(tableRefa);
+
+
+            //Tabla de checks
+            document.add(new Paragraph(" "));
+
+            PdfPTable tableEstructuraUnidad = new PdfPTable(5);
+            tableEstructuraUnidad.setWidthPercentage(90);
+
+            PdfPCell headerCellestructuraUnidad = new PdfPCell(new Paragraph("ESTRUCTURA UNIDAD", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellestructuraUnidad.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellestructuraUnidad.setPadding(cellPadding);
+            headerCellestructuraUnidad.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellestructuraUnidad.setBorderWidth(0f);
+            tableEstructuraUnidad.addCell(headerCellestructuraUnidad);
+
+            PdfPCell headerCellBueno = new PdfPCell(new Paragraph("BUENO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellBueno.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellBueno.setPadding(cellPadding);
+            headerCellBueno.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellBueno.setBorderWidth(0f);
+            tableEstructuraUnidad.addCell(headerCellBueno);
+
+            PdfPCell headerCellRegular = new PdfPCell(new Paragraph("REGULAR", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellRegular.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellRegular.setPadding(cellPadding);
+            headerCellRegular.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellRegular.setBorderWidth(0f);
+            tableEstructuraUnidad.addCell(headerCellRegular);
+
+            PdfPCell headerCellMalo = new PdfPCell(new Paragraph("MALO", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellMalo.setBackgroundColor(BaseColor.LIGHT_GRAY); // Establecer el color de fondo a negro
+            headerCellMalo.setPadding(cellPadding);
+            headerCellMalo.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellMalo.setBorderWidth(0f);
+            tableEstructuraUnidad.addCell(headerCellMalo);
+
+            PdfPCell headerCellNA = new PdfPCell(new Paragraph("NO APLICA", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK)));
+            headerCellNA.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            headerCellNA.setPadding(cellPadding);
+            headerCellNA.setBorderColor(BaseColor.LIGHT_GRAY);
+            headerCellNA.setBorderWidth(0f);
+            tableEstructuraUnidad.addCell(headerCellNA);
+
+
+            JSONArray jsonArray = new JSONArray(listaChekList);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                String descripcion = jsonObject.getString("descripcion");
+                String valorcheck = jsonObject.getString("valorcheck");
+
+
+                PdfPCell cellCheck = new PdfPCell(new Paragraph(descripcion));
+                cellCheck.setBackgroundColor(BaseColor.WHITE);
+                cellCheck.setBorderColor(BaseColor.WHITE);
+                cellCheck.setBorderWidth(0f);
+                cellCheck.setPadding(cellPadding);
+                tableEstructuraUnidad.addCell(cellCheck);
+
+
+                PdfPCell cellBueno = null;
+                PdfPCell cellRegular = null;
+                PdfPCell cellMalo = null;
+                PdfPCell cellNA = null;
+
+                if (valorcheck.equalsIgnoreCase("R")) {
+                    cellBueno = new PdfPCell(new Paragraph("-"));
+                    cellRegular = new PdfPCell(new Paragraph("X"));
+                    cellMalo = new PdfPCell(new Paragraph("-"));
+                    cellNA = new PdfPCell(new Paragraph("-"));
+                } else if (valorcheck.equalsIgnoreCase("B")) {
+
+                    cellBueno = new PdfPCell(new Paragraph("x"));
+                    cellRegular = new PdfPCell(new Paragraph("-"));
+                    cellMalo = new PdfPCell(new Paragraph("-"));
+                    cellNA = new PdfPCell(new Paragraph("-"));
+                } else if (valorcheck.equalsIgnoreCase("NA")) {
+
+                    cellBueno = new PdfPCell(new Paragraph("."));
+                    cellRegular = new PdfPCell(new Paragraph("-"));
+                    cellMalo = new PdfPCell(new Paragraph("-"));
+                    cellNA = new PdfPCell(new Paragraph("X"));
+                } else if (valorcheck.equalsIgnoreCase("M")) {
+                    cellBueno = new PdfPCell(new Paragraph("-"));
+                    cellRegular = new PdfPCell(new Paragraph("-"));
+                    cellMalo = new PdfPCell(new Paragraph("X"));
+                    cellNA = new PdfPCell(new Paragraph("-"));
+                } else {
+
+                    cellBueno = new PdfPCell(new Paragraph("-"));
+                    cellRegular = new PdfPCell(new Paragraph("-"));
+                    cellMalo = new PdfPCell(new Paragraph("-"));
+                    cellNA = new PdfPCell(new Paragraph("-"));
+                }
+
+
+                cellBueno.setBackgroundColor(BaseColor.WHITE);
+                cellBueno.setBorderColor(BaseColor.WHITE);
+                cellBueno.setBorderWidth(0f);
+                cellBueno.setPadding(cellPadding);
+                tableEstructuraUnidad.addCell(cellBueno);
+
+
+                cellRegular.setBackgroundColor(BaseColor.WHITE);
+                cellRegular.setBorderColor(BaseColor.WHITE);
+                cellRegular.setBorderWidth(0f);
+                cellRegular.setPadding(cellPadding);
+                tableEstructuraUnidad.addCell(cellRegular);
+
+
+                cellMalo.setBackgroundColor(BaseColor.WHITE);
+                cellMalo.setBorderColor(BaseColor.WHITE);
+                cellMalo.setBorderWidth(0f);
+                cellMalo.setPadding(cellPadding);
+                tableEstructuraUnidad.addCell(cellMalo);
+
+
+                cellNA.setBackgroundColor(BaseColor.WHITE);
+                cellNA.setBorderColor(BaseColor.WHITE);
+                cellNA.setBorderWidth(0f);
+                cellNA.setPadding(cellPadding);
+                tableEstructuraUnidad.addCell(cellNA);
+
+            }
+
+            document.add(tableEstructuraUnidad);
 
 
             document.close();
@@ -470,6 +882,7 @@ public class DetalleFragment extends Fragment {
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
+
     class PageEventHandler extends PdfPageEventHelper {
         @Override
         public void onStartPage(PdfWriter writer, Document document) {
@@ -514,11 +927,11 @@ public class DetalleFragment extends Fragment {
                                 combinarPDFs(pdfDetalles, pdfFileImagenes, context);
 
                             } else {
-                                Toast.makeText(requireContext(), "PDF file not found.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "PDF file not found.", Toast.LENGTH_SHORT).show();
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
-                            Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -780,9 +1193,9 @@ public class DetalleFragment extends Fragment {
 
             document.close();
 
-            // compartirPDF(pdfFile);
+             compartirPDF(pdfFile);
 
-            generatePdfFromUrls(slideItemsPrueba, pdfFile);
+         //   generatePdfFromUrls(slideItemsPrueba, pdfFile);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -808,7 +1221,7 @@ public class DetalleFragment extends Fragment {
 
 
     private void CargarImagenes(String idventa) {
-        StringRequest stringRequest3 = new StringRequest(Request.Method.POST, urlApi,
+        StringRequest stringRequest3 = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -874,14 +1287,14 @@ public class DetalleFragment extends Fragment {
             }
         };
 
-        RequestQueue requestQueue3 = Volley.newRequestQueue(requireContext());
+        RequestQueue requestQueue3 = Volley.newRequestQueue(context);
         requestQueue3.add(stringRequest3);
 
     }
 
     private void CargarMecanicos(String idventa) {
 
-        StringRequest stringRequest2 = new StringRequest(Request.Method.POST, urlApi,
+        StringRequest stringRequest2 = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -912,7 +1325,7 @@ public class DetalleFragment extends Fragment {
                                 }
 
                                 AdaptadorMecanicos adaptadorMecanicos = new AdaptadorMecanicos(listaMecanicos);
-                                LinearLayoutManager layoutManager2 = new LinearLayoutManager(requireContext());
+                                LinearLayoutManager layoutManager2 = new LinearLayoutManager(context);
                                 recyclerViewMecanicos.setLayoutManager(layoutManager2);
                                 recyclerViewMecanicos.setAdapter(adaptadorMecanicos);
 
@@ -940,14 +1353,14 @@ public class DetalleFragment extends Fragment {
             }
         };
 
-        RequestQueue requestQueue2 = Volley.newRequestQueue(requireContext());
+        RequestQueue requestQueue2 = Volley.newRequestQueue(context);
         requestQueue2.add(stringRequest2);
 
     }
 
     private void CargarRefacciones(String idventa) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlApi,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -977,7 +1390,7 @@ public class DetalleFragment extends Fragment {
                                     LayoutNoRefacciones.setVisibility(View.GONE);
 
                                     AdaptadorRefacciones adaptadorRefacciones = new AdaptadorRefacciones(listaRefacciones);
-                                    recyclerViewRefacciones.setLayoutManager(new LinearLayoutManager(requireContext()));
+                                    recyclerViewRefacciones.setLayoutManager(new LinearLayoutManager(context));
                                     recyclerViewRefacciones.setAdapter(adaptadorRefacciones);
                                 }
 
@@ -1004,13 +1417,13 @@ public class DetalleFragment extends Fragment {
                 return params;
             }
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
 
 
     private void CargarBitacora(String idservicio) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlApi,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -1075,9 +1488,54 @@ public class DetalleFragment extends Fragment {
                 return params;
             }
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
+
+/*
+    private void CargarChecks(String idservicio) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            listaChecks.clear();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                listaChecks.add(jsonObject);
+                            }
+
+                            Toast.makeText(context, " Ola", Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+
+                            Toast.makeText(context, " Error al cargar los datos \nError:" +e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e("JSON Error", "Error al analizar la respuesta JSON: " + e.getMessage());
+                        }
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "11");
+                params.put("idservicio", idservicio);
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+*/
 
     private Runnable sliderRunnable = new Runnable() {
         @Override

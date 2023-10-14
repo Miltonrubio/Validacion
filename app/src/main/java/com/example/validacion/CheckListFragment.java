@@ -1,5 +1,7 @@
 package com.example.validacion;
 
+import android.content.Context;
+import android.icu.number.CompactNotation;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -33,25 +35,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CheckListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class CheckListFragment extends Fragment implements AdaptadorChecks.AdaptadorListener /* implements AdaptadorChecks.OnCheckUpdatedListener*/ {
 
-    List<Cheks> listaChecks = new ArrayList<>(); // Inicializar la lista aquí
-
+    List<Cheks> listaChecks = new ArrayList<>();
     int valoresVacios = 0;
 
     RecyclerView reciclerViewCheck;
 
     private TextView TVResultadoChecks; // Declarar el TextView
 
-    private String urlApi =  "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
-
+    private String url;
+    Context context;
     public CheckListFragment() {
-        // Required empty public constructor
     }
 
     public static CheckListFragment newInstance(String param1, String param2) {
@@ -73,6 +68,8 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
         reciclerViewCheck = rootView.findViewById(R.id.reciclerViewCheck);
 
         TVResultadoChecks = rootView.findViewById(R.id.TVResultadoChecks); // Obtener referencia del TextView
+        context= requireContext();
+        url = context.getResources().getString(R.string.ApiBack);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -87,7 +84,7 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
 
     public void CargarChecks(String idventa) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlApi,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -121,7 +118,7 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
 
                                 AdaptadorChecks adaptadorChecks = new AdaptadorChecks(listaChecks);
                                 adaptadorChecks.setAdaptadorListener(CheckListFragment.this); // Llamando al método en la instancia del adaptador
-                                reciclerViewCheck.setLayoutManager(new LinearLayoutManager(requireContext()));
+                                reciclerViewCheck.setLayoutManager(new LinearLayoutManager(context));
                                 reciclerViewCheck.setAdapter(adaptadorChecks);
 
 
@@ -159,7 +156,7 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
                 return params;
             }
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
 

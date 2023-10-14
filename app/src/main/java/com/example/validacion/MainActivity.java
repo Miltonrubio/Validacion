@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     String personalToken;
 
 
-    String url =  "http://192.168.1.252/georgioapi/Controllers/Apiback.php";
+    String url;
 
     private RequestQueue rq;
     Context context;
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
+        url = context.getResources().getString(R.string.ApiBack);
         rq = Volley.newRequestQueue(context);
         inputUsername = findViewById(R.id.correoET);
         inputPassword = findViewById(R.id.passwordET);
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         StringRequest request2 = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             public void onResponse(String response) {
 
-                Toast.makeText(MainActivity.this, "Token actualizado", Toast.LENGTH_LONG).show();
+              //  Toast.makeText(MainActivity.this, "Token actualizado", Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override

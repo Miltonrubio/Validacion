@@ -31,8 +31,58 @@ public class Activity_Binding extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binding);
 
+        binding = ActivityBindingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+
+        String permisosUsuario = sharedPreferences.getString("permisos", "");
+
+        setupMenu(permisosUsuario);
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case (R.id.menu_home):
+                    replaceFragment(new HomeFragment());
+                    break;
+                case (R.id.menu_actividades):
+                    replaceFragment(new ActividadesFragment());
+                    break;
+                case (R.id.menu_usuario):
+                    replaceFragment(new UsuariosFragment());
+                    break;
+            }
+            return true;
+        });
+        replaceFragment(new HomeFragment());
+
+        if ("SUPERADMIN".equals(permisosUsuario)) {
+            binding.bottomNavigationView.setSelectedItemId(R.id.menu_home);
+        } else {
+            binding.bottomNavigationView.setSelectedItemId(R.id.menu_home);
+        }
+
+    }
 
 
+    private void setupMenu(String permisosUsuario) {
+        if ("SUPERADMIN".equals(permisosUsuario)) {
+            binding.bottomNavigationView.getMenu().findItem(R.id.menu_actividades).setVisible(false);
+
+        } else {
+
+        }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layoutCoches, fragment);
+        fragmentTransaction.commit();
+
+    }
+
+/*
         SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
         String permisosUsuario = sharedPreferences.getString("permisos", "");
 
@@ -103,6 +153,6 @@ public class Activity_Binding extends AppCompatActivity {
 
 
     }
-
+*/
 
 }

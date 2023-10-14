@@ -96,6 +96,7 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             String foto = jsonObject2.optString("foto", "");
             String marca = jsonObject2.optString("marcaI", "");
             String modelo = jsonObject2.optString("modeloI", "");
+            String kilometraje= jsonObject2.optString("kilometraje");
             String placa = jsonObject2.optString("placasI", "");
             String motivo = jsonObject2.optString("motivoingreso", "");
             String estatus = jsonObject2.optString("estatus", "");
@@ -105,6 +106,12 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             String nombre = jsonObject2.optString("nombre", "");
             String email = jsonObject2.optString("email", "");
             String telefono = jsonObject2.optString("telefono", "");
+            String gasolina= jsonObject2.optString("gasolina","");
+            String tipounidad= jsonObject2.optString("tipounidad","");
+            String motorI= jsonObject2.optString("motorI","");
+            String vinI= jsonObject2.optString("vinI","");
+            String domicilio= jsonObject2.optString("domicilio","");
+            String anioI= jsonObject2.optString("anioI","");
 
             String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
 
@@ -116,10 +123,16 @@ public class Adapt2 extends RecyclerView.Adapter<Adapt2.ViewHolder> {
             bundle.putString("status", estatus);
             bundle.putString("hora_ingreso", hora_ingreso);
             bundle.putString("idventa", id_ser_venta);
-
+            bundle.putString("gasolina", gasolina);
+            bundle.putString("tipounidad", tipounidad);
+            bundle.putString("kilometraje", kilometraje);
             bundle.putString("nombre", nombre);
             bundle.putString("email", email);
             bundle.putString("telefono", telefono);
+            bundle.putString("anioI", anioI);
+            bundle.putString("motorI", motorI);
+            bundle.putString("vinI", vinI);
+            bundle.putString("domicilio", domicilio);
 
 
             setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");
