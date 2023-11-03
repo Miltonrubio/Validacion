@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.validacion.Adaptadores.SlideAdapter2;
+import com.example.validacion.Objetos.SlideItem;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

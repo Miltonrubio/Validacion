@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.validacion.Adaptadores.AdaptadorCoches;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -48,7 +48,7 @@ public class PruebaSpinnre extends AppCompatActivity {
 
     private ArrayList<String> unidadesVehiculos = new ArrayList<>();
     private RecyclerView recyclerView;
-    private Adapt2 adapter2;
+    private AdaptadorCoches adapter2;
     private List<JSONObject> dataList = new ArrayList<>();
     private EditText editTextBusqueda;
 

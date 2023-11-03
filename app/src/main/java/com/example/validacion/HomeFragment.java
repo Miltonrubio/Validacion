@@ -1,6 +1,5 @@
 package com.example.validacion;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,14 +9,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,6 +33,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.validacion.Adaptadores.AdaptadorCoches;
+import com.example.validacion.Adaptadores.Utiles;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -42,7 +42,6 @@ import com.google.zxing.integration.android.IntentResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,9 +50,9 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment {
 
-    JSONArray jsonArrayNombreUnidades= null;
-    String valorGas= null;
-    private String selectedIDCliente="1";
+    JSONArray jsonArrayNombreUnidades = null;
+    String valorGas = null;
+    private String selectedIDCliente = "1";
     ArrayList<String> opciones = new ArrayList<>();
 
     String url;
@@ -68,18 +67,35 @@ public class HomeFragment extends Fragment {
 
     private ArrayList<String> unidadesVehiculos = new ArrayList<>();
     private RecyclerView recyclerView;
-    private Adapt2 adapter2;
+    private AdaptadorCoches adaptadorCoches;
     private List<JSONObject> dataList = new ArrayList<>();
     private EditText editTextBusqueda;
 
     FloatingActionButton botonAgregarActividad;
 
+
+    ConstraintLayout LayoutSinInternet;
+    RelativeLayout LayoutConContenido;
+
+    AlertDialog.Builder builder;
+    AlertDialog modalCargando;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        context= requireContext();
+        context = requireContext();
         url = context.getResources().getString(R.string.ApiBack);
+
+        botonAgregarActividad = view.findViewById(R.id.botonAgregarActividad);
+        recyclerView = view.findViewById(R.id.recyclerViewFragment);
+        editTextBusqueda = view.findViewById(R.id.searchEditText);
+        LayoutConContenido = view.findViewById(R.id.LayoutConContenido);
+        LayoutSinInternet = view.findViewById(R.id.LayoutSinInternet);
+
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
 
         return view;
     }
@@ -90,13 +106,13 @@ public class HomeFragment extends Fragment {
 
         VerNombresClientes();
         ImageView LectorQr = view.findViewById(R.id.LectorQr);
+
         opciones.add("Lleno");
         opciones.add("3/4");
         opciones.add("1/2");
         opciones.add("1/4");
         opciones.add("Reserva");
 
-        botonAgregarActividad = view.findViewById(R.id.botonAgregarActividad);
 
         LectorQr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,14 +127,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        recyclerView = view.findViewById(R.id.recyclerViewFragment);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         dataList = new ArrayList<>();
-        adapter2 = new Adapt2(dataList, context);
-        recyclerView.setAdapter(adapter2);
+        adaptadorCoches = new AdaptadorCoches(dataList, context);
+        recyclerView.setAdapter(adaptadorCoches);
 
-        editTextBusqueda = view.findViewById(R.id.searchEditText);
 
         editTextBusqueda.addTextChangedListener(new TextWatcher() {
             @Override
@@ -128,7 +142,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter2.filter(s.toString().toLowerCase());
+                adaptadorCoches.filter(s.toString().toLowerCase());
             }
 
             @Override
@@ -137,14 +151,14 @@ public class HomeFragment extends Fragment {
         });
 
 
-        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
         String permisosUsuario = sharedPreferences.getString("permisos", "");
         String idusuario = sharedPreferences.getString("idusuario", "");
 
-        if(permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")){
+        if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
             botonAgregarActividad.setVisibility(View.VISIBLE);
             VisualizarServicios();
-        }else {
+        } else {
             botonAgregarActividad.setVisibility(View.GONE);
             VisualizarServiciosPorMecanicos(idusuario);
         }
@@ -154,7 +168,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
                 LayoutInflater inflater = getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.insertar_actividad, null);
@@ -273,12 +287,12 @@ public class HomeFragment extends Fragment {
                                         } else {
 
                                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
-                                            alertDialogBuilder.setMessage("Marca: "+Marca +"\nModelo: "+Modelo+"\nGas:"+ valorGas +"\nKilometraje: "+ km + "\nMotivo De Ingreso: " + motivoIngreso +"\n\n¿Estas seguro de mandar este servicio?");
+                                            alertDialogBuilder.setMessage("Marca: " + Marca + "\nModelo: " + Modelo + "\nGas:" + valorGas + "\nKilometraje: " + km + "\nMotivo De Ingreso: " + motivoIngreso + "\n\n¿Estas seguro de mandar este servicio?");
                                             alertDialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                                    AgregarServicio(selectedIDCliente, id_serv_unidad, km, valorGas, motivoIngreso, Marca, Modelo,motor,vin,placas, anio);
+                                                    AgregarServicio(selectedIDCliente, id_serv_unidad, km, valorGas, motivoIngreso, Marca, Modelo, motor, vin, placas, anio);
                                                     dialog.dismiss();
                                                     dialogInterface.dismiss();
                                                 }
@@ -331,31 +345,39 @@ public class HomeFragment extends Fragment {
     }
 
 
-
     private void VisualizarServicios() {
+        dataList.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-                    dataList.clear();
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         dataList.add(jsonObject); // Agrega cada objeto JSON a la lista
                     }
-                    adapter2.notifyDataSetChanged();
-                    adapter2.setFilteredData(dataList);
-                    adapter2.filter("");
+                    adaptadorCoches.notifyDataSetChanged();
+                    adaptadorCoches.setFilteredData(dataList);
+                    adaptadorCoches.filter("");
+
+                    if (dataList.size() > 0) {
+
+                        mostrarLayout("ConContenido");
+                    } else {
+
+                        mostrarLayout("SinInternet");
+                    }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    mostrarLayout("SinInternet");
                 }
                 editTextBusqueda.setText("");
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+                mostrarLayout("SinInternet");
             }
         }) {
             protected Map<String, String> getParams() {
@@ -368,31 +390,59 @@ public class HomeFragment extends Fragment {
         Volley.newRequestQueue(context).add(postrequest);
     }
 
+    private void mostrarLayout(String estado) {
+        if (estado.equalsIgnoreCase("SinInternet")) {
+            LayoutConContenido.setVisibility(View.GONE);
+            LayoutSinInternet.setVisibility(View.VISIBLE);
+        } else {
+            LayoutConContenido.setVisibility(View.VISIBLE);
+            LayoutSinInternet.setVisibility(View.GONE);
+        }
+
+        onLoadComplete();
+    }
+
+
+    public void onLoadComplete() {
+        if (modalCargando.isShowing() && modalCargando != null) {
+            modalCargando.dismiss();
+        }
+    }
+
 
     private void VisualizarServiciosPorMecanicos(String idmecanico) {
+        dataList.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-                    dataList.clear();
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         dataList.add(jsonObject); // Agrega cada objeto JSON a la lista
                     }
-                    adapter2.notifyDataSetChanged();
-                    adapter2.setFilteredData(dataList);
-                    adapter2.filter("");
+                    adaptadorCoches.notifyDataSetChanged();
+                    adaptadorCoches.setFilteredData(dataList);
+                    adaptadorCoches.filter("");
+
+                    if (dataList.size() > 0) {
+
+                        mostrarLayout("ConContenido");
+                    } else {
+
+                        mostrarLayout("SinInternet");
+                    }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    mostrarLayout("SinInternet");
                 }
                 editTextBusqueda.setText("");
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+                mostrarLayout("SinInternet");
             }
         }) {
             protected Map<String, String> getParams() {
@@ -407,17 +457,13 @@ public class HomeFragment extends Fragment {
     }
 
 
-
-
-
-
     private void VerNombresClientes() {
+        nombresClientes.clear(); // Limpia la lista antes de agregar los nuevos
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-                    nombresClientes.clear(); // Limpia la lista antes de agregar los nuevos
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String id_ser_cliente = jsonObject.getString("id_ser_cliente");

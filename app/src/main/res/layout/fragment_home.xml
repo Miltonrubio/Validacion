@@ -7,85 +7,113 @@
     android:orientation="vertical"
     tools:context=".HomeFragment">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/yourConstraintLayoutId"
+    <RelativeLayout
+        android:id="@+id/LayoutConContenido"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:layout_marginBottom="11dp"
-        android:padding="11dp">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/searchButton"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/yourConstraintLayoutId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:layout_marginBottom="11dp"
+            android:padding="11dp">
+
+            <ImageView
+                android:id="@+id/searchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:contentDescription="Buscar"
+                android:padding="8dp"
+                android:src="@drawable/baseline_search_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:hint="Buscar por placa, modelo, o QR"
+                android:inputType="textEmailAddress"
+                android:text=""
+                android:textColor="@color/gris"
+                android:textColorHint="@color/azulito"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/LectorQr"
+                app:layout_constraintStart_toEndOf="@id/searchButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Nuevo ImageView -->
+            <ImageView
+                android:id="@+id/LectorQr"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:clickable="true"
+                android:contentDescription="Otro Icono"
+
+                android:padding="8dp"
+                android:src="@drawable/baseline_qr_code_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/yourConstraintLayoutId" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/botonAgregarActividad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:contentDescription="Buscar"
-            android:padding="8dp"
-            android:src="@drawable/baseline_search_24"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/baseline_library_add_24"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/LayoutSinInternet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieNoInternet"
+            android:layout_width="322dp"
+            android:layout_height="322dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="nointernet.json"
+            app:lottie_imageAssetsFolder="assets"
+            app:lottie_loop="true" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:hint="Buscar por placa, modelo, o QR"
-            android:inputType="textEmailAddress"
-            android:text=""
-            android:textColor="@color/gris"
-            android:textColorHint="@color/azulito"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/LectorQr"
-            app:layout_constraintStart_toEndOf="@id/searchButton"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Nuevo ImageView -->
-        <ImageView
-            android:id="@+id/LectorQr"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:src="@drawable/baseline_qr_code_24"
-            android:clickable="true"
-
-        android:padding="8dp"
-        android:contentDescription="Otro Icono"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/yourConstraintLayoutId" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/botonAgregarActividad"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:visibility="gone"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/baseline_library_add_24" />
-
 </RelativeLayout>
 
-
-<!--
-
-
-
-
--->
