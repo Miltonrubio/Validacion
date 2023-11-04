@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".HomeFragment">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/LayoutConContenido"
@@ -36,52 +35,40 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:hint="Buscar por placa, modelo, o QR"
+                android:hint="Buscar cliente"
                 android:inputType="textEmailAddress"
                 android:text=""
                 android:textColor="@color/gris"
                 android:textColorHint="@color/azulito"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/LectorQr"
+                app:layout_constraintEnd_toStartOf="@+id/btnFiltrarClientes"
                 app:layout_constraintStart_toEndOf="@id/searchButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Nuevo ImageView -->
             <ImageView
-                android:id="@+id/LectorQr"
+                android:id="@+id/btnFiltrarClientes"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:clickable="true"
-                android:contentDescription="Otro Icono"
-
                 android:padding="8dp"
-                android:src="@drawable/baseline_qr_code_24"
+                android:src="@drawable/baseline_filter_list_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/azulito" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewFragment"
+            android:id="@+id/recyclerViewClientes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/yourConstraintLayoutId" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/botonAgregarActividad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/baseline_library_add_24"
-            android:visibility="gone" />
+
 
     </RelativeLayout>
 
@@ -113,5 +100,17 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/botonAgregarActividad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/baseline_person_add_alt_1_24"
+        />
 </RelativeLayout>
 

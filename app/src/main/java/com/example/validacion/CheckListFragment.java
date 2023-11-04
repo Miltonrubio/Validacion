@@ -44,14 +44,10 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
 
     private String url;
     Context context;
+
     public CheckListFragment() {
     }
 
-    public static CheckListFragment newInstance(String param1, String param2) {
-        CheckListFragment fragment = new CheckListFragment();
-
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +62,7 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
         reciclerViewCheck = rootView.findViewById(R.id.reciclerViewCheck);
 
         TVResultadoChecks = rootView.findViewById(R.id.TVResultadoChecks); // Obtener referencia del TextView
-        context= requireContext();
+        context = requireContext();
         url = context.getResources().getString(R.string.ApiBack);
 
         Bundle bundle = getArguments();
@@ -82,6 +78,7 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
 
     public void CargarChecks(String idventa) {
 
+        listaChecks.clear();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -118,7 +115,6 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
                                 adaptadorChecks.setAdaptadorListener(CheckListFragment.this); // Llamando al método en la instancia del adaptador
                                 reciclerViewCheck.setLayoutManager(new LinearLayoutManager(context));
                                 reciclerViewCheck.setAdapter(adaptadorChecks);
-
 
 
                                 int totalResultados = listaChecks.size();
@@ -160,11 +156,11 @@ public class CheckListFragment extends Fragment implements AdaptadorChecks.Adapt
 
 
     public void onCheckUpdated(int position, String valorCheck, int valoresVaciosChecks, int totalValores) {
-        int calculo= totalValores-valoresVaciosChecks;
+        int calculo = totalValores - valoresVaciosChecks;
 
-        if (calculo!=0){
-            TVResultadoChecks.setText("Revisados: "+calculo + " / "+ totalValores);
-        }else{
+        if (calculo != 0) {
+            TVResultadoChecks.setText("Revisados: " + calculo + " / " + totalValores);
+        } else {
             TVResultadoChecks.setVisibility(View.INVISIBLE);
         }
     }

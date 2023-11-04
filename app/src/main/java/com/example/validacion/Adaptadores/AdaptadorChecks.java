@@ -39,14 +39,13 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
     String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
 
-
-
     public AdaptadorChecks(List<Cheks> listaChecks) {
 
         this.listaChecks = listaChecks;
 
         valoresVaciosChecks = calcularValoresVacios();
     }
+
     private int calcularValoresVacios() {
         int count = 0;
         for (Cheks checks : listaChecks) {
@@ -187,7 +186,7 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
                             showToast(context, descripcion + " Revisado");
                             listaChecks.get(position).setValorcheck(valorCheck);
                             notifyItemChanged(position);
-                          int  valoresVacios= calcularValoresVacios();
+                            int valoresVacios = calcularValoresVacios();
                             if (adaptadorListener != null) {
                                 adaptadorListener.onCheckUpdated(position, valorCheck, valoresVacios, listaChecks.size());
                             }

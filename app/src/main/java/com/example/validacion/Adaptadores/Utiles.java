@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.cardview.widget.CardView;
 
@@ -26,5 +27,19 @@ public class Utiles {
 
         return dialogCargando;
     }
+
+
+    public static CardView ModalRedondeado(Context contextDialog, View viewModal) {
+
+        CardView cardView = new CardView(contextDialog);
+        cardView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        cardView.setBackgroundResource(R.drawable.rounded_background);
+        cardView.addView(viewModal);
+        return cardView;
+    }
+
 
 }

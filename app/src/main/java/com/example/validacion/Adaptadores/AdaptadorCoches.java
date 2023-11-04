@@ -1,8 +1,12 @@
 package com.example.validacion.Adaptadores;
 
+import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -11,13 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +32,7 @@ import com.example.validacion.CheckListFragment;
 import com.example.validacion.DetalleFragment;
 import com.example.validacion.Prueba;
 import com.example.validacion.R;
+import com.itextpdf.text.pdf.parser.Line;
 
 import org.json.JSONObject;
 
@@ -140,15 +148,24 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         holder.botonDesplegable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(view, bundle);
+
+
+                mostrarModalOpciones(view.getContext(), bundle);
+
+                //       showPopupMenu(view, bundle);
             }
         });
-
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                mostrarModalOpciones(view.getContext(), bundle);
+
+
+                /*
+
                 DetalleFragment detalleFragment = new DetalleFragment();
                 detalleFragment.setArguments(bundle);
 
@@ -157,15 +174,19 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                         .replace(R.id.frame_layoutCoches, detalleFragment)
                         .addToBackStack(null)
                         .commit();
-
+*/
             }
         });
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                showPopupMenu(view, bundle);
-                return true;
+
+
+                mostrarModalOpciones(view.getContext(), bundle);
+                /*
+                showPopupMenu(view, bundle); */
+                return false;
             }
         });
 
@@ -176,7 +197,70 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
     public int getItemCount() {
 
         //return filteredData.size();
-        return  filteredData.size();
+        return filteredData.size();
+
+    }
+
+
+    private void mostrarModalOpciones(Context context, Bundle bundle) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View customView = LayoutInflater.from(context).inflate(R.layout.modal_opciones_coches, null);
+        builder.setView(ModalRedondeado(context, customView));
+        final AlertDialog dialogOpcionesCoches = builder.create();
+        dialogOpcionesCoches.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogOpcionesCoches.show();
+
+
+        LinearLayout LayoutDetalles = customView.findViewById(R.id.LayoutDetalles);
+        LinearLayout LayoutChecks = customView.findViewById(R.id.LayoutChecks);
+        LinearLayout LayoutTomarFotos = customView.findViewById(R.id.LayoutTomarFotos);
+
+        LayoutTomarFotos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(context, Prueba.class);
+                intent.putExtra("marca", bundle.getString("marca"));
+                intent.putExtra("id_ser_venta", bundle.getString("idventa"));
+                context.startActivity(intent);
+                dialogOpcionesCoches.dismiss();
+            }
+        });
+
+
+        LayoutDetalles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DetalleFragment detalleFragment = new DetalleFragment();
+                detalleFragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.frame_layoutCoches, detalleFragment)
+                        .addToBackStack(null)
+                        .commit();
+                dialogOpcionesCoches.dismiss();
+            }
+        });
+
+
+        LayoutChecks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckListFragment checkListFragment = new CheckListFragment();
+                checkListFragment.setArguments(bundle);
+
+                FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
+                fragmentManagerCheck.beginTransaction()
+                        .replace(R.id.frame_layoutCoches, checkListFragment)
+                        .addToBackStack(null)
+                        .commit();
+                dialogOpcionesCoches.dismiss();
+            }
+        });
+
 
     }
 
@@ -240,7 +324,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         notifyDataSetChanged();
     }
 
-
+/*
     private void showPopupMenu(View view, Bundle bundle) {
         PopupMenu popupMenu = new PopupMenu(context, view, Gravity.CENTER);
         popupMenu.getMenuInflater().inflate(R.menu.menu_opciones, popupMenu.getMenu());
@@ -299,6 +383,9 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
             e.printStackTrace();
         }
     }
+*/
+
+
 
     private void setTextViewText(TextView textView, String text, String defaultText) {
         if (text.equals(null) || text.equals("") || text.equals("null") || text.isEmpty()) {

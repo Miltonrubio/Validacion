@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Coches"
+    <item
         android:id="@+id/menu_home"
         android:icon="@drawable/baseline_car_repair_24"
         android:iconTint="@color/azulito"
-        />
-    <item android:title="Actividades"
+        android:title="Coches" />
+    <item
         android:id="@+id/menu_actividades"
         android:icon="@drawable/baseline_post_add_24"
         android:iconTint="@color/azulito"
-        />
-    <item android:title="Usuario"
+        android:title="Actividades" />
+    <item
+        android:id="@+id/menu_clientes"
+        android:icon="@drawable/baseline_person_add_alt_1_24"
+        android:iconTint="@color/azulito"
+        android:title="Clientes" />
+
+    <item
         android:id="@+id/menu_usuario"
         android:icon="@drawable/baseline_person_24"
         android:iconTint="@color/azulito"
-        />
+        android:title="Usuario" />
 </menu>

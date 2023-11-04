@@ -8,7 +8,7 @@
         android:title="Subir Fotos" />
     <item
         android:id="@+id/opcionCheck"
-        android:title="Check" />
+        android:title="Checks de entrada" />
     <item
         android:id="@+id/opcionCancelar"
         android:title="Cancelar" />

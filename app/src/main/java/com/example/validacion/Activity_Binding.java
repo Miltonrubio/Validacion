@@ -51,6 +51,8 @@ public class Activity_Binding extends AppCompatActivity {
                 case (R.id.menu_usuario):
                     replaceFragment(new UsuariosFragment());
                     break;
+                case  (R.id.menu_clientes):
+                    replaceFragment(new ClientesFragment());
             }
             return true;
         });
@@ -71,6 +73,7 @@ public class Activity_Binding extends AppCompatActivity {
 
         } else {
 
+            binding.bottomNavigationView.getMenu().findItem(R.id.menu_clientes).setVisible(false);
         }
     }
 
