@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/yourConstraintLayoutId"
             android:layout_width="match_parent"
@@ -66,9 +65,45 @@
             android:id="@+id/recyclerViewClientes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/yourConstraintLayoutId" />
+            android:layout_below="@id/yourConstraintLayoutId"
+            android:visibility="visible" />
 
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieNoClientes"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="517dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="74dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="140dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="nousuarios.json"
+            app:lottie_imageAssetsFolder="assets"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:id="@+id/TextSinResultados"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="84dp"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="No se encontraron usuarios"
+            android:textSize="27dp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
@@ -97,11 +132,38 @@
             app:lottie_imageAssetsFolder="assets"
             app:lottie_loop="true" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/LayoutSinContenido"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieSinContenido"
+            android:layout_width="322dp"
+            android:layout_height="322dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="nousuarios.json"
+            app:lottie_imageAssetsFolder="assets"
+            app:lottie_loop="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/botonAgregarActividad"
+        android:id="@+id/botonAgregarClientes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -111,6 +173,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/baseline_person_add_alt_1_24"
-        />
+        app:shapeAppearanceOverlay="@style/RoundedShape" />
 </RelativeLayout>
 

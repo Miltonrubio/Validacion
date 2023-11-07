@@ -25,11 +25,12 @@
 
             <ImageView
                 android:id="@+id/fotoDeUsuario"
-                android:layout_width="110dp"
-                android:src="@drawable/baseline_person_24"
-                android:layout_height="match_parent"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
                 android:layout_marginEnd="8dp"
-                android:contentDescription="Descripción de la imagen" />
+                android:contentDescription="Descripción de la imagen"
+                android:src="@drawable/baseline_person_24" />
 
             <LinearLayout
                 android:layout_width="0dp"

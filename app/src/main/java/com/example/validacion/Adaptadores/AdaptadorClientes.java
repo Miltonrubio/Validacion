@@ -4,21 +4,28 @@ package com.example.validacion.Adaptadores;
 import static android.app.PendingIntent.getActivity;
 
 import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
+import static com.example.validacion.Adaptadores.Utiles.crearToastPersonalizado;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +44,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.validacion.R;
 
+import org.checkerframework.common.returnsreceiver.qual.This;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +68,13 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
 
     List<JSONObject> listaUnidades = new ArrayList<>();
 
+
+    List<JSONObject> listaMarcas = new ArrayList<>();
+    List<JSONObject> listaModelos = new ArrayList<>();
+
+    AdaptadorModelos.OnActivityActionListener actionListener;
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -69,9 +84,15 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
     }
 
     ConstraintLayout LayoutSinInternet;
-    LinearLayout LayoutConContenido;
-    ConstraintLayout  LayoutSinContenido;
+    ConstraintLayout LayoutConContenido;
+    ConstraintLayout LayoutSinContenido;
 
+
+    RecyclerView reciclerViewMarcas;
+    ConstraintLayout LayoutSeleccionarMarca;
+    ConstraintLayout LayoutSeleccionarModelo;
+    ConstraintLayout LayoutAgregarDatos;
+    AdaptadorMarcas adaptadorMarcas;
 
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
@@ -83,6 +104,11 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
             String domicilio = jsonObject2.optString("domicilio", "");
             String id_ser_cliente = jsonObject2.optString("id_ser_cliente", "");
 
+
+            Bundle bundle = new Bundle();
+            bundle.putString("nombre", nombre);
+            bundle.putString("id_ser_cliente", id_ser_cliente);
+
             setTextViewText(holder.textNombreUsuario, nombre, "No se encontro el nombre");
             setTextViewText(holder.textTelefonoUsuario, telefono, "No se encontro el telefono");
             setTextViewText(holder.textDireccionUsuario, domicilio, "No se encontro el domicilio");
@@ -90,42 +116,118 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_clientes, null);
                     LayoutSinInternet = customView.findViewById(R.id.LayoutSinInternet);
                     LayoutConContenido = customView.findViewById(R.id.LayoutConContenido);
-                    LayoutSinContenido=customView.findViewById(R.id.LayoutSinContenido);
+                    LayoutSinContenido = customView.findViewById(R.id.LayoutSinContenido);
+
+                    ImageView btnAgregarUnidad = customView.findViewById(R.id.btnAgregarUnidad);
+                    ImageView AgregarNuevaUnidad = customView.findViewById(R.id.AgregarNuevaUnidad);
+
 
                     RecyclerViewUnidadesUsuario = customView.findViewById(R.id.RecyclerViewUnidadesUsuario);
                     TextView NombreclIENTE = customView.findViewById(R.id.NombreclIENTE);
-                    ImageView btnAgregarUnidad = customView.findViewById(R.id.btnAgregarUnidad);
 
                     NombreclIENTE.setText("Unidades de " + nombre);
                     builder.setView(ModalRedondeado(view.getContext(), customView));
-                    AlertDialog dialogConBotones = builder.create();
-                    dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    dialogConBotones.show();
+                    AlertDialog dialogUnidadesDeCliente = builder.create();
+                    dialogUnidadesDeCliente.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogUnidadesDeCliente.show();
 
-
-                    RecyclerViewUnidadesUsuario.setLayoutManager(new LinearLayoutManager(context));
-                    AdaptadorUnidadesClientes = new AdaptadorUnidadesClientes(listaUnidades, context);
-                    RecyclerViewUnidadesUsuario.setAdapter(AdaptadorUnidadesClientes);
 
                     MostrarUnidadesClientes(id_ser_cliente);
+                    RecyclerViewUnidadesUsuario.setLayoutManager(new LinearLayoutManager(context));
+                    AdaptadorUnidadesClientes = new AdaptadorUnidadesClientes(listaUnidades, context, dialogUnidadesDeCliente, id_ser_cliente);
+                    RecyclerViewUnidadesUsuario.setAdapter(AdaptadorUnidadesClientes);
+
+
+                    AgregarNuevaUnidad.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            MostrarModalMarcas(view, bundle, dialogUnidadesDeCliente);
+/*
+                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_unidad, null);
+                            builder.setView(ModalRedondeado(view.getContext(), customView));
+                            AlertDialog dialogMarcas = builder.create();
+                            dialogMarcas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogMarcas.show();
+
+                            VerNombresMarcas();
+
+                            TextView textView3 = customView.findViewById(R.id.text);
+                            textView3.setText("SELECCIONA UNA MARCA");
+
+                            ConstraintLayout yourConstraintLayoutId = customView.findViewById(R.id.yourConstraintLayoutId);
+                            yourConstraintLayoutId.setVisibility(View.VISIBLE);
+                            EditText searchEditText = customView.findViewById(R.id.searchEditText);
+                            searchEditText.setHint("Buscar la marca");
+
+
+                            LayoutSeleccionarMarca = customView.findViewById(R.id.SeleccionarMarca);
+                            LayoutSeleccionarModelo = customView.findViewById(R.id.SeleccionarModelo);
+                            LayoutAgregarDatos = customView.findViewById(R.id.LayoutAgregarDatos);
+                            reciclerViewMarcas = customView.findViewById(R.id.reciclerViewMarcas);
+
+
+                            LayoutSeleccionarMarca.setVisibility(View.VISIBLE);
+                            LayoutSeleccionarModelo.setVisibility(View.GONE);
+                            LayoutAgregarDatos.setVisibility(View.GONE);
+
+
+                            adaptadorMarcas = new AdaptadorMarcas(listaMarcas, customView.getContext(), bundle, actionListener, dialogUnidadesDeCliente, dialogMarcas);
+                            reciclerViewMarcas.setLayoutManager(new LinearLayoutManager(customView.getContext()));
+                            reciclerViewMarcas.setAdapter(adaptadorMarcas);
+
+
+                            */
+                        }
+                    });
 
 
                     btnAgregarUnidad.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
+                            MostrarModalMarcas(view, bundle, dialogUnidadesDeCliente);
+
+                            /*
+
+
+
                             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.insertar_actividad, null);
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_unidad, null);
                             builder.setView(ModalRedondeado(view.getContext(), customView));
-                            AlertDialog dialogConBotones = builder.create();
-                            dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                            dialogConBotones.show();
+                            AlertDialog dialogAgregarUnidad = builder.create();
+                            dialogAgregarUnidad.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogAgregarUnidad.show();
+
+                            VerNombresMarcas();
+
+                            TextView textView3 = customView.findViewById(R.id.text);
+                            textView3.setText("REGISTRAR NUEVA UNIDAD PARA " + nombre.toUpperCase());
 
 
+                            LayoutSeleccionarMarca = customView.findViewById(R.id.SeleccionarMarca);
+                            LayoutSeleccionarModelo = customView.findViewById(R.id.SeleccionarModelo);
+                            LayoutAgregarDatos = customView.findViewById(R.id.LayoutAgregarDatos);
+                            reciclerViewMarcas = customView.findViewById(R.id.reciclerViewMarcas);
+
+                            LayoutSeleccionarMarca.setVisibility(View.VISIBLE);
+                            LayoutSeleccionarModelo.setVisibility(View.GONE);
+                            LayoutAgregarDatos.setVisibility(View.GONE);
+
+
+                            adaptadorMarcas = new AdaptadorMarcas(listaMarcas, customView.getContext(), bundle, actionListener, dialogUnidadesDeCliente, dialogAgregarUnidad);
+                            reciclerViewMarcas.setLayoutManager(new LinearLayoutManager(customView.getContext()));
+                            reciclerViewMarcas.setAdapter(adaptadorMarcas);
+
+
+ */
                         }
                     });
 
@@ -134,6 +236,97 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
 
         } finally {
         }
+    }
+
+    private void MostrarModalMarcas(View view, Bundle bundle, AlertDialog dialogUnidadesDeCliente) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_unidad, null);
+        builder.setView(ModalRedondeado(view.getContext(), customView));
+        AlertDialog dialogMarcas = builder.create();
+        dialogMarcas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogMarcas.show();
+
+        VerNombresMarcas();
+
+        TextView textView3 = customView.findViewById(R.id.text);
+        textView3.setText("SELECCIONA UNA MARCA");
+
+        ConstraintLayout yourConstraintLayoutId = customView.findViewById(R.id.yourConstraintLayoutId);
+        yourConstraintLayoutId.setVisibility(View.VISIBLE);
+        EditText searchEditText = customView.findViewById(R.id.searchEditText);
+        searchEditText.setHint("Buscar la marca");
+
+
+        LayoutSeleccionarMarca = customView.findViewById(R.id.SeleccionarMarca);
+        LayoutSeleccionarModelo = customView.findViewById(R.id.SeleccionarModelo);
+        LayoutAgregarDatos = customView.findViewById(R.id.LayoutAgregarDatos);
+        reciclerViewMarcas = customView.findViewById(R.id.reciclerViewMarcas);
+
+
+        LayoutSeleccionarMarca.setVisibility(View.VISIBLE);
+        LayoutSeleccionarModelo.setVisibility(View.GONE);
+        LayoutAgregarDatos.setVisibility(View.GONE);
+
+
+        adaptadorMarcas = new AdaptadorMarcas(listaMarcas, customView.getContext(), bundle, actionListener, dialogUnidadesDeCliente, dialogMarcas);
+        reciclerViewMarcas.setLayoutManager(new LinearLayoutManager(customView.getContext()));
+        reciclerViewMarcas.setAdapter(adaptadorMarcas);
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adaptadorMarcas.filter(s.toString().toLowerCase());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+
+    private void VerNombresMarcas() {
+        listaMarcas.clear(); // Limpia la lista antes de agregar los nuevos
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        listaMarcas.add(jsonObject);
+                    }
+
+                    adaptadorMarcas.setFilteredData(listaMarcas);
+                    adaptadorMarcas.filter("");
+
+
+                } catch (JSONException e) {
+                    crearToastPersonalizado(context, "Error al cargar los datos");
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                crearToastPersonalizado(context, "Error al cargar los datos");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "32");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
     }
 
 
@@ -147,7 +340,6 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
                             JSONArray jsonArray = new JSONArray(response);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-
                                 listaUnidades.add(jsonObject);
                             }
 
@@ -244,8 +436,15 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
                 }
             }
         }
+
+        if (filteredData.isEmpty()) {
+            actionListenerClientes.onFilterData(false); // Indica que no hay resultados
+        } else {
+            actionListenerClientes.onFilterData(true); // Indica que hay resultados
+        }
         notifyDataSetChanged();
     }
+
 
     public void setFilteredData(List<JSONObject> filteredData) {
         this.filteredData = new ArrayList<>(filteredData);
@@ -261,10 +460,19 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
     }
 
 
-    public AdaptadorClientes(List<JSONObject> data, Context context) {
+    public interface OnActivityActionListener {
+        void onFilterData(boolean result);
+    }
+
+    private AdaptadorClientes.OnActivityActionListener actionListenerClientes;
+
+
+    public AdaptadorClientes(List<JSONObject> data, Context context, AdaptadorModelos.OnActivityActionListener actionListener, AdaptadorClientes.OnActivityActionListener actionListenerClientes) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
+        this.actionListener = actionListener;
+        this.actionListenerClientes = actionListenerClientes;
     }
 
 

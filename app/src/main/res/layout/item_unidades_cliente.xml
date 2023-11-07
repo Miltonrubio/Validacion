@@ -18,6 +18,7 @@
         android:paddingVertical="10dp">
 
         <ImageView
+            android:id="@+id/imagenCarrito"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/baseline_directions_car_filled_24"

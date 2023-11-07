@@ -50,12 +50,6 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
 
-    public AdaptadorCoches(List<JSONObject> data, Context context) {
-        this.data = data;
-        this.context = context;
-        this.filteredData = new ArrayList<>(data);
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -316,6 +310,11 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
             }
         }
 
+        if (filteredData.isEmpty()) {
+            actionListener.onFilterData(false); // Indica que no hay resultados
+        } else {
+            actionListener.onFilterData(true); // Indica que hay resultados
+        }
         notifyDataSetChanged();
     }
 
@@ -386,7 +385,6 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
 */
 
 
-
     private void setTextViewText(TextView textView, String text, String defaultText) {
         if (text.equals(null) || text.equals("") || text.equals("null") || text.isEmpty()) {
             textView.setText(defaultText);
@@ -453,6 +451,20 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                     .load(R.drawable.default_image)
                     .into(imageView);
         }
+    }
+
+
+    public interface OnActivityActionListener {
+        void onFilterData(Boolean resultados);
+    }
+
+    private AdaptadorCoches.OnActivityActionListener actionListener;
+
+    public AdaptadorCoches(List<JSONObject> data, Context context, AdaptadorCoches.OnActivityActionListener actionListener) {
+        this.data = data;
+        this.context = context;
+        this.filteredData = new ArrayList<>(data);
+        this.actionListener = actionListener;
     }
 
 }
