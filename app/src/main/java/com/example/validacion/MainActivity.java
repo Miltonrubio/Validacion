@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.validacion.Adaptadores.Utiles;
 import com.google.android.gms.tasks.OnCompleteListener;
 
 import org.json.JSONArray;
@@ -115,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (valorusername.isEmpty() || valorpassword.isEmpty()) {
-            Toast.makeText(context, "LLENE TODOS LOS CAMPOS", Toast.LENGTH_SHORT).show();
+            Utiles.crearToastPersonalizado(context, "Hay campos vacios, por favor rellenalos");
+
         } else {
             Login(valorusername, valorpassword);
         }
@@ -129,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 if (response.equals(response)) {
                     if (response.equals("fallo")) {
-                        Toast.makeText(context, "USUARIO O CONTRASEÑA INCORRECTA", Toast.LENGTH_SHORT).show();
+
+                        Utiles.crearToastPersonalizado(context, "La contraseña o el numero de telefono son incorrectos");
                     } else {
 
                         try {
@@ -163,21 +166,20 @@ public class MainActivity extends AppCompatActivity {
                             finish();
 
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(context, "Los datos son incorrectos", Toast.LENGTH_LONG).show();
+                            Utiles.crearToastPersonalizado(context, "La contraseña o el numero de telefono son incorrectos");
                         }
                     }
                 } else {
-                    Toast.makeText(context, "SERVIDORES EN MANTENIMIENTO... VUELVA A INTENTAR MAS TARDE ", Toast.LENGTH_LONG).show();
+                    Utiles.crearToastPersonalizado(context, "Hubo un error con la conexión, intenta mas tarde");
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (error instanceof NoConnectionError) {
-                    Toast.makeText(context, "ERROR AL CONECTAR", Toast.LENGTH_LONG).show();
+                    Utiles.crearToastPersonalizado(context, "Hubo un error, revisa tu conexión");
                 } else {
-                    Toast.makeText(context, "SERVIDORES EN MANTENIMIENTO... VUELVA A INTENTAR MAS TARDE ", Toast.LENGTH_LONG).show();
+                    Utiles.crearToastPersonalizado(context, "Hubo un error con la conexión, intenta mas tarde");
                 }
             }
         }) {
@@ -203,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "No se recibio el token", Toast.LENGTH_LONG).show();
+                    Utiles.crearToastPersonalizado(context, "No se recibio el token, no recibiras notificaciones");
                 });
     }
 

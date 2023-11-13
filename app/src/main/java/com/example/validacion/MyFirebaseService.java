@@ -1,11 +1,7 @@
 package com.example.validacion;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -39,7 +35,7 @@ public class MyFirebaseService extends FirebaseMessagingService {
         PendingIntent pendingIntent = null;
         int notificationId = new Random().nextInt(); // Generar un ID de notificación único
         if ("Hay un coche que necesita servicio".equals(title)) {
-            Intent intent = new Intent(this, Prueba.class);
+            Intent intent = new Intent(this, SubirFotosUnidadesActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             pendingIntent = PendingIntent.getActivity(
                     this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE

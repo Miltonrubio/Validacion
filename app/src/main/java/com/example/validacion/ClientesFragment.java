@@ -115,8 +115,6 @@ public class ClientesFragment extends Fragment implements AdaptadorModelos.OnAct
         Bundle bundle = new Bundle();
         AdaptadorModelos adaptadorModelos = new AdaptadorModelos(listaModelos, context, bundle, this, null, null, null);
         adaptadorClientes = new AdaptadorClientes(listaClientes, context, this, this);
-
-
         recyclerViewCliente.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewCliente.setAdapter(adaptadorClientes);
 
@@ -244,8 +242,6 @@ public class ClientesFragment extends Fragment implements AdaptadorModelos.OnAct
 
                                 listaClientes.add(jsonObject);
                             }
-
-
                             adaptadorClientes.notifyDataSetChanged();
                             adaptadorClientes.setFilteredData(listaClientes);
                             adaptadorClientes.filter("");

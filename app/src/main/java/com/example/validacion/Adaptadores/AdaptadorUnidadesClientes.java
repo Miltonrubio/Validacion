@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -87,7 +88,7 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
             holder.NombreUnidad.setText(Marca + " " + Modelo);
 
 
-            holder.NombreUnidad.setOnClickListener(new View.OnClickListener() {
+            holder.LayoutAgregarServicio.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
@@ -243,10 +244,14 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView NombreUnidad;
+        LinearLayout LayoutAgregarServicio;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             NombreUnidad = itemView.findViewById(R.id.NombreUnidad);
+            LayoutAgregarServicio = itemView.findViewById(R.id.LayoutAgregarServicio);
+
+
         }
     }
 

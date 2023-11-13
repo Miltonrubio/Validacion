@@ -5,18 +5,17 @@
     android:layout_marginTop="15dp"
     android:orientation="vertical"
     android:padding="6dp">
-    <!-- Segundo LinearLayout -->
 
     <LinearLayout
         android:id="@+id/LayoutDetalles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="5dp"
         android:layout_marginVertical="5dp"
         android:background="@drawable/textview_outlinegris"
         android:clickable="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="12dp">
 
         <ImageView
             android:layout_width="50dp"
@@ -40,26 +39,84 @@
         android:id="@+id/LayoutChecks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="5dp"
         android:layout_marginVertical="5dp"
+        android:background="@drawable/textview_outlinegris"
         android:clickable="true"
         android:orientation="horizontal"
-        android:background="@drawable/textview_outlinegris">
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="12dp">
 
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:tint="@color/azulito"
-            android:src="@drawable/baseline_checklist_24" />
+            android:src="@drawable/baseline_car_repair_24"
+            app:tint="@color/azulito" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textColor="@color/azulito"
             android:text="Checks de ingreso"
+            android:textColor="@color/azulito"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LayoutChecksSalida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:background="@drawable/textview_outlinegris"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Checks de salida"
+            android:textColor="@color/azulito"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_directions_car_filled_24"
+            app:tint="@color/azulito" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutCheckListTecnico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:background="@drawable/textview_outlinegris"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="12dp">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_checklist_24"
+            app:tint="@color/azulito" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Checklist Técnico"
+            android:textColor="@color/azulito"
             android:textSize="30dp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -69,26 +126,26 @@
         android:id="@+id/LayoutTomarFotos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="5dp"
         android:layout_marginVertical="5dp"
         android:background="@drawable/textview_outlinegris"
-        android:orientation="horizontal">
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="12dp">
 
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:tint="@color/azulito"
-            android:src="@drawable/baseline_camera_alt_24" />
+            android:src="@drawable/baseline_camera_alt_24"
+            app:tint="@color/azulito" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textColor="@color/azulito"
             android:text="Subir fotos"
+            android:textColor="@color/azulito"
             android:textSize="30dp"
             android:textStyle="bold" />
     </LinearLayout>

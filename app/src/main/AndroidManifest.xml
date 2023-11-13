@@ -39,7 +39,8 @@
 
         <activity
             android:name=".PruebaSpinnre"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.actions"
@@ -61,14 +62,17 @@
 
         <activity
             android:name=".Prueba2"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".Prueba"
-            android:exported="false" />
+            android:name=".SubirFotosUnidadesActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Validacion.Fullscreen"
             android:windowEnterAnimation="@anim/fade_in"
             android:windowExitAnimation="@anim/fade_out">
@@ -81,11 +85,13 @@
         <activity
             android:name=".Activity_Binding"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowEnterAnimation="@anim/fade_in"
             android:windowExitAnimation="@anim/fade_out" />
         <activity
             android:name=".MainActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowEnterAnimation="@anim/fade_in"
             android:windowExitAnimation="@anim/fade_out" />
 

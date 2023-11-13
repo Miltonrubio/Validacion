@@ -109,7 +109,7 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
             bundle.putString("nombre", nombre);
             bundle.putString("id_ser_cliente", id_ser_cliente);
 
-            setTextViewText(holder.textNombreUsuario, nombre, "No se encontro el nombre");
+            setTextViewText(holder.textNombreUsuario, nombre.toUpperCase(), "No se encontro el nombre");
             setTextViewText(holder.textTelefonoUsuario, telefono, "No se encontro el telefono");
             setTextViewText(holder.textDireccionUsuario, domicilio, "No se encontro el domicilio");
 

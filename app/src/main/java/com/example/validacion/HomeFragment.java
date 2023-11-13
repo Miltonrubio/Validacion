@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -80,16 +81,19 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     FloatingActionButton botonAgregarActividad;
 
 
-    ConstraintLayout LayoutSinInternet;
-    RelativeLayout LayoutConContenido;
-
     AlertDialog.Builder builder;
     AlertDialog modalCargando;
 
     ConstraintLayout LayoutSinResultados;
     ConstraintLayout LayoutRecycler;
+    ConstraintLayout LayoutSinInternet;
     Button btn_pendientes;
     Button btn_ENTREGADAS;
+
+    Button btn_ENTREGADAS2;
+    Button btn_pendientes2;
+
+    LottieAnimationView lottieNoClientes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,14 +104,21 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
         botonAgregarActividad = view.findViewById(R.id.botonAgregarActividad);
         recyclerView = view.findViewById(R.id.recyclerViewFragment);
-        LayoutRecycler = view.findViewById(R.id.LayoutRecycler);
         editTextBusqueda = view.findViewById(R.id.searchEditText);
-        LayoutConContenido = view.findViewById(R.id.LayoutConContenido);
         LayoutSinInternet = view.findViewById(R.id.LayoutSinInternet);
         LayoutSinResultados = view.findViewById(R.id.LayoutSinResultados);
-
+        LayoutRecycler = view.findViewById(R.id.LayoutRecycler);
+        lottieNoClientes = view.findViewById(R.id.lottieNoClientes);
         btn_pendientes = view.findViewById(R.id.btn_pendientes);
         btn_ENTREGADAS = view.findViewById(R.id.btn_ENTREGADAS);
+
+
+        btn_pendientes2 = view.findViewById(R.id.btn_pendientes2);
+        btn_ENTREGADAS2 = view.findViewById(R.id.btn_ENTREGADAS2);
+
+
+
+
 
         builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
@@ -119,8 +130,21 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        VerNombresClientes();
+        //  VerNombresClientes();
         ImageView LectorQr = view.findViewById(R.id.LectorQr);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        String permisosUsuario = sharedPreferences.getString("permisos", "");
+        String idusuario = sharedPreferences.getString("idusuario", "");
+
+        if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
+            botonAgregarActividad.setVisibility(View.VISIBLE);
+            VisualizarServicios();
+        } else {
+            botonAgregarActividad.setVisibility(View.GONE);
+            VisualizarServiciosPorMecanicos(idusuario);
+        }
+
 
         opciones.add("Lleno");
         opciones.add("3/4");
@@ -129,19 +153,62 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         opciones.add("Reserva");
 
 
+        btn_ENTREGADAS2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
+                    botonAgregarActividad.setVisibility(View.VISIBLE);
+                    VisualizarServiciosENTREGADOS();
+                } else {
+                    botonAgregarActividad.setVisibility(View.GONE);
+                    //VisualizarServiciosPorMecanicosENTREGADAS(idusuario);
+
+                    Utiles.crearToastPersonalizado(context, "Esta opción es unicamente para administrativos");
+
+                }
+            }
+        });
+
         btn_ENTREGADAS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                VisualizarServiciosENTREGADOS();
+                if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
+                    botonAgregarActividad.setVisibility(View.VISIBLE);
+                    VisualizarServiciosENTREGADOS();
+                } else {
+                    botonAgregarActividad.setVisibility(View.GONE);
+                    //   VisualizarServiciosPorMecanicosENTREGADAS(idusuario);
+                    Utiles.crearToastPersonalizado(context, "Esta opción es unicamente para administrativos");
+                }
             }
         });
+
 
         btn_pendientes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
+                    botonAgregarActividad.setVisibility(View.VISIBLE);
+                    VisualizarServicios();
+                } else {
+                    botonAgregarActividad.setVisibility(View.GONE);
+                    VisualizarServiciosPorMecanicos(idusuario);
+                }
+            }
+        });
 
-                VisualizarServicios();
+        btn_pendientes2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
+                    botonAgregarActividad.setVisibility(View.VISIBLE);
+
+                    VisualizarServicios();
+                } else {
+                    botonAgregarActividad.setVisibility(View.GONE);
+                    VisualizarServiciosPorMecanicos(idusuario);
+                }
             }
         });
 
@@ -159,7 +226,6 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         dataList = new ArrayList<>();
         adaptadorCoches = new AdaptadorCoches(dataList, context, this);
         recyclerView.setAdapter(adaptadorCoches);
@@ -182,24 +248,11 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         });
 
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-        String permisosUsuario = sharedPreferences.getString("permisos", "");
-        String idusuario = sharedPreferences.getString("idusuario", "");
-
-        if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
-            botonAgregarActividad.setVisibility(View.VISIBLE);
-            VisualizarServicios();
-        } else {
-            botonAgregarActividad.setVisibility(View.GONE);
-            VisualizarServiciosPorMecanicos(idusuario);
-        }
-
-
         botonAgregarActividad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Utiles.crearToastPersonalizado(context, "Selecciona el cliente al que le quieras registrar el servicio");
+                Utiles.crearToastPersonalizado(context, "Selecciona el cliente al que le quieras registrarle el servicio");
                 FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
                 Utiles.RedirigirAFragment(fragmentManager, new ClientesFragment(), null);
 
@@ -249,7 +302,6 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         valorGas = parent.getItemAtPosition(position).toString();
                     }
 
-
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
                     }
@@ -271,12 +323,10 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         }
                     }
 
-
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
                     }
                 });
-
 
                 SpinnerUnidades.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -302,7 +352,6 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                                         e.printStackTrace();
                                     }
                                 }
-
                                 if (unidadSeleccionada != null) {
                                     // Aquí puedes acceder a los datos de la unidad seleccionada
 
@@ -315,15 +364,12 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                                         String motor = unidadSeleccionada.getString("motor");
                                         String vin = unidadSeleccionada.getString("vin");
 
-
                                         if (km.isEmpty() || motivoIngreso.isEmpty()) {
                                             if (isAdded()) {
                                                 Toast.makeText(context, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
                                             }
-
                                             return;
                                         } else {
-
                                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
                                             alertDialogBuilder.setMessage("Marca: " + Marca + "\nModelo: " + Modelo + "\nGas:" + valorGas + "\nKilometraje: " + km + "\nMotivo De Ingreso: " + motivoIngreso + "\n\n¿Estas seguro de mandar este servicio?");
                                             alertDialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -377,14 +423,10 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
             String scanResult = result.getContents();
             editTextBusqueda.setText(scanResult);
         } else {
-            if (isAdded()) {
-                Toast.makeText(getContext(), "Escaneo cancelado", Toast.LENGTH_SHORT).show();
-            }
+
+            Utiles.crearToastPersonalizado(context, "Escaneo cancelado");
         }
     }
-
-
-    List<JSONObject> listaCompleta = new ArrayList<>();
 
     private void VisualizarServicios() {
         dataList.clear();
@@ -396,12 +438,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String estatus = jsonObject.getString("estatus");
+                        dataList.add(jsonObject);
 
-                        if (!estatus.equalsIgnoreCase("ENTREGADO")) {
-                            dataList.add(jsonObject);
-                        }
-                        listaCompleta.add(jsonObject);
                     }
                     adaptadorCoches.notifyDataSetChanged();
                     adaptadorCoches.setFilteredData(dataList);
@@ -409,16 +447,17 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
                     if (dataList.size() > 0) {
 
-                        mostrarLayout("ConContenido");
+                        mostrarLayout("conContenido");
                     } else {
 
-                        mostrarLayout("SinInternet");
+                        mostrarLayout("SinContenido");
                     }
 
+                    editTextBusqueda.setText("");
                 } catch (JSONException e) {
-                    mostrarLayout("SinInternet");
+                    mostrarLayout("SinContenido");
+                    editTextBusqueda.setText("");
                 }
-                editTextBusqueda.setText("");
             }
         }, new Response.ErrorListener() {
             @Override
@@ -447,11 +486,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String estatus = jsonObject.getString("estatus");
+                        dataList.add(jsonObject);
 
-                        if (estatus.equalsIgnoreCase("ENTREGADO")) {
-                            dataList.add(jsonObject);
-                        }
                     }
                     adaptadorCoches.notifyDataSetChanged();
                     adaptadorCoches.setFilteredData(dataList);
@@ -459,16 +495,17 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
                     if (dataList.size() > 0) {
 
-                        mostrarLayout("ConContenido");
+                        mostrarLayout("conContenido");
                     } else {
-
-                        mostrarLayout("SinInternet");
+                        mostrarLayout("SinContenido");
                     }
+                    editTextBusqueda.setText("");
 
                 } catch (JSONException e) {
-                    mostrarLayout("SinInternet");
+
+                    mostrarLayout("SinContenido");
+                    editTextBusqueda.setText("");
                 }
-                editTextBusqueda.setText("");
             }
         }, new Response.ErrorListener() {
             @Override
@@ -478,7 +515,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("opcion", "2");
+                params.put("opcion", "37");
                 return params;
             }
         };
@@ -489,11 +526,24 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
     private void mostrarLayout(String estado) {
         if (estado.equalsIgnoreCase("SinInternet")) {
-            LayoutConContenido.setVisibility(View.GONE);
             LayoutSinInternet.setVisibility(View.VISIBLE);
-        } else {
-            LayoutConContenido.setVisibility(View.VISIBLE);
+            LayoutRecycler.setVisibility(View.GONE);
+            LayoutSinResultados.setVisibility(View.GONE);
+
+        } else if (estado.equalsIgnoreCase("SinContenido")) {
             LayoutSinInternet.setVisibility(View.GONE);
+            LayoutRecycler.setVisibility(View.GONE);
+            LayoutSinResultados.setVisibility(View.VISIBLE);
+
+        } else if (estado.equalsIgnoreCase("conContenido")) {
+            LayoutSinInternet.setVisibility(View.GONE);
+            LayoutRecycler.setVisibility(View.VISIBLE);
+            LayoutSinResultados.setVisibility(View.GONE);
+        } else {
+
+            LayoutSinInternet.setVisibility(View.GONE);
+            LayoutRecycler.setVisibility(View.GONE);
+            LayoutSinResultados.setVisibility(View.VISIBLE);
         }
 
         onLoadComplete();
@@ -510,6 +560,61 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     private void VisualizarServiciosPorMecanicos(String idmecanico) {
         dataList.clear();
         modalCargando = Utiles.ModalCargando(context, builder);
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equalsIgnoreCase("\"fallo\"")) {
+                    mostrarLayout("SinContenido");
+                } else {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            dataList.add(jsonObject);
+                        }
+
+                        if (dataList.size() > 0) {
+                            mostrarLayout("conContenido");
+                        } else {
+                            mostrarLayout("SinContenido");
+                        }
+
+
+                        adaptadorCoches.notifyDataSetChanged();
+                        adaptadorCoches.setFilteredData(dataList);
+                        adaptadorCoches.filter("");
+                        editTextBusqueda.setText("");
+
+                    } catch (JSONException e) {
+
+                        mostrarLayout("SinContenido");
+                        editTextBusqueda.setText("");
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mostrarLayout("SinInternet");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "25");
+                params.put("idmecanico", idmecanico);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+
+    }
+
+
+    private void VisualizarServiciosPorMecanicosENTREGADAS(String idmecanico) {
+        dataList.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -517,7 +622,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        dataList.add(jsonObject); // Agrega cada objeto JSON a la lista
+                        dataList.add(jsonObject);
+
                     }
                     adaptadorCoches.notifyDataSetChanged();
                     adaptadorCoches.setFilteredData(dataList);
@@ -525,7 +631,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
                     if (dataList.size() > 0) {
 
-                        mostrarLayout("ConContenido");
+                        mostrarLayout("conContenido");
                     } else {
 
                         mostrarLayout("SinInternet");
@@ -544,14 +650,44 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("opcion", "25");
-                params.put("idmecanico", idmecanico);
+                params.put("opcion", "37");
                 return params;
             }
         };
 
         Volley.newRequestQueue(context).add(postrequest);
     }
+
+
+    @Override
+    public void onFilterData(Boolean resultados) {
+        if (resultados) {
+            mostrarLayout("conContenido");
+        } else {
+            if ((editTextBusqueda.getText().toString().equals("") || editTextBusqueda.getText().toString().isEmpty())) {
+
+                if (editTextBusqueda.getText().toString().equals("") && dataList.size()>0){
+
+                    mostrarLayout("conContenido");
+                }else {
+
+                    mostrarLayout("SinContenido");
+                }
+
+            } else {
+                mostrarLayout("SinContenido");
+            }
+        }
+    }
+
+}
+
+
+
+
+
+
+/* Codigo anterior para registrar servicios
 
 
     private void VerNombresClientes() {
@@ -577,10 +713,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                if (isAdded()) {
-                    Toast.makeText(context, "Hubo un error", Toast.LENGTH_SHORT).show();
-                }
+                Utiles.crearToastPersonalizado(context, "No se pudieron cargar los datos, revisa la conexión");
+
             }
         }) {
             protected Map<String, String> getParams() {
@@ -635,10 +769,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                if (isAdded()) {
-                    Toast.makeText(context, "Hubo un error", Toast.LENGTH_SHORT).show();
-                }
+
+                Utiles.crearToastPersonalizado(context, "No se pudieron cargar los datos, revisa la conexión");
             }
         }) {
             protected Map<String, String> getParams() {
@@ -672,18 +804,14 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
             @Override
             public void onResponse(String response) {
                 VisualizarServicios();
-                if (isAdded()) {
-                    Toast.makeText(context, "Servicio Agregado", Toast.LENGTH_SHORT).show();
-                }
+                Utiles.crearToastPersonalizado(context, "Servicio Agregado");
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                if (isAdded()) {
-                    Toast.makeText(context, "Hubo un error", Toast.LENGTH_SHORT).show();
-                }
+                Utiles.crearToastPersonalizado(context, "Hubo un error");
+
             }
         }) {
             protected Map<String, String> getParams() {
@@ -706,32 +834,5 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
         Volley.newRequestQueue(context).add(postrequest);
     }
-
-    @Override
-    public void onFilterData(Boolean resultados) {
-        if (resultados) {
-            animacionLupe("Oculto");
-        } else {
-            if ((editTextBusqueda.getText().toString().equals("") || editTextBusqueda.getText().toString().isEmpty())) {
-                animacionLupe("Oculto");
-            } else {
-                animacionLupe("Visible");
-            }
-        }
-    }
-
-
-    private void animacionLupe(String estado) {
-        if (estado.equals("Oculto")) {
-
-            LayoutSinResultados.setVisibility(View.GONE);
-            LayoutRecycler.setVisibility(View.VISIBLE);
-        } else {
-            LayoutSinResultados.setVisibility(View.VISIBLE);
-            LayoutRecycler.setVisibility(View.GONE);
-        }
-    }
-
-}
-
+ */
 

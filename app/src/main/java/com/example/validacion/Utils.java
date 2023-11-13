@@ -18,7 +18,7 @@ public class Utils {
     public static void showNotifications(Context context, String title, String body, PendingIntent pendingIntent, int notificationId) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "com.example.validacion");
 
-        builder.setSmallIcon(R.drawable.baseline_notifications_active_24);
+        builder.setSmallIcon(R.drawable.tallergeorgiopng);
         builder.setContentTitle(title);
         builder.setContentText(body);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);

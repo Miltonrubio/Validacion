@@ -9,14 +9,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,20 +21,18 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.validacion.CheckListFragment;
+import com.example.validacion.CheckListSalidaFragment;
+import com.example.validacion.CheckListTecnicoFragment;
 import com.example.validacion.DetalleFragment;
-import com.example.validacion.Prueba;
+import com.example.validacion.SubirFotosUnidadesActivity;
 import com.example.validacion.R;
-import com.itextpdf.text.pdf.parser.Line;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +65,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         String kilometraje = jsonObject2.optString("kilometraje");
         String placa = jsonObject2.optString("placasI", "");
         String motivo = jsonObject2.optString("motivoingreso", "");
+
         String estatus = jsonObject2.optString("estatus", "");
         String fecha_ingreso = jsonObject2.optString("fecha_ingreso", "");
         String hora_ingreso = jsonObject2.optString("hora_ingreso", "");
@@ -144,7 +140,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
             public void onClick(View view) {
 
 
-                mostrarModalOpciones(view.getContext(), bundle);
+                mostrarModalOpciones(view.getContext(), bundle, estatus);
 
                 //       showPopupMenu(view, bundle);
             }
@@ -155,7 +151,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
             @Override
             public void onClick(View view) {
 
-                mostrarModalOpciones(view.getContext(), bundle);
+                mostrarModalOpciones(view.getContext(), bundle, estatus);
 
 
                 /*
@@ -177,7 +173,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
             public boolean onLongClick(View view) {
 
 
-                mostrarModalOpciones(view.getContext(), bundle);
+                mostrarModalOpciones(view.getContext(), bundle, estatus);
                 /*
                 showPopupMenu(view, bundle); */
                 return false;
@@ -196,7 +192,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
     }
 
 
-    private void mostrarModalOpciones(Context context, Bundle bundle) {
+    private void mostrarModalOpciones(Context context, Bundle bundle, String estatus) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View customView = LayoutInflater.from(context).inflate(R.layout.modal_opciones_coches, null);
@@ -209,12 +205,29 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         LinearLayout LayoutDetalles = customView.findViewById(R.id.LayoutDetalles);
         LinearLayout LayoutChecks = customView.findViewById(R.id.LayoutChecks);
         LinearLayout LayoutTomarFotos = customView.findViewById(R.id.LayoutTomarFotos);
+        LinearLayout LayoutChecksSalida = customView.findViewById(R.id.LayoutChecksSalida);
+        LinearLayout LayoutCheckListTecnico = customView.findViewById(R.id.LayoutCheckListTecnico);
+
+
+        if (estatus.equalsIgnoreCase("LISTO PARA ENTREGA")) {
+            LayoutChecksSalida.setVisibility(View.VISIBLE);
+            LayoutChecks.setVisibility(View.GONE);
+
+        } else if (estatus.equalsIgnoreCase("ENTREGADO")) {
+            LayoutChecksSalida.setVisibility(View.VISIBLE);
+            LayoutChecks.setVisibility(View.VISIBLE);
+        } else {
+            LayoutChecksSalida.setVisibility(View.GONE);
+            LayoutChecks.setVisibility(View.VISIBLE);
+
+        }
+
 
         LayoutTomarFotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(context, Prueba.class);
+                Intent intent = new Intent(context, SubirFotosUnidadesActivity.class);
                 intent.putExtra("marca", bundle.getString("marca"));
                 intent.putExtra("id_ser_venta", bundle.getString("idventa"));
                 context.startActivity(intent);
@@ -252,6 +265,39 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                         .addToBackStack(null)
                         .commit();
                 dialogOpcionesCoches.dismiss();
+            }
+        });
+
+
+        LayoutChecksSalida.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckListSalidaFragment checkListSalidaFragment = new CheckListSalidaFragment();
+                checkListSalidaFragment.setArguments(bundle);
+
+                FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
+                fragmentManagerCheck.beginTransaction()
+                        .replace(R.id.frame_layoutCoches, checkListSalidaFragment)
+                        .addToBackStack(null)
+                        .commit();
+                dialogOpcionesCoches.dismiss();
+
+            }
+        });
+
+        LayoutCheckListTecnico.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckListTecnicoFragment checkListTecnicoFragment = new CheckListTecnicoFragment();
+                checkListTecnicoFragment.setArguments(bundle);
+
+                FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
+                fragmentManagerCheck.beginTransaction()
+                        .replace(R.id.frame_layoutCoches, checkListTecnicoFragment)
+                        .addToBackStack(null)
+                        .commit();
+                dialogOpcionesCoches.dismiss();
+
             }
         });
 
@@ -345,7 +391,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                         return true;
 
                     case R.id.opcionFotos:
-                        Intent intent = new Intent(context, Prueba.class);
+                        Intent intent = new Intent(context, SubirFotosUnidadesActivity.class);
                         intent.putExtra("marca", bundle.getString("marca"));
                         intent.putExtra("id_ser_venta", bundle.getString("idventa"));
                         context.startActivity(intent);
@@ -416,7 +462,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                 textView.setBackgroundResource(R.drawable.textview_outlinegris);
             } else if (status.equalsIgnoreCase("En servicio")) {
                 textView.setBackgroundResource(R.drawable.textview_outline3);
-            } else if (status.equalsIgnoreCase("Prueba de ruta")) {
+            } else if (status.equalsIgnoreCase("SubirFotosUnidadesActivity de ruta")) {
 
                 textView.setBackgroundResource(R.drawable.textview_outlinenegro);
                 int colorBlanco = ContextCompat.getColor(context, R.color.white);

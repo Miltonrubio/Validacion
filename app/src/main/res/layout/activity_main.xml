@@ -40,7 +40,7 @@
             android:layout_gravity="center"
             android:clickable="true"
             android:onClick="enviarACamara"
-            android:src="@drawable/logo" />
+            android:src="@drawable/tallergeorgiopng" />
 
         <LinearLayout
             android:layout_width="match_parent"

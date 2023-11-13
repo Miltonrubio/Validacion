@@ -41,13 +41,17 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
         this.viewPager2 = viewPager2;
     }
 
+    Context context;
+    String url;
+
     @NonNull
     @Override
     public SlideViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // return new SlideViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_coches_container, parent, false));
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_coches_container, parent, false);
         SlideViewHolder viewHolder = new SlideViewHolder(view);
-
+        context = view.getContext();
+        url = context.getResources().getString(R.string.ApiBack);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,15 +60,14 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
 
 
                 if (position != RecyclerView.NO_POSITION) {
-                   showAlertDialog(parent.getContext(), position, clickedItem);
-                   // Toast.makeText(parent.getContext(), clickedItem.getImage(), Toast.LENGTH_LONG).show();
+                    showAlertDialog(parent.getContext(), position, clickedItem);
+                    // Toast.makeText(parent.getContext(), clickedItem.getImage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
 
         return viewHolder;
     }
-
 
 
     @Override
@@ -149,7 +152,6 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
 
 
     private void cambiarImagenPrincipal(Context context, String id_ser_Venta, String foto) {
-        String url = "http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php";
 
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest request = new StringRequest(Request.Method.POST, url,

@@ -22,10 +22,12 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.validacion.Adaptadores.AdaptadorActividadesUnidad;
 import com.example.validacion.Adaptadores.AdaptadorMecanicos;
 import com.example.validacion.Adaptadores.AdaptadorRefacciones;
 import com.example.validacion.Adaptadores.SlideAdapter;
+import com.example.validacion.Adaptadores.Utiles;
 import com.example.validacion.Objetos.Mecanicos;
 import com.example.validacion.Objetos.Refacciones;
 import com.example.validacion.Objetos.SlideItem;
@@ -122,6 +124,8 @@ public class DetalleFragment extends Fragment {
 
     Context context;
 
+    LottieAnimationView animacionSinImagenes;
+
     public DetalleFragment() {
         // Required empty public constructor
     }
@@ -161,7 +165,7 @@ public class DetalleFragment extends Fragment {
         recyclerViewMecanicos = rootView.findViewById(R.id.recyclerViewMecanicos);
         recyclerViewBitacora = rootView.findViewById(R.id.recyclerViewBitacora);
         viewPager2 = rootView.findViewById(R.id.ViewPager);
-
+        animacionSinImagenes = rootView.findViewById(R.id.animacionSinImagenes);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -251,7 +255,7 @@ public class DetalleFragment extends Fragment {
                     textstatus.setTextColor(colorGris);
                 } else if (status.equalsIgnoreCase("En servicio")) {
                     textstatus.setTextColor(colorAmarillo);
-                } else if (status.equalsIgnoreCase("Prueba de ruta")) {
+                } else if (status.equalsIgnoreCase("SubirFotosUnidadesActivity de ruta")) {
                     textstatus.setTextColor(colorNegro);
                 } else if (status.equalsIgnoreCase("Lavado y detallado")) {
                     textstatus.setTextColor(colorAzulito);
@@ -274,7 +278,8 @@ public class DetalleFragment extends Fragment {
 
 
                 if ((listaMecanicos.isEmpty() || listaMecanicos.equals("null") || listaMecanicos.equals(null)) && (listaRefacciones.isEmpty() || listaRefacciones.equals("null") || listaRefacciones.equals(null)) && (listaActividadesUnidad.isEmpty() || listaActividadesUnidad.equals("null") || listaActividadesUnidad.equals(null))) {
-                    Toast.makeText(context, "No hay suficientes datos para generar un reporte", Toast.LENGTH_SHORT).show();
+
+                    Utiles.crearToastPersonalizado(context, "No hay suficientes datos para generar un reporte");
                 } else {
                     //  generarPDFChecks(listaChecks);
                     generarPDF(listaMecanicos, listaRefacciones, listaActividadesUnidad);
@@ -887,11 +892,10 @@ public class DetalleFragment extends Fragment {
                                 combinarPDFs(pdfDetalles, pdfFileImagenes, context);
 
                             } else {
-                                Toast.makeText(context, "PDF file not found.", Toast.LENGTH_SHORT).show();
+                                Utiles.crearToastPersonalizado(context, "PDF file not found.");
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Utiles.crearToastPersonalizado(context, "Error: " + e.getMessage());
                         }
                     }
                 }
@@ -899,7 +903,7 @@ public class DetalleFragment extends Fragment {
                 @Override
                 public void onBitmapFailed(Exception e, Drawable errorDrawable) {
 
-                    Toast.makeText(requireContext(), "No se pudo cargar la imagen desde el url ", Toast.LENGTH_SHORT).show();
+                    Utiles.crearToastPersonalizado(context, "No se pudo cargar la imagen desde el url ");
                 }
 
                 @Override
@@ -1153,9 +1157,9 @@ public class DetalleFragment extends Fragment {
 
             document.close();
 
-             compartirPDF(pdfFile);
+            compartirPDF(pdfFile);
 
-         //   generatePdfFromUrls(slideItemsPrueba, pdfFile);
+            //   generatePdfFromUrls(slideItemsPrueba, pdfFile);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1181,60 +1185,71 @@ public class DetalleFragment extends Fragment {
 
 
     private void CargarImagenes(String idventa) {
+        slideItems.clear();
+
         StringRequest stringRequest3 = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if (!TextUtils.isEmpty(response)) {
-                            try {
-                                JSONArray jsonArray = new JSONArray(response);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject fotoObj = jsonArray.getJSONObject(i);
-                                    String foto = fotoObj.getString("foto");
-                                    String id_ser_venta = fotoObj.getString("id_ser_venta");
-                                    String fotoUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/";
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject fotoObj = jsonArray.getJSONObject(i);
+                                String foto = fotoObj.getString("foto");
+                                String id_ser_venta = fotoObj.getString("id_ser_venta");
+                                String fotoUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/";
 
-                                    slideItems.add(new SlideItem(fotoUrl + foto, id_ser_venta));
-                                }
-
-                                SlideAdapter slideAdapter = new SlideAdapter(slideItems, viewPager2);
-
-                                viewPager2.setAdapter(slideAdapter);
-                                viewPager2.setClipToPadding(false);
-                                viewPager2.setClipChildren(false);
-                                viewPager2.setOffscreenPageLimit(4);
-                                viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-                                CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
-                                compositePageTransformer.addTransformer(new MarginPageTransformer(10));
-                                compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
-                                    @Override
-                                    public void transformPage(@NonNull View page, float position) {
-                                        float r = 1 - Math.abs(position);
-                                        page.setScaleY(0.85f + 0.15f);
-                                    }
-                                });
-
-                                viewPager2.setPageTransformer(compositePageTransformer);
-                                viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-                                    public void onPageSelected(int position) {
-                                        super.onPageSelected(position);
-                                        sliderHandler.removeCallbacks(sliderRunnable);
-                                        sliderHandler.postDelayed(sliderRunnable, 3000);
-                                    }
-                                });
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                slideItems.add(new SlideItem(fotoUrl + foto, id_ser_venta));
                             }
-                        } else {
-                            Log.d("API Response", "Respuesta vacía");
+
+                            SlideAdapter slideAdapter = new SlideAdapter(slideItems, viewPager2);
+
+                            viewPager2.setAdapter(slideAdapter);
+                            viewPager2.setClipToPadding(false);
+                            viewPager2.setClipChildren(false);
+                            viewPager2.setOffscreenPageLimit(4);
+                            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+                            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+                            compositePageTransformer.addTransformer(new MarginPageTransformer(10));
+                            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                                @Override
+                                public void transformPage(@NonNull View page, float position) {
+                                    float r = 1 - Math.abs(position);
+                                    page.setScaleY(0.85f + 0.15f);
+                                }
+                            });
+
+                            viewPager2.setPageTransformer(compositePageTransformer);
+                            viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                                public void onPageSelected(int position) {
+                                    super.onPageSelected(position);
+                                    sliderHandler.removeCallbacks(sliderRunnable);
+                                    sliderHandler.postDelayed(sliderRunnable, 3000);
+                                }
+                            });
+
+
+                            if (slideItems.size() > 0) {
+                                animacionSinImagenes.setVisibility(View.GONE);
+                                viewPager2.setVisibility(View.VISIBLE);
+                            } else {
+
+                                animacionSinImagenes.setVisibility(View.VISIBLE);
+                                viewPager2.setVisibility(View.GONE);
+                            }
+
+
+                        } catch (JSONException e) {
+                            animacionSinImagenes.setVisibility(View.VISIBLE);
+                            viewPager2.setVisibility(View.GONE);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                        animacionSinImagenes.setVisibility(View.VISIBLE);
+                        viewPager2.setVisibility(View.GONE);
                     }
                 }
         ) {

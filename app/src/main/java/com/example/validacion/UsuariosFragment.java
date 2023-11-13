@@ -18,31 +18,11 @@ import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UsuariosFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class UsuariosFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public UsuariosFragment() {
         // Required empty public constructor
-    }
-
-    public static UsuariosFragment newInstance(String param1, String param2) {
-        UsuariosFragment fragment = new UsuariosFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -122,5 +102,7 @@ public class UsuariosFragment extends Fragment {
         startActivity(intent);
         requireActivity().finish();
     }
+
+
 
 }

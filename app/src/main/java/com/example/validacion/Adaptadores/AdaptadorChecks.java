@@ -25,6 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.validacion.Objetos.Cheks;
 import com.example.validacion.R;
+import com.example.validacion.Utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -166,11 +167,6 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
 
     }
 
-    private void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-
-    }
-
     @Override
     public int getItemCount() {
         return listaChecks.size();
@@ -183,7 +179,8 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
                     @Override
                     public void onResponse(String response) {
                         if (!TextUtils.isEmpty(response)) {
-                            showToast(context, descripcion + " Revisado");
+                            Utiles.crearToastPersonalizado(context, descripcion + " Revisado");
+
                             listaChecks.get(position).setValorcheck(valorCheck);
                             notifyItemChanged(position);
                             int valoresVacios = calcularValoresVacios();
@@ -192,14 +189,14 @@ public class AdaptadorChecks extends RecyclerView.Adapter<AdaptadorChecks.ViewHo
                             }
 
                         } else {
-                            Toast.makeText(context, "La respuesta está vacía", Toast.LENGTH_SHORT).show();
+                            Utiles.crearToastPersonalizado(context,"Error, revisa la conexión");
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("API Error", "Error en la solicitud: " + error.getMessage());
+                        Utiles.crearToastPersonalizado(context,"Error, revisa la conexión");
                     }
                 }
         ) {

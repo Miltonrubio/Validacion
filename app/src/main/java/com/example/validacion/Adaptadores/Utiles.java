@@ -25,7 +25,7 @@ public class Utiles {
 
         ImageView logoImage = layout.findViewById(R.id.logo_image);
         TextView toastText = layout.findViewById(R.id.toast_text);
-        logoImage.setImageResource(R.drawable.logo);
+        logoImage.setImageResource(R.drawable.tallergeorgiopng);
         toastText.setText(mensaje);
 
         Toast toast = new Toast(context);

@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.validacion.Adaptadores.SlideAdapter2;
+import com.example.validacion.Adaptadores.Utiles;
 import com.example.validacion.Objetos.SlideItem;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -127,11 +128,11 @@ public class Prueba2 extends AppCompatActivity {
                             if (pdfFileImagenes != null && pdfFileImagenes.exists()) {
                                 compartirPDFDeImagnes();
                             } else {
-                                Toast.makeText(Prueba2.this, "PDF file not found.", Toast.LENGTH_SHORT).show();
+                           //     Toast.makeText(Prueba2.this, "PDF file not found.", Toast.LENGTH_SHORT).show();
+                                Utiles.crearToastPersonalizado(Prueba2.this, "PDF file not found.");
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(Prueba2.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Utiles.crearToastPersonalizado(Prueba2.this, "Error: " + e.getMessage());
                         }
                     }
                 }
@@ -139,7 +140,8 @@ public class Prueba2 extends AppCompatActivity {
                 @Override
                 public void onBitmapFailed(Exception e, Drawable errorDrawable) {
 
-                    Toast.makeText(Prueba2.this, "No se pudo cargar la imagen desde el url ", Toast.LENGTH_SHORT).show();
+                    Utiles.crearToastPersonalizado(Prueba2.this, "No se pudo cargar la imagen desde el url ");
+
                 }
 
                 @Override
