@@ -11,11 +11,18 @@
         android:icon="@drawable/baseline_post_add_24"
         android:iconTint="@color/azulito"
         android:title="Actividades" />
+
     <item
         android:id="@+id/menu_clientes"
         android:icon="@drawable/baseline_person_add_alt_1_24"
         android:iconTint="@color/azulito"
         android:title="Clientes" />
+
+    <item
+        android:id="@+id/herramientas"
+        android:icon="@drawable/baseline_construction_24"
+        android:iconTint="@color/azulito"
+        android:title="Herramientas" />
 
     <item
         android:id="@+id/menu_usuario"

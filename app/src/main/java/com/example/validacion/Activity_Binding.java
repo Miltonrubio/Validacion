@@ -56,6 +56,11 @@ public class Activity_Binding extends AppCompatActivity {
                     break;
                 case (R.id.menu_clientes):
                     replaceFragment(new ClientesFragment());
+                    break;
+                case (R.id.herramientas):
+                    replaceFragment(new InventariosFragment());
+                    break;
+
             }
             return true;
         });

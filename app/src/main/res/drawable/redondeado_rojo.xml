@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/rojo" />
+    <corners android:radius="14dp" /> <!-- Ajusta el valor del radio para controlar la redondez -->
+</shape>
