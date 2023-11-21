@@ -163,7 +163,7 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     dialogOpcionesGaveta.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     dialogOpcionesGaveta.show();
 
-
+                    LinearLayout LayoutDescargarPDF = customView.findViewById(R.id.LayoutDescargarPDF);
                     LinearLayout LayoutAsignarMecanico = customView.findViewById(R.id.LayoutAsignarMecanico);
                     LinearLayout LayoutEliminarGaveta = customView.findViewById(R.id.LayoutEliminarGaveta);
 
@@ -173,6 +173,16 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                         LayoutAsignarMecanico.setVisibility(View.GONE);
                     }
 
+                    LayoutDescargarPDF.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Map<String, String> postData = new HashMap<>();
+                            postData.put("opcion", "50");
+
+                            new DownloadFileTask(context, postData).execute(url);
+                        }
+                    });
 
                     LayoutEliminarGaveta.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -218,6 +228,13 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     LayoutAsignarMecanico.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+/*
+                            Map<String, String> postData = new HashMap<>();
+                            postData.put("opcion", "48");
+
+                            new DownloadFileTask(context, postData).execute(url);
+*/
+
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                             View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_ver_mecanicos, null);
@@ -234,6 +251,8 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                             RecyclerViewMecanicos.setAdapter(adaptadorMecanicosNuevo);
 
                             MostrarMecanicos();
+
+
                         }
                     });
 
