@@ -3,7 +3,6 @@ package com.example.validacion;
 import static android.app.Activity.RESULT_OK;
 import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -43,7 +42,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.validacion.Adaptadores.AdaptadorBuscarHerramientas;
-import com.example.validacion.Adaptadores.AdaptadorCoches;
 import com.example.validacion.Adaptadores.AdaptadorGavetas;
 import com.example.validacion.Adaptadores.AdaptadorHerramientas;
 import com.example.validacion.Adaptadores.AdaptadorMecanicosNuevo;
@@ -68,13 +66,13 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
-public class InventariosFragment extends Fragment implements AdaptadorHerramientas.OnActivityActionListener, AdaptadorGavetas.OnActivityActionListener, AdaptadorMecanicosNuevo.OnActivityActionListener {
+public class GavetasFragment extends Fragment implements AdaptadorHerramientas.OnActivityActionListener, AdaptadorGavetas.OnActivityActionListener, AdaptadorMecanicosNuevo.OnActivityActionListener {
 
 
     String rutaImagen;
 
 
-    public InventariosFragment() {
+    public GavetasFragment() {
         // Required empty public constructor
     }
 
@@ -99,9 +97,6 @@ public class InventariosFragment extends Fragment implements AdaptadorHerramient
 
     String idHerramienta;
 
-    private boolean isSearching = false;
-
-
     AdaptadorBuscarHerramientas adaptadorBuscarHerramientas;
     RecyclerView RecyclerViewHerramientas;
     LottieAnimationView lottieNoHerramientas;
@@ -113,7 +108,7 @@ public class InventariosFragment extends Fragment implements AdaptadorHerramient
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_inventarios, container, false);
+        View view = inflater.inflate(R.layout.fragment_gavetas, container, false);
 
         context = requireContext();
         url = context.getResources().getString(R.string.ApiBack);

@@ -6,21 +6,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.validacion.Adaptadores.Utiles;
 import com.example.validacion.databinding.ActivityBindingBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class Activity_Binding extends AppCompatActivity {
 
@@ -58,7 +49,7 @@ public class Activity_Binding extends AppCompatActivity {
                     replaceFragment(new ClientesFragment());
                     break;
                 case (R.id.herramientas):
-                    replaceFragment(new InventariosFragment());
+                    replaceFragment(new InventarioFragment());
                     break;
 
             }
@@ -83,7 +74,7 @@ public class Activity_Binding extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment currentFragment = fragmentManager.findFragmentById(R.id.frame_layoutCoches);
 
-        if (currentFragment instanceof UsuariosFragment || currentFragment instanceof ClientesFragment) {
+        if (currentFragment instanceof UsuariosFragment || currentFragment instanceof ClientesFragment|| currentFragment instanceof InventarioFragment) {
             binding.bottomNavigationView.setSelectedItemId(R.id.menu_home);
         } else if (currentFragment instanceof HomeFragment) {
             if (doubleBackToExitPressedOnce) {
