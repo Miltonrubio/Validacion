@@ -371,6 +371,8 @@ public class AdaptadorHerramientas extends RecyclerView.Adapter<AdaptadorHerrami
 
     public interface OnActivityActionListener {
         void onAbrirCamera(String idHerramienta, AlertDialog dialogMostrarHerramientas, AlertDialog DialogHerramientas, Context context);
+
+        void onLevantarInventario(String idGabeta, String idusuario, String idSesionIniciada);
     }
 
     private AdaptadorHerramientas.OnActivityActionListener actionListener;

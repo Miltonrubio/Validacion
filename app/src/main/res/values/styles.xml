@@ -46,5 +46,12 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="NavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/gris</item>
+        <item name="itemIconTint">@color/white</item>
+        <item name="itemIconSize">24dp</item>
+    </style>
+
+
 
 </resources>

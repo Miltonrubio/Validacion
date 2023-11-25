@@ -10,7 +10,38 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingVertical="12dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/codigoMaquina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView10"
+            app:shapeAppearanceOverlay="@style/RoundedTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextcodigoMaquina"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Codigo de la maquina" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="24dp"
+            android:text="Codigo de la maquina"
+            android:textColor="@color/azulito"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Noserie" />
 
         <TextView
             android:id="@+id/textView17"
@@ -67,8 +98,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="7dp"
             android:layout_marginTop="24dp"
-            android:textColor="@color/azulito"
             android:text="Estatus"
+            android:textColor="@color/azulito"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.428"
@@ -100,32 +131,31 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="7dp"
             android:layout_marginTop="24dp"
-            android:textColor="@color/azulito"
             android:text="Area"
+            android:textColor="@color/azulito"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fechaAdqui" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <TextView
             android:id="@+id/fechaAdqui"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="8dp"
+            android:background="@drawable/contorno_textviews"
+            android:gravity="start"
+            android:paddingVertical="18dp"
+            android:paddingStart="12dp"
+            android:text="Selecciona una fecha"
+            android:textSize="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView14"
-            app:shapeAppearanceOverlay="@style/RoundedTextInputLayout">
+            app:layout_constraintTop_toBottomOf="@+id/textView14">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/EditTexfechaAdqui"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:autofillHints="id"
-                android:hint="Selecciona la fecha de adquisicion" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </TextView>
 
         <TextView
             android:id="@+id/textView14"
@@ -133,8 +163,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="7dp"
             android:layout_marginTop="24dp"
-            android:textColor="@color/azulito"
             android:text="Fecha de adquisicion"
+            android:textColor="@color/azulito"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -164,13 +194,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="7dp"
-            android:textColor="@color/azulito"
             android:layout_marginTop="24dp"
             android:text="Costo de la maquina"
+            android:textColor="@color/azulito"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Noserie" />
+            app:layout_constraintTop_toBottomOf="@+id/codigoMaquina" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/Noserie"
@@ -189,7 +219,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:autofillHints="id"
-                android:hint="No. serie"/>
+                android:hint="No. serie" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -198,8 +228,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="7dp"
             android:layout_marginTop="24dp"
-            android:textColor="@color/azulito"
             android:text="No. de serie de la maquina"
+            android:textColor="@color/azulito"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -233,7 +263,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:autofillHints="id"
-                android:hint="Modelo"/>
+                android:hint="Modelo" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -259,9 +289,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="7dp"
-            android:textColor="@color/azulito"
             android:layout_marginTop="24dp"
             android:text="Marca de la maquina"
+            android:textColor="@color/azulito"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.372"
@@ -301,10 +331,10 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/azulito"
             android:layout_marginHorizontal="7dp"
             android:layout_marginTop="24dp"
             android:text="Nombre de maquina"
+            android:textColor="@color/azulito"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

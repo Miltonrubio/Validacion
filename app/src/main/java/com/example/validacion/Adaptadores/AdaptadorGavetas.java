@@ -4,6 +4,7 @@ import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -34,6 +35,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.validacion.ConsultaDeInventariosFragment;
 import com.example.validacion.DetallesArrastres;
 import com.example.validacion.R;
 import com.itextpdf.text.pdf.parser.Line;
@@ -41,6 +43,7 @@ import com.itextpdf.text.pdf.parser.Line;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,6 +113,10 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
         List<JSONObject> listaDeCajones = new ArrayList<>();
         url = context.getResources().getString(R.string.ApiBack);
 
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        String permisosUsuario = sharedPreferences.getString("permisos", "");
+        String nombresesioniniciada = sharedPreferences.getString("nombre", "");
+        String IDSesionIniciada = sharedPreferences.getString("idusuario", "");
 
         try {
             JSONObject jsonObject2 = filteredData.get(position);
@@ -117,6 +124,7 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
             String nombre_gaveta = jsonObject2.optString("nombre_gaveta", "");
             String nombre_mecanico = jsonObject2.optString("nombre_mecanico", "");
             String cajones = jsonObject2.optString("cajones", "");
+            String idusuario = jsonObject2.optString("idusuario", "");
 
 
             listaDeCajones.clear();
@@ -126,6 +134,8 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
 
                 for (int i = 0; i < listaCajones.length(); i++) {
                     JSONObject jsonObject = listaCajones.getJSONObject(i);
+
+
                     listaDeCajones.add(jsonObject);
                 }
             } catch (JSONException e) {
@@ -166,12 +176,71 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     LinearLayout LayoutDescargarPDF = customView.findViewById(R.id.LayoutDescargarPDF);
                     LinearLayout LayoutAsignarMecanico = customView.findViewById(R.id.LayoutAsignarMecanico);
                     LinearLayout LayoutEliminarGaveta = customView.findViewById(R.id.LayoutEliminarGaveta);
+                    LinearLayout LayoutLevantarInventario = customView.findViewById(R.id.LayoutLevantarInventario);
+                    LinearLayout LayoutConsultarInventarios= customView.findViewById(R.id.LayoutConsultarInventarios);
+
 
                     if (nombre_mecanico.isEmpty() || nombre_mecanico.equals("null") || nombre_mecanico.equals(null)) {
                         LayoutAsignarMecanico.setVisibility(View.VISIBLE);
                     } else {
                         LayoutAsignarMecanico.setVisibility(View.GONE);
                     }
+
+                    LayoutConsultarInventarios.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                            dialogOpcionesGaveta.dismiss();
+                            Utiles.RedirigirAFragment(fragmentManager, new ConsultaDeInventariosFragment(), bundle);
+
+
+                        }
+                    });
+
+
+
+                    LayoutLevantarInventario.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion, null);
+                            builder.setView(ModalRedondeado(view.getContext(), customView));
+                            AlertDialog dialogConfirmacion = builder.create();
+                            dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogConfirmacion.show();
+
+                            TextView textView4 = customView.findViewById(R.id.textView4);
+                            Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                            Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                            textView4.setText("¿Deseas levantar el inventario?");
+
+
+                            buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogConfirmacion.dismiss();
+
+                                }
+                            });
+
+
+                            buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogConfirmacion.dismiss();
+                                    dialogOpcionesGaveta.dismiss();
+
+                                    actionListener.onLevantarInventario(id_gabeta, idusuario, IDSesionIniciada);
+
+                                }
+                            });
+                        }
+                    });
+
 
                     LayoutDescargarPDF.setOnClickListener(new View.OnClickListener() {
                         @Override

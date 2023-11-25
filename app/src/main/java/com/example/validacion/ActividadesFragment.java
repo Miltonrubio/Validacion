@@ -52,6 +52,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
     ConstraintLayout LayoutSinResultados;
     ConstraintLayout LayoutSinInternet;
 
+
     public ActividadesFragment() {
     }
 
@@ -73,11 +74,18 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         ContenedorContenido = view.findViewById(R.id.ContenedorContenido);
         LayoutSinResultados = view.findViewById(R.id.LayoutSinResultados);
         LayoutSinInternet = view.findViewById(R.id.LayoutSinInternet);
-
         context = requireContext();
+
         url = context.getResources().getString(R.string.ApiBack);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-        idusuario = sharedPreferences.getString("idusuario", "");
+
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            idusuario = bundle.getString("idusuario", "");
+        } else {
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+            idusuario = sharedPreferences.getString("idusuario", "");
+        }
 
 
         recyclerViewActividades.setLayoutManager(new LinearLayoutManager(context));

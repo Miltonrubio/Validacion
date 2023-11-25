@@ -9,13 +9,14 @@
     <RelativeLayout
         android:id="@+id/LayoutConContenido"
         android:layout_width="match_parent"
+        android:background="@color/white"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/yourConstraintLayoutId"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:background="@color/azulitoSuave"
+            android:layout_height="wrap_content"
             android:padding="8dp">
 
             <ImageView
@@ -35,7 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:hint="Buscar cliente"
+                android:hint="Buscar mecanico"
                 android:inputType="textEmailAddress"
                 android:text=""
                 android:textColor="@color/gris"
@@ -63,7 +64,7 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewClientes"
+            android:id="@+id/recyclerViewMecanicos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/yourConstraintLayoutId"
@@ -173,9 +174,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        app:tint="@color/black"
-        app:backgroundTint="@color/azulitoSuave"
         android:src="@drawable/baseline_person_add_alt_1_24"
+        app:backgroundTint="@color/azulitoSuave"
+        app:tint="@color/black"
         app:shapeAppearanceOverlay="@style/RoundedShape" />
 </RelativeLayout>
 

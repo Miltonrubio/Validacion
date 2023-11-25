@@ -33,7 +33,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -75,7 +77,10 @@ public class AdaptadorMaquinas extends RecyclerView.Adapter<AdaptadorMaquinas.Vi
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
     String url;
+    AdaptadorMecanicoAMaquina adaptadorMecanicoAMaquina;
 
+    ConstraintLayout ContenedorContenido;
+    ConstraintLayout ContenedorSinInternet;
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -91,14 +96,220 @@ public class AdaptadorMaquinas extends RecyclerView.Adapter<AdaptadorMaquinas.Vi
         try {
             JSONObject jsonObject2 = filteredData.get(position);
             String nombre = jsonObject2.optString("nombre", "");
-            String id_cajon = jsonObject2.optString("id_cajon", "");
+            String idmaquina = jsonObject2.optString("idmaquina", "");
+            String marca = jsonObject2.optString("marca", "");
+            String foto = jsonObject2.optString("foto", "");
+            String modelo = jsonObject2.optString("modelo", "");
+            String nserie = jsonObject2.optString("nserie", "");
+            String area = jsonObject2.optString("area", "");
+            String idusuario = jsonObject2.optString("idusuario", "");
+            String nombreresponsable = jsonObject2.optString("nombreresponsable", "");
 
             holder.nombreMaquina.setText(nombre);
+
+            holder.tvMarcaModelo.setText(marca.toUpperCase() + " " + modelo.toUpperCase());
+            holder.idmaquina.setText("ID:" + idmaquina);
+
+
+            if (nombreresponsable.isEmpty() || nombreresponsable.equals(null) || nombreresponsable.equals("null")) {
+
+                holder.tvACargo.setText("No tiene usuario asignado");
+            } else {
+
+                holder.tvACargo.setText(nombreresponsable);
+            }
+
+            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/maquinas/" + foto;
+            Glide.with(holder.itemView.getContext())
+                    .load(imageUrl)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.baseline_precision_manufacturing_24)
+                    .error(R.drawable.baseline_precision_manufacturing_24)
+                    .into(holder.imageViewMaquina);
+
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    if (nombreresponsable.isEmpty() || nombreresponsable.equals(null) || nombreresponsable.equals("null")) {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_ver_mecanicos, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogMaquinas = builder.create();
+                        dialogMaquinas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogMaquinas.show();
+
+
+                        ContenedorSinInternet= customView.findViewById(R.id.ContenedorSinInternet);
+                        ContenedorContenido= customView.findViewById(R.id.ContenedorContenido);
+
+                        RecyclerView RecyclerViewMecanicos = customView.findViewById(R.id.RecyclerViewMecanicos);
+
+
+                        RecyclerViewMecanicos.setLayoutManager(new LinearLayoutManager(context));
+                        adaptadorMecanicoAMaquina = new AdaptadorMecanicoAMaquina(listaMecanicos, context, actionListener, idmaquina, dialogMaquinas);
+                        RecyclerViewMecanicos.setAdapter(adaptadorMecanicoAMaquina);
+
+                        MostrarMecanicos();
+
+
+
+                    } else {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.opciones_herramienta, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogMaquinas = builder.create();
+                        dialogMaquinas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogMaquinas.show();
+
+                        ImageView imagenHerramienta = customView.findViewById(R.id.imagenHerramienta);
+                        TextView textViewTitulo = customView.findViewById(R.id.textViewTitulo);
+
+
+                        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/maquinas/" + foto;
+                        Glide.with(holder.itemView.getContext())
+                                .load(imageUrl)
+                                .skipMemoryCache(true)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .placeholder(R.drawable.baseline_precision_manufacturing_24)
+                                .error(R.drawable.baseline_precision_manufacturing_24)
+                                .into(imagenHerramienta);
+
+                        textViewTitulo.setText(nombre);
+
+
+                        LinearLayout LayoutEliminar = customView.findViewById(R.id.LayoutEliminar);
+                        LinearLayout LayoutCambiarFoto = customView.findViewById(R.id.LayoutCambiarFoto);
+
+
+                        LayoutCambiarFoto.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                actionListenerMaquinas.onActualizarFoto(idmaquina,dialogMaquinas );
+                            }
+                        });
+
+
+                        LayoutEliminar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                                View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion, null);
+                                builder.setView(ModalRedondeado(view.getContext(), customView));
+                                AlertDialog dialogConfirmacion = builder.create();
+                                dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                dialogConfirmacion.show();
+
+                                TextView textView4 = customView.findViewById(R.id.textView4);
+                                textView4.setText("¿ Estas seguro que deseas eliminar " + nombre + " ?");
+
+
+                                Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                                Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+
+                                buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dialogConfirmacion.dismiss();
+                                    }
+                                });
+
+
+                                buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dialogMaquinas.dismiss();
+                                        dialogConfirmacion.dismiss();
+                                        actionListenerMaquinas.onEliminarMaquina(idmaquina);
+                                    }
+                                });
+
+                            }
+                        });
+
+
+                    }
+
+
+                    return false;
+                }
+            });
+
 
         } finally {
 
         }
     }
+
+
+    List<JSONObject> listaMecanicos = new ArrayList<>();
+
+    private void MostrarMecanicos() {
+        listaMecanicos.clear();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        listaMecanicos.add(jsonObject);
+
+                    }
+                    adaptadorMecanicoAMaquina.notifyDataSetChanged();
+                    adaptadorMecanicoAMaquina.setFilteredData(listaMecanicos);
+                    adaptadorMecanicoAMaquina.filter("");
+
+
+                    if (listaMecanicos.size() > 0) {
+
+                           mostrarLayout("conContenido");
+                    } else {
+                        mostrarLayout("SinInternet");
+                    }
+
+                } catch (JSONException e) {
+                        mostrarLayout("SinInternet");
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                  mostrarLayout("SinInternet");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "48");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private void mostrarLayout(String  estado){
+        if (estado.equalsIgnoreCase("SinInternet")){
+            ContenedorContenido.setVisibility(View.GONE);
+            ContenedorSinInternet.setVisibility(View.VISIBLE);
+        }else {
+
+            ContenedorContenido.setVisibility(View.VISIBLE);
+            ContenedorSinInternet.setVisibility(View.GONE);
+        }
+
+    }
+
+
 
     @Override
     public int getItemCount() {
@@ -113,11 +324,19 @@ public class AdaptadorMaquinas extends RecyclerView.Adapter<AdaptadorMaquinas.Vi
         TextView nombreMaquina;
         ImageView imageViewMaquina;
 
+
+        TextView idmaquina;
+        TextView tvMarcaModelo;
+        TextView tvACargo;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             nombreMaquina = itemView.findViewById(R.id.nombreMaquina);
             imageViewMaquina = itemView.findViewById(R.id.imageViewMaquina);
+            idmaquina = itemView.findViewById(R.id.idmaquina);
+            tvMarcaModelo = itemView.findViewById(R.id.tvMarcaModelo);
+            tvACargo = itemView.findViewById(R.id.tvACargo);
         }
     }
 
@@ -166,10 +385,22 @@ public class AdaptadorMaquinas extends RecyclerView.Adapter<AdaptadorMaquinas.Vi
     }
 
 
-    public AdaptadorMaquinas(List<JSONObject> data, Context context) {
+    public interface OnActivityActionListener {
+        void onEliminarMaquina(String idmaquina);
+
+
+        void onActualizarFoto(String idmaquina, AlertDialog dialogMaquinas);
+    }
+
+    AdaptadorMaquinas.OnActivityActionListener actionListenerMaquinas;
+    AdaptadorMecanicoAMaquina.OnActivityActionListener actionListener;
+
+    public AdaptadorMaquinas(List<JSONObject> data, Context context, AdaptadorMecanicoAMaquina.OnActivityActionListener actionListener, AdaptadorMaquinas.OnActivityActionListener actionListenerMaquinas) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
+        this.actionListener = actionListener;
+        this.actionListenerMaquinas = actionListenerMaquinas;
 
 
     }

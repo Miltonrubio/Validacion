@@ -3,35 +3,77 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/rounded_background"
-    android:layout_marginVertical="12dp"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="26dp"
+    android:layout_marginVertical="12dp"
+    android:background="@drawable/rounded_background"
     android:paddingHorizontal="12dp"
-    android:paddingVertical="18dp"
-    android:layout_height="wrap_content">
+    android:paddingBottom="18dp">
+
+    <TextView
+        android:id="@+id/idmaquina"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="end"
+        android:text="idMaquina"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvACargo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="4dp"
+        android:gravity="end"
+        android:text="A cargo de"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.673"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMarcaModelo"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tvMarcaModelo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="Modelo Marca"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nombreMaquina" />
 
     <ImageView
         android:id="@+id/imageViewMaquina"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
         android:layout_marginTop="4dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/baseline_precision_manufacturing_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/idmaquina" />
 
     <TextView
         android:id="@+id/nombreMaquina"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="Nombre de maquina"
         android:textSize="22dp"
         android:textStyle="bold"
-        android:layout_marginHorizontal="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewMaquina" />
 

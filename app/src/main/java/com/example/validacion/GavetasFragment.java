@@ -700,4 +700,37 @@ public class GavetasFragment extends Fragment implements AdaptadorHerramientas.O
     }
 
 
+
+    public void onLevantarInventario(String idGabeta, String idusuario, String idSesionIniciada){
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                MostrarGavetas();
+                Utiles.crearToastPersonalizado(context, "El inventario se levantó correctamente");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "No se pudó levantar el inventario, revisa la conexión");
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "56");
+                params.put("idgabeta", idGabeta);
+                params.put("idencargado", idusuario);
+                params.put("idmecanico", idSesionIniciada);
+
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
 }

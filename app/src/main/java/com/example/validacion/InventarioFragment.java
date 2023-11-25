@@ -46,7 +46,7 @@ context = requireContext();
         verProductividad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utiles.RedirigirAFragment(fragmentManager, new GavetasFragment(), null);
+                Utiles.RedirigirAFragment(fragmentManager, new CrudMecanicosFragment(), null);
             }
         });
 

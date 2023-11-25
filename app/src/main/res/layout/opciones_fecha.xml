@@ -10,12 +10,12 @@
         android:id="@+id/btnCancelar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="508dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="20dp"
+        android:backgroundTint="@color/rojo"
         android:text="Cancelar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.166"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/datePickerFecha" />
 
     <TextView
         android:id="@+id/textView3"
@@ -36,9 +36,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
-        android:background="#F5F5F8"
-        android:headerBackground="@color/rojo"
-        android:backgroundTintMode="@color/rojo"
+        android:backgroundTintMode="@color/azulito"
+        android:headerBackground="@color/azulito"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,12 +48,11 @@
         android:id="@+id/buttonAceptar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="508dp"
-        android:backgroundTint="@color/rojo"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="@color/azulito"
         android:text="Aceptar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.833"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/datePickerFecha" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
