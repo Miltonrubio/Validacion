@@ -100,13 +100,24 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
             JSONObject jsonObject2 = filteredData.get(position);
             String foto = jsonObject2.optString("foto", "");
             String idusuario = jsonObject2.optString("idusuario", "");
+            String telefono = jsonObject2.optString("telefono", "");
             String nombre = jsonObject2.optString("nombre", "");
+            String permisos = jsonObject2.optString("permisos", "");
+
+
 
             Bundle bundle = new Bundle();
             bundle.putString("idusuario", idusuario);
             bundle.putString("nombre", nombre);
 
             String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto;
+
+
+
+            holder.cargoMec.setText(permisos.toUpperCase());
+            holder.telefonoMec.setText(telefono);
+
+
 
 
             Glide.with(holder.itemView.getContext())
@@ -116,7 +127,7 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
                     .error(R.drawable.mecanico)
                     .into(holder.ImagenMecanico);
 
-            holder.NombreMecanico.setText(nombre);
+            holder.NombreMecanico.setText(nombre.toUpperCase());
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -148,12 +159,17 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
 
         ImageView ImagenMecanico;
 
+        TextView cargoMec;
+        TextView telefonoMec;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             NombreMecanico = itemView.findViewById(R.id.NombreMecanico);
             ImagenMecanico = itemView.findViewById(R.id.ImagenMecanico);
+            cargoMec = itemView.findViewById(R.id.cargoMec);
+            telefonoMec = itemView.findViewById(R.id.telefonoMec);
         }
     }
 
@@ -192,6 +208,11 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
                 }
             }
         }
+        if (filteredData.isEmpty()) {
+            actionListener.onFilterData(false); // Indica que no hay resultados
+        } else {
+            actionListener.onFilterData(true); // Indica que hay resultados
+        }
 
         notifyDataSetChanged();
     }
@@ -201,10 +222,22 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
         notifyDataSetChanged();
     }
 
-    public AdaptadorProductividadMecanicos(List<JSONObject> data, Context context) {
+
+
+    public interface OnActivityActionListener {
+        void onFilterData(Boolean resultados);
+    }
+
+    private AdaptadorProductividadMecanicos.OnActivityActionListener actionListener;
+
+
+
+
+    public AdaptadorProductividadMecanicos(List<JSONObject> data, Context context, AdaptadorProductividadMecanicos.OnActivityActionListener actionListener) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
+        this.actionListener= actionListener;
     }
 
 

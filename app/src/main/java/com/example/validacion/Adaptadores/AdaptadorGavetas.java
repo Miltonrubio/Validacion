@@ -241,7 +241,7 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                         }
                     });
 
-
+/*
                     LayoutDescargarPDF.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -252,6 +252,9 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                             new DownloadFileTask(context, postData).execute(url);
                         }
                     });
+
+
+ */
 
                     LayoutEliminarGaveta.setOnClickListener(new View.OnClickListener() {
                         @Override

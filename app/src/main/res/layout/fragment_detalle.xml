@@ -325,14 +325,14 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnImprimirPdf"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_margin="12dp"
         android:elevation="6dp"
-        android:src="@drawable/baseline_picture_as_pdf_24"
+        android:src="@drawable/file_pdf_solid"
         app:backgroundTint="@color/azulitoSuave"
         app:elevation="6dp"
         app:layout_behavior="com.google.android.material.floatingactionbutton.FloatingActionButton$Behavior" />

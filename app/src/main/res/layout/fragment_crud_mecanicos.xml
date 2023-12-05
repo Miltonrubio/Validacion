@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeRefresh"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -15,17 +24,18 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/yourConstraintLayoutId"
             android:layout_width="match_parent"
-            android:background="@color/azulitoSuave"
+            android:background="@color/verdesito"
             android:layout_height="wrap_content"
             android:padding="8dp">
 
             <ImageView
                 android:id="@+id/searchButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
                 android:clickable="true"
                 android:contentDescription="Buscar"
                 android:padding="8dp"
+                app:tint="@color/black"
                 android:src="@drawable/baseline_search_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -39,8 +49,8 @@
                 android:hint="Buscar mecanico"
                 android:inputType="textEmailAddress"
                 android:text=""
-                android:textColor="@color/gris"
-                android:textColorHint="@color/azulito"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btnFiltrarClientes"
@@ -50,15 +60,15 @@
             <!-- Nuevo ImageView -->
             <ImageView
                 android:id="@+id/btnFiltrarClientes"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
                 android:clickable="true"
                 android:padding="8dp"
                 android:src="@drawable/baseline_filter_list_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/azulito" />
+                app:tint="@color/black" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -68,8 +78,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/yourConstraintLayoutId"
+            android:layout_marginTop="2dp"
             android:visibility="visible" />
-
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieNoClientes"
@@ -163,7 +173,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+<!--
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/botonAgregarClientes"
         android:layout_width="wrap_content"
@@ -175,8 +185,12 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/baseline_person_add_alt_1_24"
-        app:backgroundTint="@color/azulitoSuave"
+        app:backgroundTint="@color/verdesito"
         app:tint="@color/black"
         app:shapeAppearanceOverlay="@style/RoundedShape" />
+
+        -->
 </RelativeLayout>
 
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

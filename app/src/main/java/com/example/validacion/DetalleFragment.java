@@ -26,6 +26,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.validacion.Adaptadores.AdaptadorActividadesUnidad;
 import com.example.validacion.Adaptadores.AdaptadorMecanicos;
 import com.example.validacion.Adaptadores.AdaptadorRefacciones;
+import com.example.validacion.Adaptadores.DownloadFileTask;
 import com.example.validacion.Adaptadores.SlideAdapter;
 import com.example.validacion.Adaptadores.Utiles;
 import com.example.validacion.Objetos.Mecanicos;
@@ -101,7 +102,6 @@ public class DetalleFragment extends Fragment {
     private String url;
 
     List<SlideItem> slideItems = new ArrayList<>();
-    List<SlideItem> slideItemsPrueba = new ArrayList<>();
     List<Mecanicos> listaMecanicos = new ArrayList<>();
     List<Refacciones> listaRefacciones = new ArrayList<>();
 
@@ -144,13 +144,6 @@ public class DetalleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detalle, container, false);
-
-
-        slideItemsPrueba.clear();
-        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/010517b32ac5b640cd134d6c4503ff27.jpg", "1"));
-        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/010aca7e324f9966ab767c0128d63a96.jpg", "1"));
-        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/bf8a73d0b93408399677aac957b77ada.jpg", "1"));
-        slideItemsPrueba.add(new SlideItem("http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/6a59df1b0be0b163a706ee0b752cc78d.jpg", "1"));
 
         context = requireContext();
         url = context.getResources().getString(R.string.ApiBack);
@@ -276,15 +269,11 @@ public class DetalleFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
+                Map<String, String> postData = new HashMap<>();
+                postData.put("opcion", "50");
+                postData.put("idventa", idventa);
 
-                if ((listaMecanicos.isEmpty() || listaMecanicos.equals("null") || listaMecanicos.equals(null)) && (listaRefacciones.isEmpty() || listaRefacciones.equals("null") || listaRefacciones.equals(null)) && (listaActividadesUnidad.isEmpty() || listaActividadesUnidad.equals("null") || listaActividadesUnidad.equals(null))) {
-
-                    Utiles.crearToastPersonalizado(context, "No hay suficientes datos para generar un reporte");
-                } else {
-                    //  generarPDFChecks(listaChecks);
-                    generarPDF(listaMecanicos, listaRefacciones, listaActividadesUnidad);
-                }
-
+                new DownloadFileTask(context, postData).execute(url);
 
             }
         });

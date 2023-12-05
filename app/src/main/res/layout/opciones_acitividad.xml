@@ -1,110 +1,185 @@
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:gravity="center"
+        android:text="¿Estas seguro que deseas iniciar esta actividad?"
+        android:textColor="@color/azulito"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/LayoutIniciar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:clickable="true"
+        android:background="@drawable/contorno_verdesito"
         android:orientation="horizontal"
         android:padding="8dp"
-        android:visibility="gone"
-        >
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView11">
 
         <ImageView
             android:layout_width="50dp"
+            app:tint="@color/verdefuerte"
+            android:layout_margin="6dp"
             android:layout_height="50dp"
             android:src="@drawable/baseline_play_arrow_24" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginHorizontal="6dp"
             android:gravity="center"
             android:text="Iniciar Actividad"
             android:textSize="23sp" />
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/LayoutPausar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/redondeado_contorno_azul"
         android:clickable="true"
-        android:visibility="gone"
         android:orientation="horizontal"
         android:padding="8dp"
-        >
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutIniciar">
 
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_margin="6dp"
+            app:tint="@color/azulito"
             android:src="@drawable/baseline_pause_24" />
 
         <TextView
-            android:layout_width="299dp"
-            android:layout_height="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
             android:gravity="center"
             android:text="Pausar Actividad"
             android:textSize="23sp" />
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/LayoutFinalizarActividad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:clickable="true"
-        android:visibility="gone"
+        android:background="@drawable/contorno_verdesito"
         android:orientation="horizontal"
         android:padding="8dp"
-        >
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutPausar">
 
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
+            app:tint="@color/verde"
+            android:layout_margin="6dp"
             android:src="@drawable/baseline_done_24" />
 
         <TextView
-            android:layout_width="287dp"
-            android:layout_height="53dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
             android:gravity="center"
             android:text="Terminar Actividad"
             android:textSize="23sp" />
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/LayoutCancelar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:clickable="true"
-        android:visibility="gone"
         android:orientation="horizontal"
+        android:background="@drawable/contorno_rojo"
         android:padding="8dp"
-        >
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutFinalizarActividad">
 
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
+            app:tint="@color/rojo"
+            android:layout_margin="6dp"
             android:src="@drawable/baseline_delete_forever_24" />
 
         <TextView
-            android:layout_width="287dp"
-            android:layout_height="53dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginHorizontal="6dp"
             android:gravity="center"
             android:text="Cancelar Actividad"
             android:textSize="23sp" />
 
     </LinearLayout>
 
-</LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutReanudarActividades"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:clickable="true"
+        android:background="@drawable/contorno_amarillo"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutCancelar">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:tint="@color/amarillo"
+            android:layout_margin="6dp"
+            android:src="@drawable/baseline_restart_alt_24" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="6dp"
+            android:gravity="center"
+            android:text="Reanudar Actividad"
+            android:textSize="23sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

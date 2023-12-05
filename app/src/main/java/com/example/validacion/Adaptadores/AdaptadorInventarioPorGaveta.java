@@ -1,6 +1,7 @@
 package com.example.validacion.Adaptadores;
 
 import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
+import static com.example.validacion.Adaptadores.Utiles.crearToastPersonalizado;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -48,6 +49,7 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,17 +62,23 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
 
 
     private Context context;
-
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
     String url;
 
 
-    public AdaptadorInventarioPorGaveta(List<JSONObject> data, Context context) {
+    public AdaptadorInventarioPorGaveta(List<JSONObject> data, Context context, AdaptadorInventarioPorGaveta.OnActivityActionListener actionListener) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
+        this.actionListener = actionListener;
     }
+
+    public interface OnActivityActionListener {
+        void onFinalizarInventario(String iddocga);
+    }
+
+    private AdaptadorInventarioPorGaveta.OnActivityActionListener actionListener;
 
 
     @NonNull
@@ -87,7 +95,7 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-        List<JSONObject> listaDeCajones = new ArrayList<>();
+        List<JSONObject> listaDeHerramientas = new ArrayList<>();
         url = context.getResources().getString(R.string.ApiBack);
 
         /*
@@ -103,19 +111,128 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
             String iddocga = jsonObject.optString("iddocga", "");
             String NombreMecanico = jsonObject.optString("NombreMecanico", "");
             String fecha = jsonObject.optString("fecha", "");
-            String listaHerramientas= jsonObject.optString("listaHerramientas","");
-
-            holder.tvEncargado.setText("A cargo de "+ NombreMecanico);
-            holder.tvFechaInventario.setText(fecha);
+            String listaHerramientas = jsonObject.optString("listaHerramientas", "");
+            String estadoInv = jsonObject.optString("estadoInv", "");
 
 
 
 
+            listaDeHerramientas.clear();
 
+            try {
+                JSONArray lista = new JSONArray(listaHerramientas);
+                for (int i = 0; i < lista.length(); i++) {
+                    JSONObject jsonObjectHerram = lista.getJSONObject(i);
+                    listaDeHerramientas.add(jsonObjectHerram);
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
+            AdaptadorHerramientasDelInventario adaptadorHerramientasDelInventario;
+            holder.reciclerViewInventarios.setLayoutManager(new LinearLayoutManager(context));
+            adaptadorHerramientasDelInventario = new AdaptadorHerramientasDelInventario(listaDeHerramientas, context, estadoInv);
+            holder.reciclerViewInventarios.setAdapter(adaptadorHerramientasDelInventario);
+
+            adaptadorHerramientasDelInventario.notifyDataSetChanged();
+            adaptadorHerramientasDelInventario.setFilteredData(listaDeHerramientas);
+            adaptadorHerramientasDelInventario.filter("");
+
+
+            if (NombreMecanico.equalsIgnoreCase("0") || NombreMecanico.equalsIgnoreCase(null) || NombreMecanico.equalsIgnoreCase("null") || NombreMecanico.isEmpty()) {
+
+                holder.tvEncargado.setText("No tiene un mecanico asignado");
+            } else {
+
+                holder.tvEncargado.setText("A cargo de " + NombreMecanico);
+            }
+
+
+            String horaFormateada = formatoFecha(fecha);
+
+            holder.tvEstadoInventario.setText(estadoInv);
+
+
+            holder.tvFechaInventario.setText(horaFormateada);
+
+
+            if(estadoInv.equalsIgnoreCase("pendiente")){
+                holder.bttonFinalizar.setVisibility(View.VISIBLE);
+            }else {
+                holder.bttonFinalizar.setVisibility(View.GONE);
+            }
+
+            holder.bttonFinalizar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int totalVacios = adaptadorHerramientasDelInventario.obtenerContador();
+
+                    if (totalVacios > 0) {
+
+                        crearToastPersonalizado(context, "Debes realizar todos los checks para finalizar");
+                    } else {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogConfirmacion = builder.create();
+                        dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogConfirmacion.show();
+
+                        TextView textView4 = customView.findViewById(R.id.textView4);
+                        textView4.setText("¿ Estas seguro que deseas finalizar la revision del inventario?");
+
+
+                        Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                        Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+
+                        buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogConfirmacion.dismiss();
+                            }
+                        });
+
+
+                        buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                dialogConfirmacion.dismiss();
+                                actionListener.onFinalizarInventario(iddocga);
+                            }
+                        });
+
+
+                    }
+
+                }
+            });
 
 
         } finally {
 
+        }
+    }
+
+
+    private String formatoFecha(String fechaSeleccionada) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date date = inputFormat.parse(fechaSeleccionada);
+            SimpleDateFormat outputDayOfWeek = new SimpleDateFormat("EEEE", new Locale("es", "ES"));
+            String dayOfWeek = outputDayOfWeek.format(date);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+            String formattedDate = outputFormat.format(date);
+
+            String fecha = dayOfWeek.toUpperCase() + " " + formattedDate.toUpperCase();
+
+            return fecha;
+        } catch (ParseException e) {
+            return null;
         }
     }
 
@@ -134,12 +251,19 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
         TextView tvFechaInventario;
         RecyclerView reciclerViewInventarios;
 
+        Button bttonFinalizar;
+
+        TextView tvEstadoInventario;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvFechaInventario = itemView.findViewById(R.id.tvFechaInventario);
             reciclerViewInventarios = itemView.findViewById(R.id.reciclerViewInventarios);
             tvEncargado = itemView.findViewById(R.id.tvEncargado);
+            bttonFinalizar = itemView.findViewById(R.id.bttonFinalizar);
+
+            tvEstadoInventario = itemView.findViewById(R.id.tvEstadoInventario);
         }
     }
 
