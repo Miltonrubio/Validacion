@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,6 +37,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.validacion.HomeFragment;
 import com.example.validacion.R;
 
@@ -86,6 +90,22 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
             String foto = jsonObject.optString("foto", "");
             String vin = jsonObject.optString("vin", "");
             holder.NombreUnidad.setText(Marca + " " + Modelo);
+
+holder.PlacasUnidad.setVisibility(View.VISIBLE);
+
+holder.PlacasUnidad.setText(placas.toUpperCase());
+
+            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
+
+
+            Glide.with(holder.itemView.getContext())
+                    .load(imageUrl)
+                    .skipMemoryCache(false)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.baseline_directions_car_filled_24)
+                    .error(R.drawable.baseline_directions_car_filled_24)
+                    .into(holder.imagenCarrito);
+
 
 
             holder.LayoutAgregarServicio.setOnClickListener(new View.OnClickListener() {
@@ -245,13 +265,16 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
 
         TextView NombreUnidad;
         LinearLayout LayoutAgregarServicio;
+        ImageView imagenCarrito;
+        TextView PlacasUnidad;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             NombreUnidad = itemView.findViewById(R.id.NombreUnidad);
             LayoutAgregarServicio = itemView.findViewById(R.id.LayoutAgregarServicio);
+            imagenCarrito= itemView.findViewById(R.id.imagenCarrito);
 
-
+            PlacasUnidad=itemView.findViewById(R.id.PlacasUnidad);
         }
     }
 

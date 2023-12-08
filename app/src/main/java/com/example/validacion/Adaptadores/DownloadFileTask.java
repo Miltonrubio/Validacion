@@ -1,11 +1,15 @@
 package com.example.validacion.Adaptadores;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
@@ -51,7 +55,8 @@ public class DownloadFileTask extends AsyncTask<String, Void, Void> {
             urlConnection.connect();
 
             // Crea el directorio de descarga si no existe
-            String folderPath = Environment.getExternalStorageDirectory().toString();
+       //     String folderPath = Environment.getExternalStorageDirectory().toString();
+            String folderPath = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString();
             java.io.File folder = new java.io.File(folderPath, "Download");
             if (!folder.exists()) {
                 folder.mkdir();
@@ -78,13 +83,31 @@ public class DownloadFileTask extends AsyncTask<String, Void, Void> {
             // Obtener la URI del archivo
             Uri fileUri = FileProvider.getUriForFile(context, "com.example.validacion.fileprovider", file);
 
+
+            /*
             // Compartir el archivo usando un Intent
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("application/pdf");
             shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            context.startActivity(Intent.createChooser(shareIntent, "Compartir PDF"));
+             */
+
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri, "application/pdf");
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            try {
+                startActivity(context, intent, null);
+            } catch (ActivityNotFoundException e) {
+                Utiles.crearToastPersonalizado(context, "No se encontró una aplicación para abrir PDF");
+
+            }
+
+
+
+          //  context.startActivity(Intent.createChooser(shareIntent, "Compartir PDF"));
 
         } catch (IOException e) {
             Log.e("DownloadFileTask", "Error al descargar el archivo: " + e.getMessage());

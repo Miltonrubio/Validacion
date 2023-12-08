@@ -60,7 +60,6 @@ import java.util.Map;
 
 public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<AdaptadorInventarioPorGaveta.ViewHolder> {
 
-
     private Context context;
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
