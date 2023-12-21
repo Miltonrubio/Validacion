@@ -48,11 +48,10 @@ public class Activity_Binding extends AppCompatActivity {
                 case (R.id.menu_clientes):
                     replaceFragment(new ClientesFragment());
                     break;
-                    /*
                 case (R.id.herramientas):
                     replaceFragment(new InventarioFragment());
                     break;
-*/
+
             }
             return true;
         });
@@ -63,7 +62,7 @@ public class Activity_Binding extends AppCompatActivity {
 
     private void setupMenu(String permisosUsuario) {
 
-        binding.bottomNavigationView.getMenu().findItem(R.id.herramientas).setVisible(false);
+    //    binding.bottomNavigationView.getMenu().findItem(R.id.herramientas).setVisible(false);
 
         if ("SUPERADMIN".equals(permisosUsuario)) {
             binding.bottomNavigationView.getMenu().findItem(R.id.menu_actividades).setVisible(false);

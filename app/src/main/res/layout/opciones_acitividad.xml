@@ -182,4 +182,39 @@
 
     </LinearLayout>
 
+
+
+    <LinearLayout
+        android:id="@+id/LayoutSubirEvidencias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:clickable="true"
+        android:background="@drawable/contorno_azulito"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutReanudarActividades">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:tint="@color/azulito"
+            android:layout_margin="6dp"
+            android:src="@drawable/camera_retro_solid" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="6dp"
+            android:gravity="center"
+            android:text="Consultar Evidencias"
+            android:textSize="23sp" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

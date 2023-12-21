@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +21,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.validacion.Objetos.SlideItem;
 import com.example.validacion.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -35,8 +42,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+
 public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActividades.ViewHolder> {
 
+    ViewPager2 viewPager2;
 
     String nuevoEstado = "";
     private Context context;
@@ -44,6 +57,9 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
     private List<JSONObject> data;
 
     //  private boolean actividadIniciada = false;
+
+    List<SlideItem> slideItems = new ArrayList<>();
+    private Handler sliderHandler = new Handler();
 
 
     @NonNull
@@ -111,6 +127,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                     LinearLayout LayoutFinalizarActividad = customView.findViewById(R.id.LayoutFinalizarActividad);
                     LinearLayout LayoutCancelar = customView.findViewById(R.id.LayoutCancelar);
                     LinearLayout LayoutReanudarActividades = customView.findViewById(R.id.LayoutReanudarActividades);
+                    LinearLayout LayoutSubirEvidencias = customView.findViewById(R.id.LayoutSubirEvidencias);
 
 
                     if (estatus.equalsIgnoreCase("Pendiente")) {
@@ -120,9 +137,10 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                         LayoutFinalizarActividad.setVisibility(View.GONE);
                         LayoutCancelar.setVisibility(View.VISIBLE);
                         LayoutReanudarActividades.setVisibility(View.GONE);
+                        LayoutSubirEvidencias.setVisibility(View.GONE);
 
 
-                    } else if (estatus.equalsIgnoreCase("Activo") || estatus.equalsIgnoreCase("Activa") || estatus.equalsIgnoreCase("Iniciado")) {
+                    } else if (  estatus.equalsIgnoreCase("Activo") ||  estatus.equalsIgnoreCase("") || estatus.equalsIgnoreCase("Activa") || estatus.equalsIgnoreCase("Iniciado")) {
 
 
                         LayoutIniciar.setVisibility(View.GONE);
@@ -130,6 +148,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                         LayoutFinalizarActividad.setVisibility(View.VISIBLE);
                         LayoutCancelar.setVisibility(View.VISIBLE);
                         LayoutReanudarActividades.setVisibility(View.GONE);
+                        LayoutSubirEvidencias.setVisibility(View.VISIBLE);
 
                     } else if (estatus.equalsIgnoreCase("Pausado") || estatus.equalsIgnoreCase("Pausada")) {
 
@@ -138,6 +157,8 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                         LayoutFinalizarActividad.setVisibility(View.GONE);
                         LayoutCancelar.setVisibility(View.VISIBLE);
                         LayoutReanudarActividades.setVisibility(View.VISIBLE);
+                        LayoutSubirEvidencias.setVisibility(View.GONE);
+
 
                     } else if (estatus.equalsIgnoreCase("Cancelada")) {
 
@@ -147,14 +168,78 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                         LayoutFinalizarActividad.setVisibility(View.GONE);
                         LayoutCancelar.setVisibility(View.VISIBLE);
                         LayoutReanudarActividades.setVisibility(View.GONE);
+                        LayoutSubirEvidencias.setVisibility(View.GONE);
+
 
                     } else {
+
                         LayoutIniciar.setVisibility(View.GONE);
                         LayoutPausar.setVisibility(View.GONE);
                         LayoutFinalizarActividad.setVisibility(View.GONE);
-                        LayoutCancelar.setVisibility(View.VISIBLE);
+                        LayoutCancelar.setVisibility(View.GONE);
                         LayoutReanudarActividades.setVisibility(View.GONE);
+                        LayoutSubirEvidencias.setVisibility(View.VISIBLE);
+
                     }
+
+
+                    LayoutSubirEvidencias.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_evidencias, null);
+                            builder.setView(ModalRedondeado(view.getContext(), customView));
+                            AlertDialog dialogConfirmacion = builder.create();
+                            dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogConfirmacion.show();
+
+                            viewPager2 = customView.findViewById(R.id.ViewPagerImagenes);
+                            VerFotosActividad(idbitacora);
+
+                            TextView txtDesc = customView.findViewById(R.id.txtDesc);
+                            if (observaciones.isEmpty() || observaciones.equals("null") || observaciones.equals("") || observaciones.equals(null)) {
+
+                                txtDesc.setText("Esta actividad no tiene descripcion");
+                            } else {
+
+                                txtDesc.setText(observaciones);
+                            }
+
+                            Button btnCancelar = customView.findViewById(R.id.btnCancelar);
+                            Button tomarFoto = customView.findViewById(R.id.tomarFoto);
+
+                            if (estatus.equalsIgnoreCase("finalizada")) {
+
+                                btnCancelar.setVisibility(View.VISIBLE);
+                                tomarFoto.setVisibility(View.GONE);
+                            } else {
+                                btnCancelar.setVisibility(View.VISIBLE);
+                                tomarFoto.setVisibility(View.VISIBLE);
+                            }
+
+
+                            btnCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogConfirmacion.dismiss();
+                                }
+                            });
+
+                            tomarFoto.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    dialogConfirmacion.dismiss();
+                                    dialogConBotones.dismiss();
+                                    actionListener.onMandarEvidencia(idbitacora, nuevoEstado, "Fin", "", "NO");
+                                }
+                            });
+
+
+                        }
+                    });
 
 
                     LayoutReanudarActividades.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +261,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
 
 
                                         TextView textView4 = customView.findViewById(R.id.textView4);
-                                        textView4.setText("¿Estas deseas ranudar la actividad " + observaciones + " ?");
+                                        textView4.setText("¿Estas seguro de que deseas ranudar la actividad " + observaciones + " ?");
 
                                         Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
                                         Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
@@ -293,7 +378,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
 
                                                 nuevoEstado = "activo";
 
-                                                actionListener.onMandarEvidencia(idbitacora, nuevoEstado, "Inicio", "");
+                                                actionListener.onMandarEvidencia(idbitacora, nuevoEstado, "Inicio", "", "SI");
                                                 dialogConfirmacion.dismiss();
                                                 dialogConBotones.dismiss();
 
@@ -320,49 +405,57 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                         @Override
                         public void onClick(View view) {
 
+                            ValidarEvidencias(idbitacora, view, dialogConBotones);
+/*
+                            if (respuestaImagenes.equals("Sin evidencias")) {
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion_actividades, null);
-                            builder.setView(ModalRedondeado(view.getContext(), customView));
-                            AlertDialog dialogConfirmacion = builder.create();
-                            dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                            dialogConfirmacion.show();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                                View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion_actividades, null);
+                                builder.setView(ModalRedondeado(view.getContext(), customView));
+                                AlertDialog dialogConfirmacion = builder.create();
+                                dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                dialogConfirmacion.show();
 
-                            TextView textView4 = customView.findViewById(R.id.textView4);
-                            LinearLayout LayoutCancelar = customView.findViewById(R.id.LayoutCancelar);
-                            LinearLayout LayoutTomarFoto = customView.findViewById(R.id.LayoutTomarFoto);
-                            EditText observaciones = customView.findViewById(R.id.observaciones);
-                            observaciones.setVisibility(View.VISIBLE);
+                                TextView textView4 = customView.findViewById(R.id.textView4);
+                                LinearLayout LayoutCancelar = customView.findViewById(R.id.LayoutCancelar);
+                                LinearLayout LayoutTomarFoto = customView.findViewById(R.id.LayoutTomarFoto);
+                                EditText observaciones = customView.findViewById(R.id.observaciones);
+                                observaciones.setVisibility(View.VISIBLE);
 
-                            textView4.setText("Para Finalizar una actividad debes subir tu evidencia");
+                                textView4.setText("Para Finalizar una actividad debes subir tu evidencia");
 
 
-                            LayoutCancelar.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    dialogConfirmacion.dismiss();
-                                }
-                            });
-
-                            LayoutTomarFoto.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-                                    String observacionesFinales = observaciones.getText().toString();
-
-                                    if (observacionesFinales.isEmpty()) {
-                                        crearToastPersonalizado(context, "Debes ingresar una observación para finalizar la actividad");
-                                    } else {
-
+                                LayoutCancelar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
                                         dialogConfirmacion.dismiss();
-                                        nuevoEstado = "finalizada";
-                                        actionListener.onMandarEvidencia(idbitacora, nuevoEstado, "Fin", observacionesFinales);
-                                        dialogConBotones.dismiss();
                                     }
-                                }
-                            });
+                                });
 
+                                LayoutTomarFoto.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
 
+                                        String observacionesFinales = observaciones.getText().toString();
+
+                                        if (observacionesFinales.isEmpty()) {
+                                            crearToastPersonalizado(context, "Debes ingresar una observación para finalizar la actividad");
+                                        } else {
+
+                                            dialogConfirmacion.dismiss();
+                                            nuevoEstado = "finalizada";
+                                            actionListener.onMandarEvidencia(idbitacora, nuevoEstado, "Fin", observacionesFinales);
+                                            dialogConBotones.dismiss();
+                                        }
+                                    }
+                                });
+                            } else if (respuestaImagenes.equalsIgnoreCase("Con evidencias")) {
+                                Utiles.crearToastPersonalizado(context, "Tienes evidencias");
+                            } else {
+
+                                Utiles.crearToastPersonalizado(context, respuestaImagenes+ " No se pudieron cargar las evidencias");
+                            }
+*/
                         }
                     });
 
@@ -424,9 +517,262 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
         }
     }
 
+    String respuestaImagenes;
+
+    List<JSONObject> listaFotos = new ArrayList<>();
+
+    private void ValidarEvidencias(String id_bitacora, View view, AlertDialog dialogConBotones) {
+        listaFotos.clear();
+
+        respuestaImagenes = "";
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject fotoObj = jsonArray.getJSONObject(i);
+
+                        listaFotos.add(fotoObj);
+
+                    }
+
+                    if (listaFotos.size() > 1) {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogConfirmacion = builder.create();
+                        dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogConfirmacion.show();
+
+
+                        TextView textView4 = customView.findViewById(R.id.textView4);
+                        Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                        Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                        textView4.setText("¿Estas seguro que deseas finalizar esta actividad?");
+
+                        buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogConfirmacion.dismiss();
+                            }
+                        });
+
+                        buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                dialogConfirmacion.dismiss();
+                                dialogConBotones.dismiss();
+                                actionListener.onActualizarEstadoActividadesActivity(id_bitacora, "finalizada", "");
+
+                            }
+                        });
+
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion_actividades, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogConfirmacion = builder.create();
+                        dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogConfirmacion.show();
+
+                        TextView textView4 = customView.findViewById(R.id.textView4);
+                        LinearLayout LayoutCancelar = customView.findViewById(R.id.LayoutCancelar);
+                        LinearLayout LayoutTomarFoto = customView.findViewById(R.id.LayoutTomarFoto);
+                        EditText observaciones = customView.findViewById(R.id.observaciones);
+                        observaciones.setVisibility(View.VISIBLE);
+
+                        textView4.setText("Para Finalizar una actividad debes subir tu evidencia");
+
+
+                        LayoutCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogConfirmacion.dismiss();
+                            }
+                        });
+
+                        LayoutTomarFoto.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                String observacionesFinales = observaciones.getText().toString();
+
+                                if (observacionesFinales.isEmpty()) {
+                                    crearToastPersonalizado(context, "Debes ingresar una observación para finalizar la actividad");
+                                } else {
+
+                                    dialogConfirmacion.dismiss();
+                                    nuevoEstado = "finalizada";
+                                    actionListener.onMandarEvidencia(id_bitacora, nuevoEstado, "Fin", observacionesFinales, "SI");
+                                    dialogConBotones.dismiss();
+                                }
+                            }
+                        });
+
+
+                    }
+
+                } catch (JSONException e) {
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion_actividades, null);
+                    builder.setView(ModalRedondeado(view.getContext(), customView));
+                    AlertDialog dialogConfirmacion = builder.create();
+                    dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogConfirmacion.show();
+
+                    TextView textView4 = customView.findViewById(R.id.textView4);
+                    LinearLayout LayoutCancelar = customView.findViewById(R.id.LayoutCancelar);
+                    LinearLayout LayoutTomarFoto = customView.findViewById(R.id.LayoutTomarFoto);
+                    EditText observaciones = customView.findViewById(R.id.observaciones);
+                    observaciones.setVisibility(View.VISIBLE);
+
+                    textView4.setText("Para Finalizar una actividad debes subir tu evidencia");
+
+
+                    LayoutCancelar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialogConfirmacion.dismiss();
+                        }
+                    });
+
+                    LayoutTomarFoto.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            String observacionesFinales = observaciones.getText().toString();
+
+                            if (observacionesFinales.isEmpty()) {
+                                crearToastPersonalizado(context, "Debes ingresar una observación para finalizar la actividad");
+                            } else {
+
+                                dialogConfirmacion.dismiss();
+                                nuevoEstado = "finalizada";
+                                actionListener.onMandarEvidencia(id_bitacora, nuevoEstado, "Fin", observacionesFinales, "SI");
+                                dialogConBotones.dismiss();
+                            }
+                        }
+                    });
+
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "No se pudo cargar, revisa la conexion ");
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "71");
+                params.put("id_bitacora", id_bitacora);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+
+    }
+
+
+    private void VerFotosActividad(String id_bitacora) {
+        slideItems.clear();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject fotoObj = jsonArray.getJSONObject(i);
+                        String nombre = fotoObj.getString("nombre");
+                        String id_foto = fotoObj.getString("id_foto");
+                        String fotoUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/actividades/";
+
+                        slideItems.add(new SlideItem(fotoUrl + nombre, id_foto));
+
+                    }
+
+                    SlideAdapter slideAdapter = new SlideAdapter(slideItems, viewPager2);
+
+                    viewPager2.setAdapter(slideAdapter);
+                    viewPager2.setClipToPadding(false);
+                    viewPager2.setClipChildren(false);
+                    viewPager2.setOffscreenPageLimit(4);
+                    viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+                    CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+                    compositePageTransformer.addTransformer(new MarginPageTransformer(10));
+                    compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                        @Override
+                        public void transformPage(@NonNull View page, float position) {
+                            float r = 1 - Math.abs(position);
+                            page.setScaleY(0.85f + 0.15f);
+                        }
+                    });
+
+                    viewPager2.setPageTransformer(compositePageTransformer);
+                    viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                        public void onPageSelected(int position) {
+                            super.onPageSelected(position);
+                            sliderHandler.removeCallbacks(sliderRunnable);
+                            sliderHandler.postDelayed(sliderRunnable, 3000);
+                        }
+                    });
+
+
+                    if (slideItems.size() > 0) {
+                        viewPager2.setVisibility(View.VISIBLE);
+                    } else {
+                        viewPager2.setVisibility(View.GONE);
+                    }
+                } catch (JSONException e) {
+                    viewPager2.setVisibility(View.GONE);
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                viewPager2.setVisibility(View.GONE);
+                Utiles.crearToastPersonalizado(context, "Hubo un error al cargar las imagenes");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "71");
+                params.put("id_bitacora", id_bitacora);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private Runnable sliderRunnable = new Runnable() {
+        @Override
+        public void run() {
+            viewPager2.setCurrentItem(viewPager2.getCurrentItem() + 1);
+        }
+    };
+
+
     public interface DisponibilidadCallback {
         void onDisponibilidadValidada(String disponibilidad);
     }
+
 
     public void ValidarDisponibilidad(String idpersonal, DisponibilidadCallback callback) {
 
@@ -522,10 +868,10 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
         void onActualizarEstadoActividadesActivity(String idbitacora, String estatus, String observacion);
 
 
-        void onMandarEvidencia(String idbitacora, String estatus, String tipo_evidencia, String observacion);
+        void onMandarEvidencia(String idbitacora, String estatus, String tipo_evidencia, String observacion, String actualizarEstado);
 
 
-      //  void onDisponibilidadValidada(String disponibilidad);
+        //  void onDisponibilidadValidada(String disponibilidad);
     }
 
     private OnActivityActionListener actionListener;

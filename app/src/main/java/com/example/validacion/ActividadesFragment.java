@@ -1,3 +1,4 @@
+
 package com.example.validacion;
 
 import static android.app.Activity.RESULT_OK;
@@ -31,6 +32,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -76,10 +78,9 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
     RecyclerView recyclerViewActividades;
     String url;
 
-    EditText searchEditTextActividades;
     String idusuario;
 
-    LinearLayout ContenedorContenido;
+    ConstraintLayout ContenedorContenido;
     ConstraintLayout LayoutSinResultados;
     ConstraintLayout LayoutSinInternet;
 
@@ -110,7 +111,12 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_actividades, container, false);
         recyclerViewActividades = view.findViewById(R.id.recyclerViewActividades);
-        searchEditTextActividades = view.findViewById(R.id.searchEditTextActividades);
+
+
+        Button btn_finalizadas = view.findViewById(R.id.btn_finalizadas);
+        Button btn_pendientes = view.findViewById(R.id.btn_pendientes);
+
+
         ContenedorContenido = view.findViewById(R.id.ContenedorContenido);
         LayoutSinResultados = view.findViewById(R.id.LayoutSinResultados);
         LayoutSinInternet = view.findViewById(R.id.LayoutSinInternet);
@@ -128,23 +134,37 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         } else {
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
             idusuario = sharedPreferences.getString("idusuario", "");
+
         }
 
 
-        adaptadorNombresActividades = new AdaptadorNombresActividades(listaNombreActividades, context, this);
-
-
-        recyclerViewActividades.setLayoutManager(new LinearLayoutManager(context));
         adaptadorActividades = new AdaptadorActividades(dataList, context, this);
+        adaptadorNombresActividades = new AdaptadorNombresActividades(listaNombreActividades, context, this);
+        recyclerViewActividades.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewActividades.setAdapter(adaptadorActividades);
-        TomarActividadesDesdeApi(idusuario);
+        ActividadesPendientes(idusuario);
 
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                TomarActividadesDesdeApi(idusuario);
+                ActividadesPendientes(idusuario);
                 swipeRefresh.setRefreshing(false);
 
+            }
+        });
+
+
+        btn_pendientes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActividadesPendientes(idusuario);
+            }
+        });
+
+        btn_finalizadas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActividadesFinalizadas(idusuario);
             }
         });
 
@@ -159,23 +179,23 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
 
                         String dispon = disponibilidad;
                         if (dispon.equals("libre")) {
-                            MostrarNombresActividades();
                             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                             View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.opciones_asignar_actividad, null);
                             builder.setView(ModalRedondeado(view.getContext(), customView));
-                             dialogSeleccionarActividad = builder.create();
+                            dialogSeleccionarActividad = builder.create();
                             dialogSeleccionarActividad.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                             dialogSeleccionarActividad.show();
                             RecyclerView recyclerViewSeleccionActividades = customView.findViewById(R.id.recyclerViewSeleccionActividades);
 
 
-                            recyclerViewSeleccionActividades.setLayoutManager(new LinearLayoutManager(view.getContext()));
+                            recyclerViewSeleccionActividades.setLayoutManager(new LinearLayoutManager(context));
                             recyclerViewSeleccionActividades.setAdapter(adaptadorNombresActividades);
 
+                            MostrarNombresActividades();
 
                         } else {
 
-                            Utiles.crearToastPersonalizado(context, "Esta ocupao");
+                            Utiles.crearToastPersonalizado(context, "Esta ocupado, pausa o finaliza para asignar otra actividad");
 
                         }
                     }
@@ -187,9 +207,9 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         return view;
     }
 
+
     public void MostrarNombresActividades() {
         listaNombreActividades.clear();
-
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -201,31 +221,12 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
                         listaNombreActividades.add(jsonObject);
 
                     }
+
                     adaptadorNombresActividades.notifyDataSetChanged();
                     adaptadorNombresActividades.setFilteredData(listaNombreActividades);
                     adaptadorNombresActividades.filter("");
 
-                    /*
-                    if (dataList.size() > 0) {
-                        mostrarLayout("conContenido");
-                    } else {
-                        mostrarLayout("SinContenido");
-                    }
-
-                    adaptadorActividades.notifyDataSetChanged();
-                    adaptadorActividades.setFilteredData(dataList);
-                    adaptadorActividades.filter("");
-
                 } catch (JSONException e) {
-                    mostrarLayout("SinContenido");
-                }
-
-                searchEditTextActividades.setText("");
-                //   mostrarDatosFiltrados();
-                */
-                } catch (JSONException e) {
-                    //mostrarLayout("SinContenido");
-
                     Utiles.crearToastPersonalizado(context, "No hay conexion");
                 }
             }
@@ -278,7 +279,56 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
     }
 
 
-    public void TomarActividadesDesdeApi(String idmecanico) {
+    public void ActividadesFinalizadas(String idmecanico) {
+        dataList.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        dataList.add(jsonObject);
+
+                    }
+
+                    if (dataList.size() > 0) {
+                        mostrarLayout("conContenido");
+                    } else {
+                        mostrarLayout("SinContenido");
+                    }
+
+                    adaptadorActividades.setFilteredData(dataList);
+                    adaptadorActividades.filter("");
+                    adaptadorActividades.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    mostrarLayout("SinContenido");
+                }
+                //   mostrarDatosFiltrados();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mostrarLayout("SinInternet");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "72");
+                params.put("idpersonal", idmecanico);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    public void ActividadesPendientes(String idmecanico) {
         dataList.clear();
         modalCargando = Utiles.ModalCargando(context, builder);
 
@@ -291,7 +341,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String estatus = jsonObject.getString("estatus");
 
-                        if (estatus.equalsIgnoreCase("activo") || estatus.equalsIgnoreCase("activa") || estatus.equalsIgnoreCase("pendiente") || estatus.equalsIgnoreCase("pausada")) {
+                        if (estatus.equalsIgnoreCase("activo") || estatus.equalsIgnoreCase("") || estatus.equalsIgnoreCase("activa") || estatus.equalsIgnoreCase("pendiente") || estatus.equalsIgnoreCase("pausada")) {
                             dataList.add(jsonObject);
                         }
                     }
@@ -302,15 +352,13 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
                         mostrarLayout("SinContenido");
                     }
 
-                    adaptadorActividades.notifyDataSetChanged();
                     adaptadorActividades.setFilteredData(dataList);
                     adaptadorActividades.filter("");
+                    adaptadorActividades.notifyDataSetChanged();
 
                 } catch (JSONException e) {
                     mostrarLayout("SinContenido");
                 }
-
-                searchEditTextActividades.setText("");
                 //   mostrarDatosFiltrados();
             }
         }, new Response.ErrorListener() {
@@ -371,7 +419,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
                 } else {
                     Utiles.crearToastPersonalizado(context, "Se actualizo la actividad");
                 }
-                TomarActividadesDesdeApi(idusuario);
+                ActividadesPendientes(idusuario);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -411,6 +459,7 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
 
     String resultadoImagen = "";
 
+
     @Override
     public void onRegistrarNuevaActividad(String idbitacora, String descripcion) {
         this.idbitacoraSeleccionado = idbitacora;
@@ -437,9 +486,11 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
     }
 
 
-    @Override
-    public void onMandarEvidencia(String idbitacora, String estatus, String tipo_evidencia, String observacion) {
+    String actualizarEstado;
 
+    @Override
+    public void onMandarEvidencia(String idbitacora, String estatus, String tipo_evidencia, String observacion, String actualizarEstado) {
+        this.actualizarEstado = actualizarEstado;
         this.idbitacoraSeleccionado = idbitacora;
         this.nuevoStatus = estatus;
         this.tipo_evidencia = tipo_evidencia;
@@ -539,8 +590,6 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
     }
 
 
-
-
     private File crearImagen() throws IOException {
         String nombreFoto = "image";
         File directorio = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -566,7 +615,6 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
         }
         return file;
     }
-
 
 
     private class SendImageTask extends AsyncTask<Bitmap, Void, Void> {
@@ -625,14 +673,18 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
 
                 Utiles.crearToastPersonalizado(context, "Imagen subida correctamente");
                 modalCargando.dismiss();
-                ActualizarEstadoActividades(idbitacoraSeleccionado, nuevoStatus, observacion);
+
+                if (actualizarEstado.equalsIgnoreCase("SI")) {
+                    ActualizarEstadoActividades(idbitacoraSeleccionado, nuevoStatus, observacion);
+
+                } else {
+                    Log.d("No se actualizo el estado", "No se actualizo");
+                }
+
+
             }
         }
     }
-
-
-
-
 
 
     private class NewSendImageTask extends AsyncTask<Bitmap, Void, Void> {
@@ -699,3 +751,4 @@ public class ActividadesFragment extends Fragment implements AdaptadorActividade
 
 
 }
+
