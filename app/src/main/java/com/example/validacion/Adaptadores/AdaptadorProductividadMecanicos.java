@@ -36,6 +36,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -62,6 +64,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +81,7 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
     String url;
-
+    FragmentManager fragmentManager;
 
     @NonNull
     @Override
@@ -88,12 +91,9 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
         return new ViewHolder(view);
     }
 
-    FragmentManager fragmentManager;
-
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-        url = context.getResources().getString(R.string.ApiBack);
 
         fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
         try {
@@ -105,7 +105,6 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
             String permisos = jsonObject2.optString("permisos", "");
 
 
-
             Bundle bundle = new Bundle();
             bundle.putString("idusuario", idusuario);
             bundle.putString("nombre", nombre);
@@ -113,11 +112,8 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
             String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto;
 
 
-
             holder.cargoMec.setText(permisos.toUpperCase());
             holder.telefonoMec.setText(telefono);
-
-
 
 
             Glide.with(holder.itemView.getContext())
@@ -129,6 +125,36 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
 
             holder.NombreMecanico.setText(nombre.toUpperCase());
 
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_actividades, null);
+                    builder.setView(ModalRedondeado(view.getContext(), customView));
+                    AlertDialog dialogConfirmacion = builder.create();
+                    dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogConfirmacion.show();
+
+                    LinearLayout LyoutConsultarReportes = customView.findViewById(R.id.LyoutConsultarReportes);
+                    LinearLayout LayoutGenerarRegistro = customView.findViewById(R.id.LayoutGenerarRegistro);
+
+
+                    LayoutGenerarRegistro.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            actionListener.onValidarCheckDiario(idusuario, view, nombre);
+
+                        }
+                    });
+
+
+                }
+            });
+
+
+            /*
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -137,12 +163,73 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
                     Utiles.RedirigirAFragment(fragmentManager, new ActividadesFragment(), bundle);
                 }
             });
-
+*/
 
         } finally {
 
         }
     }
+
+/*
+
+    public void ValidarCheckDiario(String ID_usuario, View view, String nombre) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                if (!response.equalsIgnoreCase("\"Agregado\"")) {
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_check_actividades, null);
+                    builder.setView(ModalRedondeado(view.getContext(), customView));
+                    AlertDialog dialogConBotones = builder.create();
+                    dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogConBotones.show();
+
+
+                    RecyclerView reciclerViewActividades = customView.findViewById(R.id.reciclerViewActividades);
+                    TextView textView20 = customView.findViewById(R.id.textView20);
+                    Button button = customView.findViewById(R.id.button);
+                    textView20.setText("Listado de actividades de " + nombre);
+
+                    adaptadorCheckActividades = new AdaptadorCheckActividades(listadoActividades, context, response);
+
+                    LinearLayoutManager linearLayout = new LinearLayoutManager(context);
+                    reciclerViewActividades.setLayoutManager(linearLayout);
+                    reciclerViewActividades.setAdapter(adaptadorCheckActividades);
+                    CheckActividades();
+
+
+                } else {
+
+                    Utiles.crearToastPersonalizado(context, "Se creo el registro de actividades");
+
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Utiles.crearToastPersonalizado(context, "Error al cargar");
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "74");
+                params.put("fecha", fechaActual);
+                params.put("ID_usuario", ID_usuario);
+
+
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+ */
 
 
     @Override
@@ -223,21 +310,22 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
     }
 
 
-
     public interface OnActivityActionListener {
         void onFilterData(Boolean resultados);
+
+        void onValidarCheckDiario(String ID_usuario, View view, String nombre);
+
     }
 
     private AdaptadorProductividadMecanicos.OnActivityActionListener actionListener;
-
-
 
 
     public AdaptadorProductividadMecanicos(List<JSONObject> data, Context context, AdaptadorProductividadMecanicos.OnActivityActionListener actionListener) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
-        this.actionListener= actionListener;
+        this.actionListener = actionListener;
+        url = context.getResources().getString(R.string.ApiBack);
     }
 
 

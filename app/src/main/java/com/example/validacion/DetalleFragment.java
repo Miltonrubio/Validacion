@@ -1,7 +1,10 @@
 package com.example.validacion;
 
 
+import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
@@ -14,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
@@ -43,6 +47,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BadPdfFormatException;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.Line;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -145,6 +150,8 @@ public class DetalleFragment extends Fragment {
         }
     }
 
+    String id_ser_cliente;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -185,6 +192,8 @@ public class DetalleFragment extends Fragment {
             telefonousuario = bundle.getString("telefono", "");
             emailusuario = bundle.getString("email", "");
             domicilio = bundle.getString("domicilio", "");
+            id_ser_cliente = bundle.getString("id_ser_cliente", "");
+
 
             CargarRefacciones(idventa);
             CargarMecanicos(idventa);
@@ -274,21 +283,133 @@ public class DetalleFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.opciones_pdfs, null);
+                builder.setView(ModalRedondeado(view.getContext(), customView));
+                AlertDialog dialogConBotones = builder.create();
+                dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogConBotones.show();
+
+
+                LinearLayout pdfServicio = customView.findViewById(R.id.pdfServicio);
+                LinearLayout pdfCheckEntrada = customView.findViewById(R.id.pdfCheckEntrada);
+                LinearLayout checkSalida = customView.findViewById(R.id.checkSalida);
+                LinearLayout checkTecnico = customView.findViewById(R.id.checkTecnico);
+                LinearLayout REFACCIONES = customView.findViewById(R.id.REFACCIONES);
+                LinearLayout mecanicos = customView.findViewById(R.id.mecanicos);
+
+                REFACCIONES.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "82");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+                    }
+                });
+
+
+                mecanicos.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "81");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+                    }
+                });
+
+
+                pdfServicio.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "83");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+/*
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "50");
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+*/
+
+
+
+
+
+                    }
+                });
+
+
+                pdfCheckEntrada.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "78");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+
+                    }
+                });
+
+                checkSalida.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "79");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+
+                    }
+                });
+
+                checkTecnico.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "80");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+
+                    }
+                });
+/*
                 Map<String, String> postData = new HashMap<>();
                 postData.put("opcion", "50");
                 postData.put("idventa", idventa);
 
                 new DownloadFileTask(context, postData).execute(url);
 
+
+ */
             }
         });
 
 
         return rootView;
     }
-
-
-
 
 
     private void CargarImagenes(String idventa) {

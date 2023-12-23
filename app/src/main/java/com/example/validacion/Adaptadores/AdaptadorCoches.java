@@ -59,6 +59,9 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         JSONObject jsonObject2 = filteredData.get(position);
         String id_ref = jsonObject2.optString("id_ser_refacciones", "");
         String id_check_mecanico = jsonObject2.optString("id_check_mecanico", "");
+        String id_ser_cliente = jsonObject2.optString("id_ser_cliente", "");
+
+
         String foto = jsonObject2.optString("foto", "");
         String marca = jsonObject2.optString("marcaI", "");
         String modelo = jsonObject2.optString("modeloI", "");
@@ -100,6 +103,9 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         bundle.putString("motorI", motorI);
         bundle.putString("vinI", vinI);
         bundle.putString("domicilio", domicilio);
+        bundle.putString("id_ser_cliente", id_ser_cliente);
+
+
 
 
         setTextViewText(holder.textMarca, marca.toUpperCase() + " - " + modelo.toUpperCase(), "Marca no disponible");

@@ -127,6 +127,11 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
                     ImageView btnAgregarUnidad = customView.findViewById(R.id.btnAgregarUnidad);
                     ImageView AgregarNuevaUnidad = customView.findViewById(R.id.AgregarNuevaUnidad);
 
+                    EditText searchEditText = customView.findViewById(R.id.searchEditText);
+
+
+
+
 
                     RecyclerViewUnidadesUsuario = customView.findViewById(R.id.RecyclerViewUnidadesUsuario);
                     TextView NombreclIENTE = customView.findViewById(R.id.NombreclIENTE);
@@ -143,6 +148,21 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
                     AdaptadorUnidadesClientes = new AdaptadorUnidadesClientes(listaUnidades, context, dialogUnidadesDeCliente, id_ser_cliente);
                     RecyclerViewUnidadesUsuario.setAdapter(AdaptadorUnidadesClientes);
 
+                    searchEditText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            AdaptadorUnidadesClientes.filter(s.toString().toLowerCase());
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                        }
+                    });
 
                     AgregarNuevaUnidad.setOnClickListener(new View.OnClickListener() {
                         @Override

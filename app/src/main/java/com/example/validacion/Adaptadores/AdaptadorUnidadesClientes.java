@@ -91,9 +91,9 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
             String vin = jsonObject.optString("vin", "");
             holder.NombreUnidad.setText(Marca + " " + Modelo);
 
-holder.PlacasUnidad.setVisibility(View.VISIBLE);
+            holder.PlacasUnidad.setVisibility(View.VISIBLE);
 
-holder.PlacasUnidad.setText(placas.toUpperCase());
+            holder.PlacasUnidad.setText(placas.toUpperCase());
 
             String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
 
@@ -105,7 +105,6 @@ holder.PlacasUnidad.setText(placas.toUpperCase());
                     .placeholder(R.drawable.baseline_directions_car_filled_24)
                     .error(R.drawable.baseline_directions_car_filled_24)
                     .into(holder.imagenCarrito);
-
 
 
             holder.LayoutAgregarServicio.setOnClickListener(new View.OnClickListener() {
@@ -272,9 +271,9 @@ holder.PlacasUnidad.setText(placas.toUpperCase());
             super(itemView);
             NombreUnidad = itemView.findViewById(R.id.NombreUnidad);
             LayoutAgregarServicio = itemView.findViewById(R.id.LayoutAgregarServicio);
-            imagenCarrito= itemView.findViewById(R.id.imagenCarrito);
+            imagenCarrito = itemView.findViewById(R.id.imagenCarrito);
 
-            PlacasUnidad=itemView.findViewById(R.id.PlacasUnidad);
+            PlacasUnidad = itemView.findViewById(R.id.PlacasUnidad);
         }
     }
 
@@ -285,8 +284,32 @@ holder.PlacasUnidad.setText(placas.toUpperCase());
             filteredData.addAll(data);
         } else {
 
+
+            String[] keywords = query.toLowerCase().split(" ");
+            for (JSONObject item : data) {
+                String id_serv_unidad = item.optString("id_serv_unidad", "").toLowerCase();
+                String Marca = item.optString("Marca", "").toLowerCase();
+                String Modelo = item.optString("Modelo", "").toLowerCase();
+                String anio = item.optString("anio", "").toLowerCase();
+                String placas = item.optString("placas", "").toLowerCase();
+                String vin = item.optString("vin", "").toLowerCase();
+
+                boolean matchesAllKeywords = true;
+
+                for (String keyword : keywords) {
+                    if (!(Marca.contains(keyword) || Modelo.contains(keyword) || anio.contains(keyword) || placas.contains(keyword) || vin.contains(keyword) ||
+                            id_serv_unidad.contains(keyword))) {
+                        matchesAllKeywords = false;
+                        break;
+                    }
+                }
+
+                if (matchesAllKeywords) {
+                    filteredData.add(item);
+                }
+            }
+            notifyDataSetChanged();
         }
-        notifyDataSetChanged();
     }
 
     public void setFilteredData(List<JSONObject> filteredData) {
