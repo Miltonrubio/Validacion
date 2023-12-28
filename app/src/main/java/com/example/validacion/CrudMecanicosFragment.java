@@ -285,7 +285,8 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                     RecyclerView reciclerViewActividades = customView.findViewById(R.id.reciclerViewActividades);
                     TextView textView20 = customView.findViewById(R.id.textView20);
                     Button button = customView.findViewById(R.id.button);
-                    textView20.setText("Listado de actividades de " + nombre);
+                    Button buttonCerrar = customView.findViewById(R.id.buttonCerrar);
+                    textView20.setText("Revisión de actividades de " + nombre);
 
 
                     try {
@@ -308,11 +309,21 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                         CheckActividades(idRegistroActividades);
 
                         if (estado.equalsIgnoreCase("iniciado")) {
-                            button.setVisibility(View.VISIBLE);
+                            button.setEnabled(true);
+                            button.setText("Guardar");
                         } else {
-                            button.setVisibility(View.GONE);
+                            button.setText("Guardado");
+                            button.setEnabled(false);
 
                         }
+
+
+                        buttonCerrar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogConBotones.dismiss();
+                            }
+                        });
 
 
                         button.setOnClickListener(new View.OnClickListener() {
@@ -345,7 +356,7 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                                 buttonAceptar.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-
+                                        dialogConBotones.dismiss();
                                         dialogConfirmacion.dismiss();
                                         onFinalizarRegistro(ID_registro_actividades);
 
@@ -364,9 +375,6 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                 } else {
 
 
-
-
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion, null);
                     builder.setView(ModalRedondeado(view.getContext(), customView));
@@ -378,7 +386,7 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                     Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
                     Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
 
-                    textView4.setText("Deseas iniciar un registro de actividades ");
+                    textView4.setText("¿Deseas iniciar un registro de actividades del dia de hoy para " + nombre + " ?");
 
 
                     buttonAceptar.setOnClickListener(new View.OnClickListener() {
@@ -386,6 +394,7 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                         public void onClick(View view) {
                             onRegistrarRegistro(ID_usuario);
                             dialogConfirmacion.dismiss();
+
                         }
                     });
 

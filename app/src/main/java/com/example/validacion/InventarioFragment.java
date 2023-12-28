@@ -39,6 +39,10 @@ public class InventarioFragment extends Fragment {
         LinearLayout VerMaquinas = view.findViewById(R.id.VerMaquinas);
         LinearLayout verProductividad = view.findViewById(R.id.verProductividad);
 
+        LinearLayout ListaActividades = view.findViewById(R.id.ListaActividades);
+
+
+
         verGavetas.setVisibility(View.GONE);
         VerMaquinas.setVisibility(View.GONE);
 
@@ -70,6 +74,17 @@ public class InventarioFragment extends Fragment {
                 Utiles.RedirigirAFragment(fragmentManager, new MaquinasFragment(), null);
             }
         });
+
+
+
+        ListaActividades.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utiles.RedirigirAFragment(fragmentManager, new ListadoActividadesFragment(), null);
+            }
+        });
+
+
 
         return view;
     }

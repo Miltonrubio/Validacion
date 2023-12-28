@@ -16,10 +16,9 @@
         android:paddingVertical="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.636"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.431">
+        app:layout_constraintVertical_bias="0.192">
 
         <LinearLayout
             android:id="@+id/verProductividad"
@@ -48,7 +47,42 @@
                 android:gravity="center"
                 android:text="Ver productividad"
                 android:textColor="@color/white"
-                android:textSize="32dp"
+                android:textSize="29dp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ListaActividades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:background="@drawable/redondeado_contorno_azul"
+            android:orientation="vertical"
+            android:padding="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/verProductividad">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/list_ul_solid"
+                app:tint="@color/azulito" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Lista de Actividades"
+                android:textColor="@color/azulito"
+                android:textSize="29dp"
                 android:textStyle="bold" />
 
 
@@ -80,7 +114,7 @@
                 android:gravity="center"
                 android:text="Ver maquinas"
                 android:textColor="@color/white"
-                android:textSize="32dp"
+                android:textSize="29dp"
                 android:textStyle="bold"
 
                 />
@@ -111,7 +145,7 @@
                 android:gravity="center"
                 android:text="Consultar Gavetas"
                 android:textColor="@color/white"
-                android:textSize="32dp"
+                android:textSize="29dp"
                 android:textStyle="bold"
 
                 />

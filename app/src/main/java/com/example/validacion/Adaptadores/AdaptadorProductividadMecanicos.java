@@ -49,6 +49,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.validacion.ActividadesFragment;
 import com.example.validacion.Activity_Binding;
+import com.example.validacion.DetalleFragment;
+import com.example.validacion.DetallesActividadesFragment;
 import com.example.validacion.R;
 import com.example.validacion.SubirFotosUnidadesActivity;
 import com.itextpdf.text.pdf.parser.Line;
@@ -133,13 +135,29 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_actividades, null);
                     builder.setView(ModalRedondeado(view.getContext(), customView));
-                    AlertDialog dialogConfirmacion = builder.create();
-                    dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    dialogConfirmacion.show();
+                    AlertDialog dialogOpcionesActividades = builder.create();
+                    dialogOpcionesActividades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogOpcionesActividades.show();
 
                     LinearLayout LyoutConsultarReportes = customView.findViewById(R.id.LyoutConsultarReportes);
                     LinearLayout LayoutGenerarRegistro = customView.findViewById(R.id.LayoutGenerarRegistro);
 
+
+                    LyoutConsultarReportes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            DetallesActividadesFragment detallesActividadesFragment = new DetallesActividadesFragment();
+                            detallesActividadesFragment.setArguments(bundle);
+
+                            FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.frame_layoutCoches, detallesActividadesFragment)
+                                    .addToBackStack(null)
+                                    .commit();
+                            dialogOpcionesActividades.dismiss();
+                        }
+                    });
 
                     LayoutGenerarRegistro.setOnClickListener(new View.OnClickListener() {
                         @Override

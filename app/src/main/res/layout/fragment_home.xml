@@ -47,7 +47,6 @@
                 app:layout_constraintStart_toEndOf="@id/searchButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Nuevo ImageView -->
             <ImageView
                 android:id="@+id/LectorQr"
                 android:layout_width="52dp"

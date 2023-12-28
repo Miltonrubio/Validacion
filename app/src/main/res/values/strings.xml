@@ -4,14 +4,8 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <!--
 
-Servidor
-   <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php</string>
-
-   -->
-
-    <string name="ApiBack">http://192.168.16.162/apitallergeorgio-georgiomovil/Controllers/Apiback.php</string>
+    <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php</string>
 
 
     <!--
@@ -22,6 +16,9 @@ Api local chapa:
 
 Api local luis:
     <string name="ApiLocalGavetas">http://192.168.16.188/apistaller/api.php</string>
+
+Servidor
+   <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php</string>
 
     -->
 

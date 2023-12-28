@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="25dp">
+
+
+    <EditText
+        android:id="@+id/editTextMotivoIngreso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/textview_outline"
+        android:hint="Ingresa el motivo de ingreso"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="16dp"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SpinnerGasolina" />
+
+
+    <EditText
+        android:id="@+id/editTextKilometraje"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/textview_outline"
+        android:hint="Ingresa el kilometraje"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="16dp"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView25" />
+
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/textview_outline"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="16dp"
+        android:text="Selecciona una unidad"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutCliente" />
+
+    <LinearLayout
+        android:id="@+id/LayoutCliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/textSeleccionarCliente"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="2.6"
+            android:background="@drawable/textview_outline"
+            android:gravity="center"
+            android:paddingVertical="16dp"
+            android:text="Selecciona un cliente"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+
+        <ImageView
+            android:id="@+id/btnAgregarCliente"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight=".3"
+            android:src="@drawable/user_plus_solid" />
+
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/SpinnerGasolina"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/textview_outline"
+        android:hint="Ingresa el kilometraje"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="16dp"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextKilometraje" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:backgroundTint="@color/azulito"
+        android:text="Registrar"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextMotivoIngreso" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

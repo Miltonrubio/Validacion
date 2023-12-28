@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -115,9 +119,6 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
         btn_pendientes2 = view.findViewById(R.id.btn_pendientes2);
         btn_ENTREGADAS2 = view.findViewById(R.id.btn_ENTREGADAS2);
-
-
-
 
 
         builder = new AlertDialog.Builder(context);
@@ -252,9 +253,71 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
             @Override
             public void onClick(View v) {
 
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_agregar_nuevo_servicio, null);
+                builder.setView(Utiles.ModalRedondeado(context, customView));
+                AlertDialog dialogNuevoServicio = builder.create();
+                dialogNuevoServicio.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogNuevoServicio.show();
+
+
+                Spinner SpinnerGasolina = customView.findViewById(R.id.SpinnerGasolina);
+                ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, opciones);
+                adaptadorGas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                SpinnerGasolina.setAdapter(adaptadorGas);
+                SpinnerGasolina.setSelection(0);
+
+
+                TextView textSeleccionarCliente = customView.findViewById(R.id.textSeleccionarCliente);
+
+                ImageView btnAgregarCliente = customView.findViewById(R.id.btnAgregarCliente);
+
+
+                textSeleccionarCliente.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_opciones_clientes, null);
+                        builder.setView(Utiles.ModalRedondeado(context, customView));
+                        AlertDialog dialogClientes = builder.create();
+                        dialogClientes.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogClientes.show();
+
+
+
+
+
+
+
+
+                    }
+                });
+
+
+                btnAgregarCliente.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_agregar_clientes, null);
+                        builder.setView(Utiles.ModalRedondeado(context, customView));
+                        AlertDialog dialogAgregarClientes = builder.create();
+                        dialogAgregarClientes.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogAgregarClientes.show();
+                    }
+                });
+
+
+
+
+/*
                 Utiles.crearToastPersonalizado(context, "Selecciona el cliente al que le quieras registrarle el servicio");
                 FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
                 Utiles.RedirigirAFragment(fragmentManager, new ClientesFragment(), null);
+*/
+
 
                 /*
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -666,10 +729,10 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         } else {
             if ((editTextBusqueda.getText().toString().equals("") || editTextBusqueda.getText().toString().isEmpty())) {
 
-                if (editTextBusqueda.getText().toString().equals("") && dataList.size()>0){
+                if (editTextBusqueda.getText().toString().equals("") && dataList.size() > 0) {
 
                     mostrarLayout("conContenido");
-                }else {
+                } else {
 
                     mostrarLayout("SinContenido");
                 }

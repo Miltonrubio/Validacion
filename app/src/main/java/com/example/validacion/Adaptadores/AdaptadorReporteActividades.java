@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,24 +51,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorCheckActividades.ViewHolder> {
+public class AdaptadorReporteActividades extends RecyclerView.Adapter<AdaptadorReporteActividades.ViewHolder> {
 
 
     private Context context;
-
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
     String url;
 
-    String ID_registro;
-    String estado;
+    List<JSONObject> listadoActividades = new ArrayList<>();
 
-    public AdaptadorCheckActividades(List<JSONObject> data, Context context, String ID_registro, String estado) {
+    public AdaptadorReporteActividades(List<JSONObject> data, Context context) {
         this.data = data;
-        this.estado = estado;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
-        this.ID_registro = ID_registro;
+        url = context.getResources().getString(R.string.ApiBack);
     }
 
     @NonNull
@@ -76,76 +73,58 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_check_actividades, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_reporte_actividades, parent, false);
         return new ViewHolder(view);
 
     }
 
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        url = context.getResources().getString(R.string.ApiBack);
 
 
         try {
             JSONObject jsonObject2 = filteredData.get(position);
-            String nombre_actividad = jsonObject2.optString("nombre_actividad", "");
-            String ID_check_actividad = jsonObject2.optString("ID_check_actividad", "");
-            String valor_check = jsonObject2.optString("valor_check", "");
-
+            String fecha = jsonObject2.optString("fecha", "");
+            String ID_registro_actividades = jsonObject2.optString("ID_registro_actividades", "");
+            String desglose_actividades = jsonObject2.optString("desglose_actividades", "");
 
             Bundle bundle = new Bundle();
-            bundle.putString("nombre_actividad", nombre_actividad);
+            bundle.putString("ID_registro_actividades", ID_registro_actividades);
+            bundle.putString("fecha", fecha);
 
 
-            holder.nombreActividad.setText(nombre_actividad);
+            listadoActividades.clear();
+            try {
+                JSONArray jsonArray = new JSONArray(desglose_actividades);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    listadoActividades.add(jsonObject);
+                }
 
+                AdaptadorDesgloseActividades adaptadorDesgloseActividades = new AdaptadorDesgloseActividades(listadoActividades, context);
+                holder.recyclerViewReporteActividades.setLayoutManager(new LinearLayoutManager(context));
+                holder.recyclerViewReporteActividades.setAdapter(adaptadorDesgloseActividades);
+                adaptadorDesgloseActividades.notifyDataSetChanged();
+                adaptadorDesgloseActividades.setFilteredData(listadoActividades);
+                adaptadorDesgloseActividades.filter("");
 
-            if(estado.equalsIgnoreCase("iniciado")){
-                holder.radioButtonNo.setEnabled(true);
-                holder.radioButtonSi.setEnabled(true);
+            } catch (JSONException e) {
 
-            }else {
-
-                holder.radioButtonNo.setEnabled(false);
-                holder.radioButtonSi.setEnabled(false);
             }
 
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                Date date = inputFormat.parse(fecha);
+                SimpleDateFormat outputDayOfWeek = new SimpleDateFormat("EEEE", new Locale("es", "ES"));
+                String dayOfWeek = outputDayOfWeek.format(date);
+                SimpleDateFormat outputFormat = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+                String formattedDate = outputFormat.format(date);
 
-            if (valor_check.equalsIgnoreCase("Si")) {
+                holder.textView21.setText("Actividades del: " + dayOfWeek.toLowerCase() + " " + formattedDate.toLowerCase());
 
-                holder.radioButtonNo.setChecked(false);
-                holder.radioButtonSi.setChecked(true);
-            } else if (valor_check.equalsIgnoreCase("")) {
-
-                holder.radioButtonSi.setChecked(false);
-                holder.radioButtonNo.setChecked(false);
-            } else {
-                holder.radioButtonNo.setChecked(true);
-                holder.radioButtonSi.setChecked(false);
+            } catch (ParseException e) {
+                holder.textView21.setText("No se encontro la fecha");
             }
-
-
-            holder.radioButtonNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    holder.radioButtonNo.setChecked(true);
-                    holder.radioButtonSi.setChecked(false);
-                    ActualizarCheck(ID_check_actividad, "No", nombre_actividad);
-
-                }
-            });
-
-
-            holder.radioButtonSi.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    holder.radioButtonSi.setChecked(true);
-                    holder.radioButtonNo.setChecked(false);
-
-                    ActualizarCheck(ID_check_actividad, "Si", nombre_actividad);
-                }
-            });
 
 
         } finally {
@@ -163,48 +142,15 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
     }
 
 
-    public void ActualizarCheck(String ID_check_actividad, String valor_check, String nombreActividad) {
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Utiles.crearToastPersonalizado(context, "Error al cargar, revisa la conexión");
-
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "76");
-                params.put("ID_check_actividad", ID_check_actividad);
-                params.put("valor_check", valor_check);
-
-
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-
-    }
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nombreActividad;
-        RadioButton radioButtonSi;
+        RecyclerView recyclerViewReporteActividades;
 
-        RadioButton radioButtonNo;
-
+        TextView textView21;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            nombreActividad = itemView.findViewById(R.id.nombreActividad);
-            radioButtonSi = itemView.findViewById(R.id.radioButtonSi);
-            radioButtonNo = itemView.findViewById(R.id.radioButtonNo);
+            textView21 = itemView.findViewById(R.id.textView21);
+            recyclerViewReporteActividades = itemView.findViewById(R.id.recyclerViewReporteActividades);
         }
     }
 

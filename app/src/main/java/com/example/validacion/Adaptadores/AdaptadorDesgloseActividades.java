@@ -51,24 +51,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorCheckActividades.ViewHolder> {
+public class AdaptadorDesgloseActividades extends RecyclerView.Adapter<AdaptadorDesgloseActividades.ViewHolder> {
 
 
     private Context context;
-
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
     String url;
 
-    String ID_registro;
-    String estado;
-
-    public AdaptadorCheckActividades(List<JSONObject> data, Context context, String ID_registro, String estado) {
+    public AdaptadorDesgloseActividades(List<JSONObject> data, Context context) {
         this.data = data;
-        this.estado = estado;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
-        this.ID_registro = ID_registro;
+        url = context.getResources().getString(R.string.ApiBack);
     }
 
     @NonNull
@@ -76,76 +71,45 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_check_actividades, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_desglose_actividades, parent, false);
         return new ViewHolder(view);
 
     }
 
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        url = context.getResources().getString(R.string.ApiBack);
 
 
         try {
             JSONObject jsonObject2 = filteredData.get(position);
-            String nombre_actividad = jsonObject2.optString("nombre_actividad", "");
             String ID_check_actividad = jsonObject2.optString("ID_check_actividad", "");
             String valor_check = jsonObject2.optString("valor_check", "");
-
+            String nombre_actividad = jsonObject2.optString("nombre_actividad", "");
 
             Bundle bundle = new Bundle();
-            bundle.putString("nombre_actividad", nombre_actividad);
+            bundle.putString("ID_check_actividad", ID_check_actividad);
+            bundle.putString("valor_check", valor_check);
 
-
-            holder.nombreActividad.setText(nombre_actividad);
-
-
-            if(estado.equalsIgnoreCase("iniciado")){
-                holder.radioButtonNo.setEnabled(true);
-                holder.radioButtonSi.setEnabled(true);
-
-            }else {
-
-                holder.radioButtonNo.setEnabled(false);
-                holder.radioButtonSi.setEnabled(false);
-            }
-
+            holder.radioButtonNo.setEnabled(false);
+            holder.radioButtonSi.setEnabled(false);
 
             if (valor_check.equalsIgnoreCase("Si")) {
 
                 holder.radioButtonNo.setChecked(false);
                 holder.radioButtonSi.setChecked(true);
-            } else if (valor_check.equalsIgnoreCase("")) {
 
-                holder.radioButtonSi.setChecked(false);
-                holder.radioButtonNo.setChecked(false);
-            } else {
+
+            } else if (valor_check.equalsIgnoreCase("No")) {
+
                 holder.radioButtonNo.setChecked(true);
                 holder.radioButtonSi.setChecked(false);
+            } else {
+                holder.radioButtonNo.setChecked(false);
+                holder.radioButtonSi.setChecked(false);
+
             }
 
-
-            holder.radioButtonNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    holder.radioButtonNo.setChecked(true);
-                    holder.radioButtonSi.setChecked(false);
-                    ActualizarCheck(ID_check_actividad, "No", nombre_actividad);
-
-                }
-            });
-
-
-            holder.radioButtonSi.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    holder.radioButtonSi.setChecked(true);
-                    holder.radioButtonNo.setChecked(false);
-
-                    ActualizarCheck(ID_check_actividad, "Si", nombre_actividad);
-                }
-            });
+            holder.Descripcion.setText(nombre_actividad);
 
 
         } finally {
@@ -163,48 +127,17 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
     }
 
 
-    public void ActualizarCheck(String ID_check_actividad, String valor_check, String nombreActividad) {
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Utiles.crearToastPersonalizado(context, "Error al cargar, revisa la conexión");
-
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "76");
-                params.put("ID_check_actividad", ID_check_actividad);
-                params.put("valor_check", valor_check);
-
-
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-
-    }
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nombreActividad;
+        RadioButton radioButtonNo;
         RadioButton radioButtonSi;
 
-        RadioButton radioButtonNo;
-
+        TextView Descripcion;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            nombreActividad = itemView.findViewById(R.id.nombreActividad);
             radioButtonSi = itemView.findViewById(R.id.radioButtonSi);
             radioButtonNo = itemView.findViewById(R.id.radioButtonNo);
+            Descripcion = itemView.findViewById(R.id.Descripcion);
         }
     }
 
@@ -219,20 +152,12 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
             for (JSONObject item : data) {
                 String nombre = item.optString("nombre", "").toLowerCase();
                 String empresa = item.optString("empresa", "").toLowerCase();
-                String telefono = item.optString("telefono", "").toLowerCase();
-                String estatus = item.optString("estatus", "").toLowerCase();
-                String placas = item.optString("placas", "").toLowerCase();
-                String modelo = item.optString("modelo", "").toLowerCase();
-
-                String direccion = item.optString("direccion", "").toLowerCase();
-                String id = item.optString("id", "").toLowerCase();
 
 
                 boolean matchesAllKeywords = true;
 
                 for (String keyword : keywords) {
-                    if (!(modelo.contains(keyword) || empresa.contains(keyword) || direccion.contains(keyword) || telefono.contains(keyword) || id.contains(keyword) || placas.contains(keyword) ||
-                            nombre.contains(keyword) || estatus.contains(keyword))) {
+                    if (!(nombre.contains(keyword) || empresa.contains(keyword))) {
                         matchesAllKeywords = false;
                         break;
                     }
@@ -250,15 +175,6 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
     public void setFilteredData(List<JSONObject> filteredData) {
         this.filteredData = new ArrayList<>(filteredData);
         notifyDataSetChanged();
-    }
-
-
-    private void setTextViewText(TextView textView, String text, String defaultText) {
-        if (text.equals(null) || text.equals("") || text.equals(":null") || text.equals("null") || text.isEmpty()) {
-            textView.setText(defaultText);
-        } else {
-            textView.setText(text);
-        }
     }
 
 }

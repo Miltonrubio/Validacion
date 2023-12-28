@@ -3,77 +3,83 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="45dp">
+    android:paddingHorizontal="15dp"
+    android:paddingVertical="45dp">
+
 
     <LinearLayout
-        android:id="@+id/LyoutConsultarReportes"
+        android:id="@+id/layoutEliminar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="48dp"
-        android:background="@color/verdefuerte"
-        android:gravity="center"
+        android:background="@drawable/redondeado_rojo"
         android:orientation="horizontal"
-        android:padding="5dp"
         android:weightSum="3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_weight=".1"
-            android:padding="4dp"
-            android:src="@drawable/baseline_access_time_24"
-            app:tint="@color/white" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:padding="6dp"
+            android:src="@drawable/baseline_delete_forever_24"
+            app:tint="@color/white"
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="7dp"
-            android:layout_weight="2.9"
-            android:gravity="center"
-            android:text="CONSULTAR REPORTES"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/LayoutGenerarRegistro"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/azulito"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        android:weightSum="3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LyoutConsultarReportes">
-
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_weight=".1"
-            android:padding="8dp"
-            android:src="@drawable/clipboard_regular"
-            app:tint="@color/white" />
+            />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="7dp"
-            android:layout_weight="2.9"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight=".5"
             android:gravity="center"
-            android:text="ACTIVIDADES DE HOY"
+            android:paddingVertical="14dp"
+            android:text="Eliminar"
             android:textColor="@color/white"
-            android:textSize="18dp"
+            android:textSize="32dp"
             android:textStyle="bold" />
+
+
     </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layoutEditar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/redondeado_azul"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutEliminar">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:padding="6dp"
+            android:src="@drawable/baseline_edit_24"
+            app:tint="@color/white"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight=".5"
+            android:gravity="center"
+            android:paddingVertical="14dp"
+            android:text="Editar"
+            android:textColor="@color/white"
+            android:textSize="32dp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
