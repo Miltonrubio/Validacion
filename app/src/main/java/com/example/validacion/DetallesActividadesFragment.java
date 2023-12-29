@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import okhttp3.internal.Util;
+
 public class DetallesActividadesFragment extends Fragment {
 
 
@@ -158,6 +160,9 @@ public class DetallesActividadesFragment extends Fragment {
 
 
     private void abrirModalFechas() {
+
+        fechaFinalSeleccionada = "";
+        fechaInicialSeleccionada = "";
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -288,8 +293,14 @@ public class DetallesActividadesFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                dialogSeleccionarFecha.dismiss();
-                ActividadesPorFecha(ID_usuario, fechaInicialSeleccionada, fechaFinalSeleccionada);
+
+                if (fechaInicialSeleccionada.equals("") || fechaFinalSeleccionada.equals("")) {
+                    Utiles.crearToastPersonalizado(context, "Debes seleccionar la fecha inicial y la fecha final");
+                } else {
+
+                    dialogSeleccionarFecha.dismiss();
+                    ActividadesPorFecha(ID_usuario, fechaInicialSeleccionada, fechaFinalSeleccionada);
+                }
 
 
             }

@@ -96,7 +96,6 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
 
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        url = context.getResources().getString(R.string.ApiBack);
         try {
             JSONObject jsonObject2 = filteredData.get(position);
             String nombre = jsonObject2.optString("nombre", "");
@@ -493,6 +492,7 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
         this.filteredData = new ArrayList<>(data);
         this.actionListener = actionListener;
         this.actionListenerClientes = actionListenerClientes;
+        url = context.getResources().getString(R.string.ApiBack);
     }
 
 

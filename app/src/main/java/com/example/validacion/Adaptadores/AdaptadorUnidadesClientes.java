@@ -78,7 +78,6 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
 
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        url = context.getResources().getString(R.string.ApiBack);
         try {
             JSONObject jsonObject = filteredData.get(position);
             String id_serv_unidad = jsonObject.optString("id_serv_unidad", "");
@@ -323,6 +322,7 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
         this.filteredData = new ArrayList<>(data);
         this.dialogUnidadesDeCliente = dialogUnidadesDeCliente;
         this.id_ser_cliente = id_ser_cliente;
+        url = context.getResources().getString(R.string.ApiBack);
     }
 
 

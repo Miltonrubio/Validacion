@@ -1,5 +1,8 @@
 package com.example.validacion;
 
+import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
+import static com.example.validacion.Adaptadores.Utiles.crearToastPersonalizado;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.service.controls.Control;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,13 +40,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.validacion.Adaptadores.AdaptadorCoches;
+import com.example.validacion.Adaptadores.AdaptadorMarcaDesdeInicio;
+import com.example.validacion.Adaptadores.AdaptadorMarcas;
+import com.example.validacion.Adaptadores.AdaptadorModeloDesdeInicio;
 import com.example.validacion.Adaptadores.AdaptadorModelos;
+import com.example.validacion.Adaptadores.AdaptadorSeleccionarCliente;
+import com.example.validacion.Adaptadores.AdaptadorSeleccionarUnidad;
 import com.example.validacion.Adaptadores.Utiles;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -57,34 +68,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivityActionListener {
+public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivityActionListener, AdaptadorSeleccionarCliente.OnActivityActionListener, AdaptadorSeleccionarUnidad.OnActivityActionListener, AdaptadorModeloDesdeInicio.OnActivityActionListener {
 
-    JSONArray jsonArrayNombreUnidades = null;
+    private AdaptadorCoches.OnActivityActionListener cochesActionListener;
+    private AdaptadorSeleccionarCliente.OnActivityActionListener clienteActionListener;
+    private AdaptadorSeleccionarUnidad.OnActivityActionListener unidadActionListener;
+    private AdaptadorModeloDesdeInicio.OnActivityActionListener modeloActionListener;
+
+    AdaptadorSeleccionarCliente adaptadorSeleccionarCliente;
     String valorGas = null;
     private String selectedIDCliente = "1";
     ArrayList<String> opciones = new ArrayList<>();
 
     String url;
     Context context;
-    JSONObject jsonObjectUnidades;
-    private ArrayAdapter<String> spinnerAdapterUnidades;
+
     private ArrayList<String> nombresClientes = new ArrayList<>();
-
-    String Marca, Modelo, anio, placas, motor, vin;
-    String id_serv_unidad = null;
-
-
+    String id_serv_unidad = "";
     private ArrayList<String> unidadesVehiculos = new ArrayList<>();
     private RecyclerView recyclerView;
     private AdaptadorCoches adaptadorCoches;
     private List<JSONObject> dataList = new ArrayList<>();
-
-
+    TextView textSeleccionarCliente;
     private EditText editTextBusqueda;
-
     FloatingActionButton botonAgregarActividad;
-
-
     AlertDialog.Builder builder;
     AlertDialog modalCargando;
 
@@ -93,11 +100,19 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     ConstraintLayout LayoutSinInternet;
     Button btn_pendientes;
     Button btn_ENTREGADAS;
-
     Button btn_ENTREGADAS2;
     Button btn_pendientes2;
-
     LottieAnimationView lottieNoClientes;
+    AlertDialog dialogClientes;
+    TextView textSeleccionarUnidad;
+
+
+    String nombreCliente;
+    String id_ser_cliente;
+
+    List<JSONObject> listaUnidades = new ArrayList<>();
+    AdaptadorSeleccionarUnidad adaptadorSeleccionarUnidad;
+    AlertDialog dialogUnidades;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -123,6 +138,10 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
         builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
+        cochesActionListener = this;
+        unidadActionListener = this;
+        clienteActionListener = this;
+        modeloActionListener = this;
 
         return view;
     }
@@ -226,7 +245,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
             }
         });
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         dataList = new ArrayList<>();
         adaptadorCoches = new AdaptadorCoches(dataList, context, this);
         recyclerView.setAdapter(adaptadorCoches);
@@ -252,7 +271,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         botonAgregarActividad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                id_serv_unidad = "";
+                id_ser_cliente = "";
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 View customView = LayoutInflater.from(context).inflate(R.layout.modal_agregar_nuevo_servicio, null);
@@ -262,35 +282,177 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 dialogNuevoServicio.show();
 
 
+                Button buttonGuardar = customView.findViewById(R.id.buttonGuardar);
+                Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
                 Spinner SpinnerGasolina = customView.findViewById(R.id.SpinnerGasolina);
+                textSeleccionarUnidad = customView.findViewById(R.id.textSeleccionarUnidad);
+                textSeleccionarCliente = customView.findViewById(R.id.textSeleccionarCliente);
+                ImageView btnAgregarCliente = customView.findViewById(R.id.btnAgregarCliente);
+                TextView textSeleccionarCliente = customView.findViewById(R.id.textSeleccionarCliente);
+
+
+                EditText editTextKilometraje = customView.findViewById(R.id.editTextKilometraje);
+                EditText editTextMotivoIngreso = customView.findViewById(R.id.editTextMotivoIngreso);
+
+
                 ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, opciones);
                 adaptadorGas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 SpinnerGasolina.setAdapter(adaptadorGas);
                 SpinnerGasolina.setSelection(0);
 
 
-                TextView textSeleccionarCliente = customView.findViewById(R.id.textSeleccionarCliente);
+                textSeleccionarUnidad.setEnabled(false);
 
-                ImageView btnAgregarCliente = customView.findViewById(R.id.btnAgregarCliente);
+                SpinnerGasolina.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        valorGas = parent.getItemAtPosition(position).toString();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+
+                });
+
+
+                buttonGuardar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String motivoIngreso = editTextMotivoIngreso.getText().toString().trim();
+                        String km = editTextKilometraje.getText().toString().trim();
+
+
+                        if (valorGas.isEmpty() || motivoIngreso.isEmpty() || km.isEmpty() || id_serv_unidad.isEmpty() || id_ser_cliente.isEmpty()) {
+
+                            Utiles.crearToastPersonalizado(context, "Debes completar todos los campos");
+
+                        } else {
+                            dialogNuevoServicio.dismiss();
+                            AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio);
+
+
+                        }
+
+
+                    }
+                });
+
+
+                buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogNuevoServicio.dismiss();
+                    }
+                });
+
+                textSeleccionarUnidad.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_opciones_clientes, null);
+                        builder.setView(Utiles.ModalRedondeado(context, customView));
+                        dialogUnidades = builder.create();
+                        dialogUnidades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogUnidades.show();
+                        MostrarUnidadesClientes(id_ser_cliente, view.getContext());
+
+
+                        Bundle bundleUsuario = new Bundle();
+                        bundleUsuario.putString("nombreUsuario", nombreCliente);
+                        bundleUsuario.putString("id_ser_cliente", id_ser_cliente);
+
+
+                        LayoutConContenidoUnidades = customView.findViewById(R.id.LayoutConContenido);
+                        LayoutSinInternetUnidades = customView.findViewById(R.id.LayoutSinInternet);
+                        LayoutSinContenidoUnidades = customView.findViewById(R.id.LayoutSinContenido);
+
+
+                        EditText searchEditText = customView.findViewById(R.id.searchEditText);
+                        ImageView btnAgregarUnidad = customView.findViewById(R.id.btnAgregarUnidad);
+                        ImageView AgregarNuevaUnidad = customView.findViewById(R.id.AgregarNuevaUnidad);
+
+                        btnAgregarUnidad.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                MostrarModalMarcas(view, bundleUsuario);
+
+                            }
+                        });
+                        AgregarNuevaUnidad.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                MostrarModalMarcas(view, bundleUsuario);
+
+                            }
+                        });
+
+
+                        searchEditText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                adaptadorSeleccionarUnidad.filter(s.toString().toLowerCase());
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+
+
+                        RecyclerView RecyclerViewUnidadesUsuario = customView.findViewById(R.id.RecyclerViewUnidadesUsuario);
+                        RecyclerViewUnidadesUsuario.setLayoutManager(new LinearLayoutManager(context));
+                        adaptadorSeleccionarUnidad = new AdaptadorSeleccionarUnidad(listaUnidades, context, unidadActionListener, dialogUnidades);
+                        RecyclerViewUnidadesUsuario.setAdapter(adaptadorSeleccionarUnidad);
+
+                    }
+                });
 
 
                 textSeleccionarCliente.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
-
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         View customView = LayoutInflater.from(context).inflate(R.layout.modal_opciones_clientes, null);
                         builder.setView(Utiles.ModalRedondeado(context, customView));
-                        AlertDialog dialogClientes = builder.create();
+                        dialogClientes = builder.create();
                         dialogClientes.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         dialogClientes.show();
+                        ImageView btnAgregarUnidad = customView.findViewById(R.id.btnAgregarUnidad);
+                        btnAgregarUnidad.setVisibility(View.GONE);
+
+                        VerClientes(view.getContext());
+
+                        EditText searchEditText = customView.findViewById(R.id.searchEditText);
+
+                        searchEditText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                adaptadorSeleccionarCliente.filter(s.toString().toLowerCase());
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
 
 
-
-
-
-
+                        RecyclerView RecyclerViewUnidadesUsuario = customView.findViewById(R.id.RecyclerViewUnidadesUsuario);
+                        RecyclerViewUnidadesUsuario.setLayoutManager(new LinearLayoutManager(context));
+                        adaptadorSeleccionarCliente = new AdaptadorSeleccionarCliente(listaClientes, context, clienteActionListener, dialogClientes);
+                        RecyclerViewUnidadesUsuario.setAdapter(adaptadorSeleccionarCliente);
 
 
                     }
@@ -300,23 +462,53 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 btnAgregarCliente.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_agregar_clientes, null);
-                        builder.setView(Utiles.ModalRedondeado(context, customView));
-                        AlertDialog dialogAgregarClientes = builder.create();
-                        dialogAgregarClientes.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        dialogAgregarClientes.show();
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_clientes, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogAgregarCliente = builder.create();
+                        dialogAgregarCliente.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogAgregarCliente.show();
+
+                        Button botonAgregarCliente = customView.findViewById(R.id.botonAgregarCliente);
+                        Button botonCancelar = customView.findViewById(R.id.botonCancelar);
+                        EditText EditTextNombre = customView.findViewById(R.id.EditTextNombre);
+                        EditText EditTextDomicilio = customView.findViewById(R.id.EditTextDomicilio);
+                        EditText EditTextTelefono = customView.findViewById(R.id.EditTextTelefono);
+                        EditText EditTextCorreo = customView.findViewById(R.id.EditTextCorreo);
+
+
+                        botonCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogAgregarCliente.dismiss();
+                            }
+                        });
+
+                        botonAgregarCliente.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String nombre = EditTextNombre.getText().toString();
+                                String correo = EditTextCorreo.getText().toString();
+                                String domicilio = EditTextDomicilio.getText().toString();
+                                String telefono = EditTextTelefono.getText().toString();
+
+
+                                if (nombre.isEmpty() || correo.isEmpty() || domicilio.isEmpty() || telefono.isEmpty()) {
+                                    crearToastPersonalizado(context, "Tienes campos vacios, por favor rellenalos");
+                                } else {
+                                    dialogAgregarCliente.dismiss();
+                                    AgregarCliente(nombre, domicilio, telefono, correo);
+                                }
+                            }
+                        });
                     }
                 });
 
 
 
 
-/*
-                Utiles.crearToastPersonalizado(context, "Selecciona el cliente al que le quieras registrarle el servicio");
-                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-                Utiles.RedirigirAFragment(fragmentManager, new ClientesFragment(), null);
-*/
 
 
                 /*
@@ -477,6 +669,52 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
 
     }
+
+    List<JSONObject> listaClientes = new ArrayList<>();
+
+    private void VerClientes(Context context) {
+        listaClientes.clear();
+
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        listaClientes.add(jsonObject);
+                    }
+
+                    adaptadorSeleccionarCliente.setFilteredData(listaClientes);
+                    adaptadorSeleccionarCliente.filter("");
+
+
+                } catch (JSONException e) {
+                    Utiles.crearToastPersonalizado(context, "Error al cargar los datos");
+                }
+                onLoadComplete();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Utiles.crearToastPersonalizado(context, "Error al cargar los datos");
+                onLoadComplete();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "19");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -743,6 +981,331 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         }
     }
 
+
+    ConstraintLayout LayoutConContenidoUnidades;
+
+    ConstraintLayout LayoutSinInternetUnidades;
+    ConstraintLayout LayoutSinContenidoUnidades;
+
+
+    private void MostrarUnidadesClientes(String id_ser_cliente, Context context) {
+        listaUnidades.clear();
+
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                listaUnidades.add(jsonObject);
+                            }
+
+                            adaptadorSeleccionarUnidad.notifyDataSetChanged();
+                            adaptadorSeleccionarUnidad.setFilteredData(listaUnidades);
+                            adaptadorSeleccionarUnidad.filter("");
+
+                            if (listaClientes.size() > 0) {
+
+                                OcultarLayoutsUnidades("ConContenido");
+                            } else {
+                                OcultarLayoutsUnidades("SinContenido");
+                            }
+
+                        } catch (JSONException e) {
+                            OcultarLayoutsUnidades("SinContenido");
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        OcultarLayoutsUnidades("SinInternet");
+
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "20");
+                params.put("id_ser_cliente", id_ser_cliente);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(stringRequest);
+    }
+
+
+    private void OcultarLayoutsUnidades(String estado) {
+        if (estado.equalsIgnoreCase("SinInternet")) {
+            LayoutConContenidoUnidades.setVisibility(View.GONE);
+            LayoutSinInternetUnidades.setVisibility(View.VISIBLE);
+            LayoutSinContenidoUnidades.setVisibility(View.GONE);
+        } else if (estado.equalsIgnoreCase("SinContenido")) {
+
+            LayoutConContenidoUnidades.setVisibility(View.GONE);
+            LayoutSinInternetUnidades.setVisibility(View.GONE);
+            LayoutSinContenidoUnidades.setVisibility(View.VISIBLE);
+        } else {
+
+            LayoutConContenidoUnidades.setVisibility(View.VISIBLE);
+            LayoutSinInternetUnidades.setVisibility(View.GONE);
+            LayoutSinContenidoUnidades.setVisibility(View.GONE);
+        }
+        onLoadComplete();
+    }
+
+
+    private void AgregarCliente(String nombre, String domicilio, String telefono, String email) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Utiles.crearToastPersonalizado(context, "Se agrego el cliente " + nombre);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Utiles.crearToastPersonalizado(context, "No se pudo agregar al cliente, revisa la conexión ");
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "31");
+                params.put("nombre", nombre);
+                params.put("domicilio", domicilio);
+                params.put("telefono", telefono);
+                params.put("email", email);
+                params.put("obs", "Nuevo Usuario");
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+
+    }
+
+
+    @Override
+    public void onTomarCliente(String nombreCliente, String id_ser_cliente) {
+        textSeleccionarCliente.setText(nombreCliente.toUpperCase());
+        textSeleccionarUnidad.setEnabled(true);
+        this.id_ser_cliente = id_ser_cliente;
+        this.nombreCliente = nombreCliente;
+        id_serv_unidad = "";
+        textSeleccionarUnidad.setText("Selecciona la unidad");
+    }
+
+
+    String marca, modelo, anio, placas, motor, vin;
+
+    @Override
+    public void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas) {
+        this.id_serv_unidad = id_serv_unidad;
+        this.marca = marca;
+        this.modelo = modelo;
+        this.vin = vin;
+        this.motor = motor;
+        this.anio = anio;
+        this.placas = placas;
+
+
+        textSeleccionarUnidad.setText(marca.toUpperCase() + " " + modelo.toUpperCase());
+
+
+    }
+
+
+    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                VisualizarServicios();
+                Utiles.crearToastPersonalizado(context, "Servicio Agregado");
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Utiles.crearToastPersonalizado(context, "Hubo un error");
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "21");
+                params.put("id_ser_cliente", id_ser_cliente);
+                params.put("idunidad", idunidad);
+                params.put("km", km);
+                params.put("gas", gas);
+                params.put("motivo", motivo);
+                params.put("marca", marca);
+                params.put("modelo", modelo);
+                params.put("motor", motor);
+                params.put("vin", vin);
+                params.put("placas", placas);
+                params.put("anio", anio);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    List<JSONObject> listaMarcas = new ArrayList<>();
+    ConstraintLayout LayoutSeleccionarMarca;
+    ConstraintLayout LayoutSeleccionarModelo;
+    ConstraintLayout LayoutAgregarDatos;
+
+    RecyclerView reciclerViewMarcas;
+
+    AdaptadorMarcaDesdeInicio adaptadorMarcaDesdeInicio;
+
+    private void MostrarModalMarcas(View view, Bundle bundleUsuario) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_unidad, null);
+        builder.setView(ModalRedondeado(view.getContext(), customView));
+        AlertDialog dialogMarcas = builder.create();
+        dialogMarcas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogMarcas.show();
+
+        VerNombresMarcas(view.getContext());
+
+        TextView textView3 = customView.findViewById(R.id.text);
+        textView3.setText("SELECCIONA UNA MARCA");
+
+        ConstraintLayout yourConstraintLayoutId = customView.findViewById(R.id.yourConstraintLayoutId);
+        yourConstraintLayoutId.setVisibility(View.VISIBLE);
+        EditText searchEditText = customView.findViewById(R.id.searchEditText);
+        searchEditText.setHint("Buscar la marca");
+
+
+        LayoutSeleccionarMarca = customView.findViewById(R.id.SeleccionarMarca);
+        LayoutSeleccionarModelo = customView.findViewById(R.id.SeleccionarModelo);
+        LayoutAgregarDatos = customView.findViewById(R.id.LayoutAgregarDatos);
+        reciclerViewMarcas = customView.findViewById(R.id.reciclerViewMarcas);
+
+
+        LayoutSeleccionarMarca.setVisibility(View.VISIBLE);
+        LayoutSeleccionarModelo.setVisibility(View.GONE);
+        LayoutAgregarDatos.setVisibility(View.GONE);
+
+
+        adaptadorMarcaDesdeInicio = new AdaptadorMarcaDesdeInicio(listaMarcas, context, bundleUsuario, modeloActionListener, dialogMarcas);
+        reciclerViewMarcas.setLayoutManager(new LinearLayoutManager(context));
+        reciclerViewMarcas.setAdapter(adaptadorMarcaDesdeInicio);
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adaptadorMarcaDesdeInicio.filter(s.toString().toLowerCase());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+
+    private void VerNombresMarcas(Context context) {
+        listaMarcas.clear();
+
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        listaMarcas.add(jsonObject);
+                    }
+
+                    adaptadorMarcaDesdeInicio.setFilteredData(listaMarcas);
+                    adaptadorMarcaDesdeInicio.filter("");
+
+
+                } catch (JSONException e) {
+                    crearToastPersonalizado(context, "Error al cargar los datos");
+                }
+                onLoadComplete();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                crearToastPersonalizado(context, "Error al cargar los datos");
+                onLoadComplete();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "32");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    public void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo) {
+        dialogUnidades.dismiss();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Respuesta de volley registrarUsuario", "idcliente" + idcliente + " idmarca" + idmarca + " idmodelo" + idmodelo + " anio" + anio + " placas" + placas + " vin" + vin + " motor" + motor + " tipo" + tipo);
+                crearToastPersonalizado(context, "Agregado correctamente");
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                crearToastPersonalizado(context, "Hubo un error al registrar al usuario, por favor revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "34");
+                params.put("idcliente", idcliente);
+                params.put("idmarca", idmarca);
+                params.put("idmodelo", idmodelo);
+                params.put("anio", anio);
+                params.put("placas", placas);
+                params.put("vin", vin);
+                params.put("motor", motor);
+                params.put("tipo", tipo);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
 }
 
 
@@ -862,40 +1425,5 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     }
 
 
-    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio) {
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                VisualizarServicios();
-                Utiles.crearToastPersonalizado(context, "Servicio Agregado");
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Utiles.crearToastPersonalizado(context, "Hubo un error");
-
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "21");
-                params.put("id_ser_cliente", id_ser_cliente);
-                params.put("idunidad", idunidad);
-                params.put("km", km);
-                params.put("gas", gas);
-                params.put("motivo", motivo);
-                params.put("marca", marca);
-                params.put("modelo", modelo);
-                params.put("motor", motor);
-                params.put("vin", vin);
-                params.put("placas", placas);
-                params.put("anio", anio);
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-    }
  */
 
