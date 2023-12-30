@@ -1,24 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/azulitoSuave"
+    android:paddingVertical="12dp"
     tools:context=".InventarioFragment">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginHorizontal="22dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/rounded_background"
         android:paddingHorizontal="12dp"
         android:paddingVertical="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.636"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.192">
+        app:layout_constraintVertical_bias="1.0">
+
+        <LinearLayout
+            android:id="@+id/TiposDeUnidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
+            android:background="@drawable/redondeado_contorno_azul"
+            android:orientation="vertical"
+            android:padding="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ListaActividades">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/truck_solid"
+                app:tint="@color/azulito" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Tipos De Unidades"
+                android:textColor="@color/azulito"
+                android:textSize="29dp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/verProductividad"
@@ -59,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
-            android:background="@drawable/redondeado_contorno_azul"
+            android:background="@drawable/redondeado_contorno_verde"
             android:orientation="vertical"
             android:padding="25dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +112,7 @@
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
                 android:src="@drawable/list_ul_solid"
-                app:tint="@color/azulito" />
+                app:tint="@color/verdefuerte" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -81,7 +120,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="Lista de Actividades"
-                android:textColor="@color/azulito"
+                android:textColor="@color/verdefuerte"
                 android:textSize="29dp"
                 android:textStyle="bold" />
 
@@ -150,7 +189,8 @@
 
                 />
         </LinearLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

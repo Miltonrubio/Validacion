@@ -91,7 +91,6 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-
         try {
             JSONObject jsonObject2 = filteredData.get(position);
             String ID_listado_actividad = jsonObject2.optString("ID_listado_actividad", "");
@@ -99,7 +98,18 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
             String estatus = jsonObject2.optString("estatus", "");
 
 
+            if (estatus.equalsIgnoreCase("alta")) {
 
+                holder.nombreActividad.setBackgroundResource(R.drawable.redondeado_verde);
+                int colorIcono = ContextCompat.getColor(context, R.color.white);
+                holder.nombreActividad.setTextColor(colorIcono);
+            } else {
+
+                holder.nombreActividad.setBackgroundResource(R.drawable.redondeado_gris);
+                int colorIcono = ContextCompat.getColor(context, R.color.white);
+                holder.nombreActividad.setTextColor(colorIcono);
+
+            }
 
 
             Bundle bundle = new Bundle();
@@ -119,8 +129,20 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
                     dialogOpcionesActividades.show();
 
 
+                    LinearLayout LayoutReactivar = customView.findViewById(R.id.LayoutReactivar);
+
                     LinearLayout layoutEditar = customView.findViewById(R.id.layoutEditar);
                     LinearLayout layoutEliminar = customView.findViewById(R.id.layoutEliminar);
+
+                    if (estatus.equalsIgnoreCase("alta")) {
+
+                        layoutEliminar.setVisibility(View.VISIBLE);
+                        LayoutReactivar.setVisibility(View.GONE);
+                    } else {
+
+                        layoutEliminar.setVisibility(View.GONE);
+                        LayoutReactivar.setVisibility(View.VISIBLE);
+                    }
 
 
                     layoutEditar.setOnClickListener(new View.OnClickListener() {

@@ -102,6 +102,7 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
 
             setTextViewText(holder.NombreUnidad, Marca.toUpperCase() + " " + Modelo.toUpperCase(), "No se encontro el nombre");
             setTextViewText(holder.PlacasUnidad, placas.toUpperCase(), "No se encontro el telefono");
+            holder.PlacasUnidad.setVisibility(View.VISIBLE);
 
             String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
 

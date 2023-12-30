@@ -179,11 +179,9 @@ public class ListadoActividadesFragment extends Fragment implements AdaptadorLis
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String estatus = jsonObject.getString("estatus");
-                        if (estatus.equalsIgnoreCase("alta")) {
-                            listadoActividades.add(jsonObject);
-                        } else {
+                        //  if (estatus.equalsIgnoreCase("alta")) {
+                        listadoActividades.add(jsonObject);
 
-                        }
                     }
 
                     if (listadoActividades.size() > 0) {

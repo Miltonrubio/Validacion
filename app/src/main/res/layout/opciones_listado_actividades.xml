@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
+            android:layout_marginHorizontal="6dp"
             android:layout_weight=".5"
             android:gravity="center"
             android:paddingVertical="14dp"
@@ -67,9 +67,10 @@
             />
 
         <TextView
+            android:id="@+id/textEdi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
+            android:layout_marginHorizontal="6dp"
             android:layout_weight=".5"
             android:gravity="center"
             android:paddingVertical="14dp"
@@ -79,6 +80,117 @@
             android:textStyle="bold" />
 
 
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layoutActualizarFoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/redondeado_gris"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutEditar">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:padding="12dp"
+            android:src="@drawable/baseline_camera_alt_24"
+            app:tint="@color/white"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_weight=".5"
+            android:gravity="center"
+            android:paddingVertical="14dp"
+            android:text="Actualizar foto"
+            android:textColor="@color/white"
+            android:textSize="32dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutReactivar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/redondeado_verde"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutActualizarFoto">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:padding="6dp"
+            android:src="@drawable/baseline_restart_alt_24"
+            app:tint="@color/white"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_weight=".5"
+            android:gravity="center"
+            android:paddingVertical="14dp"
+            android:text="Reactivar actividad"
+            android:textColor="@color/white"
+            android:textSize="29dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutVerChecks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/redondeado_verde"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutActualizarFoto">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:padding="12dp"
+            android:src="@drawable/list_ul_solid"
+            app:tint="@color/white"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_weight=".5"
+            android:gravity="center"
+            android:paddingVertical="14dp"
+            android:text="Consultar Checks"
+            android:textColor="@color/white"
+            android:textSize="29dp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 
