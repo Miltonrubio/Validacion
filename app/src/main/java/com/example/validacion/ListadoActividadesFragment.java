@@ -237,6 +237,35 @@ public class ListadoActividadesFragment extends Fragment implements AdaptadorLis
 
 
     @Override
+    public void onReactivarListado(String ID_listado_actividad) {
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Utiles.crearToastPersonalizado(context, "Se reactivó la actividad correctamente");
+                ConsultarActividades();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "No se pudó reactivar, revisa la conexión ");
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "94");
+                params.put("ID_listado_actividad", ID_listado_actividad);
+                return params;
+            }
+        };
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    @Override
     public void onEliminarListado(String ID_listado_actividad) {
 
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {

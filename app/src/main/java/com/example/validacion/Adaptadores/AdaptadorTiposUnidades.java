@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -139,17 +140,206 @@ public class AdaptadorTiposUnidades extends RecyclerView.Adapter<AdaptadorTiposU
                         @Override
                         public void onClick(View view) {
 
+                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_ver_checks_tipo_unidad, null);
+                            builder.setView(ModalRedondeado(view.getContext(), customView));
+                            AlertDialog dialogCheckUnidades = builder.create();
+                            dialogCheckUnidades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogCheckUnidades.show();
 
-                            /*
+                            RadioButton radioBtnSiPlacas = customView.findViewById(R.id.radioBtnSiPlacas);
+                            RadioButton radioBtnNoPlacas = customView.findViewById(R.id.radioBtnNoPlacas);
+                            RadioButton radioBtnSiKm = customView.findViewById(R.id.radioBtnSiKm);
+                            RadioButton radioBtnNoKm = customView.findViewById(R.id.radioBtnNoKm);
+                            RadioButton radioBtnSiGas = customView.findViewById(R.id.radioBtnSiGas);
+                            RadioButton radioBtnNoGas = customView.findViewById(R.id.radioBtnNoGas);
+                            RadioButton radioBtnSiVin = customView.findViewById(R.id.radioBtnSiVin);
+                            RadioButton radioBtnNoVin = customView.findViewById(R.id.radioBtnNoVin);
+                            RadioButton radioBtnSiMotor = customView.findViewById(R.id.radioBtnSiMotor);
+                            RadioButton radioBtnNoMotor = customView.findViewById(R.id.radioBtnNoMotor);
 
 
-            String placas = jsonObject2.optString("placas", "");
-            String km = jsonObject2.optString("km", "");
-            String gasolina = jsonObject2.optString("gasolina", "");
-            String vin = jsonObject2.optString("vin", "");
-            String motor = jsonObject2.optString("motor", "");
+                            Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                            Button btnGuardar = customView.findViewById(R.id.btnGuardar);
 
-                             */
+
+                            btnGuardar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogOpcionesTipoUnidad.dismiss();
+                                    dialogCheckUnidades.dismiss();
+                                }
+                            });
+
+                            buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogCheckUnidades.dismiss();
+                                }
+                            });
+
+
+                            if (gasolina.equalsIgnoreCase("1")) {
+                                radioBtnSiGas.setChecked(true);
+                                radioBtnNoGas.setChecked(false);
+                            } else {
+                                radioBtnSiGas.setChecked(false);
+                                radioBtnNoGas.setChecked(true);
+                            }
+
+
+                            if (motor.equalsIgnoreCase("1")) {
+                                radioBtnSiMotor.setChecked(true);
+                                radioBtnNoMotor.setChecked(false);
+                            } else {
+                                radioBtnSiMotor.setChecked(false);
+                                radioBtnNoMotor.setChecked(true);
+                            }
+
+
+                            if (vin.equalsIgnoreCase("1")) {
+                                radioBtnSiVin.setChecked(true);
+                                radioBtnNoVin.setChecked(false);
+                            } else {
+
+                                radioBtnSiVin.setChecked(false);
+                                radioBtnNoVin.setChecked(true);
+                            }
+
+
+                            if (km.equalsIgnoreCase("1")) {
+                                radioBtnSiKm.setChecked(true);
+                                radioBtnNoKm.setChecked(false);
+                            } else {
+                                radioBtnSiKm.setChecked(false);
+                                radioBtnNoKm.setChecked(true);
+                            }
+
+
+                            if (placas.equalsIgnoreCase("1")) {
+                                radioBtnSiPlacas.setChecked(true);
+                                radioBtnNoPlacas.setChecked(false);
+                            } else {
+                                radioBtnSiPlacas.setChecked(false);
+                                radioBtnNoPlacas.setChecked(true);
+                            }
+
+
+                            radioBtnSiPlacas.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnSiPlacas.setChecked(true);
+                                    radioBtnNoPlacas.setChecked(false);
+
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "placas", "1");
+                                }
+                            });
+
+                            radioBtnNoPlacas.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnSiPlacas.setChecked(false);
+                                    radioBtnNoPlacas.setChecked(true);
+
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "placas", "0");
+                                }
+                            });
+
+
+                            radioBtnSiKm.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnNoKm.setChecked(false);
+                                    radioBtnSiKm.setChecked(true);
+
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "km", "1");
+                                }
+                            });
+
+
+                            radioBtnNoKm.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnNoKm.setChecked(true);
+                                    radioBtnSiKm.setChecked(false);
+
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "km", "0");
+                                }
+                            });
+
+
+                            radioBtnSiGas.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnSiGas.setChecked(true);
+                                    radioBtnNoGas.setChecked(false);
+
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "gasolina", "1");
+                                }
+                            });
+                            radioBtnNoGas.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnSiGas.setChecked(false);
+                                    radioBtnNoGas.setChecked(true);
+
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "gasolina", "0");
+
+                                }
+                            });
+
+                            radioBtnSiVin.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnNoVin.setChecked(false);
+                                    radioBtnSiVin.setChecked(true);
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "vin", "1");
+
+                                }
+                            });
+
+
+                            radioBtnNoVin.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnNoVin.setChecked(true);
+                                    radioBtnSiVin.setChecked(false);
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "vin", "0");
+
+                                }
+                            });
+
+                            radioBtnSiMotor.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnSiMotor.setChecked(true);
+                                    radioBtnNoMotor.setChecked(false);
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "motor", "1");
+
+                                }
+                            });
+
+
+                            radioBtnNoMotor.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    radioBtnSiMotor.setChecked(false);
+                                    radioBtnNoMotor.setChecked(true);
+
+                                    actionListener.onActualizarCheck(ID_tipo_unidad, "motor", "0");
+
+                                }
+                            });
 
 
                         }
@@ -232,7 +422,7 @@ public class AdaptadorTiposUnidades extends RecyclerView.Adapter<AdaptadorTiposU
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView TipoUnidad;
         ImageView imagenCarrito;
-        LinearLayout LayoutUnidad;
+        ConstraintLayout LayoutUnidad;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -290,6 +480,8 @@ public class AdaptadorTiposUnidades extends RecyclerView.Adapter<AdaptadorTiposU
 
 
         void onActualizarNombre(String ID_tipo_unidad, String nombre, AlertDialog dialogOpcionesTipoUnidad);
+
+        void onActualizarCheck(String ID_tipo_unidad, String tipo_check, String valor_check);
 
     }
 

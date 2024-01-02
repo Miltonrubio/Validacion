@@ -18,6 +18,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -111,7 +112,9 @@ public class CrudTiposUnidades extends Fragment implements AdaptadorTiposUnidade
         builder.setCancelable(false);
 
 
-        recylcerViewTiposUnidades.setLayoutManager(new LinearLayoutManager(context));
+        GridLayoutManager gridLayoutManager= new GridLayoutManager(context, 2);
+        recylcerViewTiposUnidades.setLayoutManager(gridLayoutManager);
+
         adaptadorTiposUnidades = new AdaptadorTiposUnidades(listaTiposUnidades, context, this);
         recylcerViewTiposUnidades.setAdapter(adaptadorTiposUnidades);
 
@@ -623,6 +626,35 @@ public class CrudTiposUnidades extends Fragment implements AdaptadorTiposUnidade
                 params.put("opcion", "92");
                 params.put("ID_tipo_unidad", ID_tipo_unidad);
                 params.put("nombre_tipo", nuevoNombre);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    public void onActualizarCheck(String ID_tipo_unidad, String tipo_check, String valor_check) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                VerTipoUnidades();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                crearToastPersonalizado(context, "Error al cargar los datos");
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "96");
+                params.put("ID_tipo_unidad", ID_tipo_unidad);
+                params.put("tipo_check", tipo_check);
+                params.put("valor_check", valor_check);
                 return params;
             }
         };

@@ -31,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,6 +56,30 @@ import java.util.Map;
 
 
 public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorModeloDesdeInicio.ViewHolder> {
+
+
+    public interface OnActivityActionListener {
+        void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo);
+    }
+
+    private AdaptadorModeloDesdeInicio.OnActivityActionListener actionListener;
+
+    AlertDialog dialogMarcas;
+    AlertDialog dialogMModelos;
+
+    public AdaptadorModeloDesdeInicio(List<JSONObject> data, Context context, Bundle bundle, AdaptadorModeloDesdeInicio.OnActivityActionListener actionListener, AlertDialog dialogMarcas, AlertDialog dialogMModelos) {
+        this.data = data;
+        this.context = context;
+        this.filteredData = new ArrayList<>(data);
+        this.bundle = bundle;
+        url = context.getResources().getString(R.string.ApiBack);
+        this.actionListener = actionListener;
+        this.dialogMarcas = dialogMarcas;
+        this.dialogMModelos = dialogMModelos;
+
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+    }
 
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
@@ -81,6 +106,7 @@ public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorMo
     ConstraintLayout LayoutSeleccionarModelo;
     RecyclerView reciclerViewModelos;
 
+    AdaptadorTiposUnidadesDesdeInicio adaptadorTiposUnidades;
 
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
@@ -100,9 +126,39 @@ public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorMo
             holder.imagenCarrito.setVisibility(View.GONE);
 
 
+            Bundle bundleModelo = new Bundle();
+            bundleModelo.putString("id_marca", id_marca);
+            bundleModelo.putString("marca", marca);
+            bundleModelo.putString("id_ser_cliente", id_ser_cliente);
+            bundleModelo.putString("nombreUsuario", nombreUsuario);
+            bundleModelo.putString("id_car_model", id_car_model);
+            bundleModelo.putString("name", name);
+
+
             holder.LayoutAgregarServicio.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    /*
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.layout_mostrar_tipos_unidades, null);
+                    builder.setView(ModalRedondeado(view.getContext(), customView));
+                    AlertDialog dialogModelos = builder.create();
+                    dialogModelos.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogModelos.show();
+
+                    RecyclerView recyclerViewTiposUnidades = customView.findViewById(R.id.recyclerViewTiposUnidades);
+
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
+                    recyclerViewTiposUnidades.setLayoutManager(gridLayoutManager);
+                    adaptadorTiposUnidades = new AdaptadorTiposUnidadesDesdeInicio(listaTiposUnidades, context);
+                    recyclerViewTiposUnidades.setAdapter(adaptadorTiposUnidades);
+                    VerTipoUnidades();
+
+
+                    */
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_unidad, null);
                     builder.setView(ModalRedondeado(view.getContext(), customView));
@@ -269,13 +325,66 @@ public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorMo
                             }
                         }
                     });
-
+//  */
 
                 }
             });
 
 
         } finally {
+        }
+    }
+
+
+    List<JSONObject> listaTiposUnidades = new ArrayList<>();
+    AlertDialog modalCargando;
+
+    AlertDialog.Builder builder;
+
+    private void VerTipoUnidades() {
+        listaTiposUnidades.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        listaTiposUnidades.add(jsonObject);
+                    }
+
+                    adaptadorTiposUnidades.setFilteredData(listaTiposUnidades);
+                    adaptadorTiposUnidades.filter("");
+
+
+                } catch (JSONException e) {
+                    crearToastPersonalizado(context, "Error al cargar los datos");
+                }
+                onLoadComplete();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                crearToastPersonalizado(context, "Error al cargar los datos");
+                onLoadComplete();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "90");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private void onLoadComplete() {
+        if (modalCargando.isShowing() && modalCargando != null) {
+            modalCargando.dismiss();
         }
     }
 
@@ -336,28 +445,6 @@ public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorMo
         } else {
             textView.setText(text);
         }
-    }
-
-
-    public interface OnActivityActionListener {
-        void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo);
-    }
-
-    private AdaptadorModeloDesdeInicio.OnActivityActionListener actionListener;
-
-    AlertDialog dialogMarcas;
-    AlertDialog dialogMModelos;
-
-    public AdaptadorModeloDesdeInicio(List<JSONObject> data, Context context, Bundle bundle, AdaptadorModeloDesdeInicio.OnActivityActionListener actionListener, AlertDialog dialogMarcas, AlertDialog dialogMModelos) {
-        this.data = data;
-        this.context = context;
-        this.filteredData = new ArrayList<>(data);
-        this.bundle = bundle;
-        url = context.getResources().getString(R.string.ApiBack);
-        this.actionListener = actionListener;
-        this.dialogMarcas = dialogMarcas;
-        this.dialogMModelos = dialogMModelos;
-
     }
 
 

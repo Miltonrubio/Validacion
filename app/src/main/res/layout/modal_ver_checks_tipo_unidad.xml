@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="5dp"
+    android:paddingHorizontal="12dp"
     android:paddingBottom="25dp">
 
 
@@ -12,7 +12,7 @@
         android:id="@+id/Layout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:background="@drawable/contorno_negro"
         android:orientation="horizontal"
         android:weightSum="6"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,9 +23,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
             android:layout_weight="4"
-            android:gravity="center"
+            android:gravity="start"
             android:text="Motor"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="normal"
 
@@ -37,6 +39,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="SI" />
 
         <RadioButton
@@ -44,6 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="NO" />
 
 
@@ -53,7 +57,7 @@
         android:id="@+id/Layout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:background="@drawable/contorno_negro"
         android:orientation="horizontal"
         android:weightSum="6"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,9 +68,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
             android:layout_weight="4"
-            android:gravity="center"
+            android:gravity="start"
             android:text="Vin"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="normal"
 
@@ -78,6 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="SI" />
 
         <RadioButton
@@ -85,6 +92,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="NO" />
 
 
@@ -94,7 +102,7 @@
         android:id="@+id/Layout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:background="@drawable/contorno_negro"
         android:orientation="horizontal"
         android:weightSum="6"
         app:layout_constraintEnd_toEndOf="parent"
@@ -106,9 +114,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
             android:layout_weight="4"
-            android:gravity="center"
+            android:gravity="start"
             android:text="Kilometraje"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="normal"
 
@@ -119,6 +129,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="SI" />
 
         <RadioButton
@@ -126,6 +137,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="NO" />
 
 
@@ -135,7 +147,7 @@
         android:id="@+id/Layout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:background="@drawable/contorno_negro"
         android:orientation="horizontal"
         android:weightSum="6"
         app:layout_constraintEnd_toEndOf="parent"
@@ -146,9 +158,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
             android:layout_weight="4"
-            android:gravity="center"
+            android:gravity="start"
             android:text="Gasolina"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="normal"
 
@@ -160,6 +174,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="SI" />
 
         <RadioButton
@@ -167,6 +182,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="NO" />
 
 
@@ -179,8 +195,9 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="28dp"
         android:gravity="center"
-
         android:text="Selecciona los checks que quieres para el formulario de ingreso"
+
+        android:textColor="@color/azulito"
         android:textSize="22dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -193,6 +210,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
+        android:background="@drawable/contorno_negro"
         android:orientation="horizontal"
         android:weightSum="6"
         app:layout_constraintEnd_toEndOf="parent"
@@ -203,9 +221,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
             android:layout_weight="4"
-            android:gravity="center"
+            android:gravity="start"
             android:text="Placas"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="normal"
 
@@ -217,6 +237,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="SI" />
 
         <RadioButton
@@ -224,10 +245,36 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/contorno_negro"
             android:text="NO" />
 
 
     </LinearLayout>
 
+
+    <Button
+        android:id="@+id/buttonCancelar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="31dp"
+        android:backgroundTint="@color/rojo"
+        android:text="Cancelar"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Layout5" />
+
+
+    <Button
+        android:id="@+id/btnGuardar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="31dp"
+        android:backgroundTint="@color/azulito"
+        android:text="Guardar"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Layout5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

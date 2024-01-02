@@ -65,6 +65,9 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
         void onEliminarListado(String ID_listado_actividad);
 
         void onEditarListado(String ID_listado_actividad, String nombre_actividad);
+
+        void onReactivarListado(String ID_listado_actividad);
+
     }
 
     private AdaptadorListadoActividades.OnActivityActionListener actionListener;
@@ -130,6 +133,8 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
 
 
                     LinearLayout LayoutReactivar = customView.findViewById(R.id.LayoutReactivar);
+                    TextView textEliminar = customView.findViewById(R.id.textEliminar);
+                    textEliminar.setText("Desactivar");
 
                     LinearLayout layoutEditar = customView.findViewById(R.id.layoutEditar);
                     LinearLayout layoutEliminar = customView.findViewById(R.id.layoutEliminar);
@@ -143,6 +148,16 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
                         layoutEliminar.setVisibility(View.GONE);
                         LayoutReactivar.setVisibility(View.VISIBLE);
                     }
+
+
+                    LayoutReactivar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            dialogOpcionesActividades.dismiss();
+                            actionListener.onReactivarListado(ID_listado_actividad);
+                        }
+                    });
 
 
                     layoutEditar.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +222,7 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
                             Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
 
 
-                            textView4.setText("Seguro deseas eliminar la actividad " + nombre_actividad);
+                            textView4.setText("Seguro deseas desactivar la actividad " + nombre_actividad);
 
 
                             buttonAceptar.setOnClickListener(new View.OnClickListener() {
