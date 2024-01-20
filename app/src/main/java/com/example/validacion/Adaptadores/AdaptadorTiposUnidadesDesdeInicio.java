@@ -93,7 +93,7 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
 
             setTextViewText(holder.TipoUnidad, nombre, "No se encontro el modelo");
 
-            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto;
+            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
 
             Glide.with(context)
                     .load(imageUrl)
@@ -104,6 +104,36 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
 
             Bundle bundle = new Bundle();
             bundle.putString("ID_tipo_unidad", ID_tipo_unidad);
+            bundle.putString("checkPlacas", placas);
+            bundle.putString("checkKm", km);
+            bundle.putString("checkVin", vin);
+            bundle.putString("checkMotor", motor);
+            bundle.putString("checkGasolina", gasolina);
+
+            holder.LayoutUnidad.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_registrar_unidad, null);
+                    builder.setView(ModalRedondeado(view.getContext(), customView));
+                    AlertDialog dialogMarcas = builder.create();
+                    dialogMarcas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogMarcas.show();
+
+                    TextView textView24 = customView.findViewById(R.id.textView24);
+
+                    textView24.setText("Registra los datos solicitados para " + nombre);
+
+
+
+
+
+
+
+
+                }
+            });
 
 
         } finally {

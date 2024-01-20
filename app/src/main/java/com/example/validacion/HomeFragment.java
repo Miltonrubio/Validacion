@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,6 +55,8 @@ import com.example.validacion.Adaptadores.AdaptadorModeloDesdeInicio;
 import com.example.validacion.Adaptadores.AdaptadorModelos;
 import com.example.validacion.Adaptadores.AdaptadorSeleccionarCliente;
 import com.example.validacion.Adaptadores.AdaptadorSeleccionarUnidad;
+import com.example.validacion.Adaptadores.AdaptadorTiposUnidades;
+import com.example.validacion.Adaptadores.AdaptadorTiposUnidadesDesdeInicio;
 import com.example.validacion.Adaptadores.Utiles;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -376,14 +379,15 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         btnAgregarUnidad.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                MostrarModalMarcas(view, bundleUsuario);
-
+                                //        MostrarModalMarcas(view, bundleUsuario);
+                                MostrarModalAgregarNuevaUnidad(view, bundleUsuario);
                             }
                         });
                         AgregarNuevaUnidad.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                MostrarModalMarcas(view, bundleUsuario);
+                                //      MostrarModalMarcas(view, bundleUsuario);
+                                MostrarModalAgregarNuevaUnidad(view, bundleUsuario);
 
                             }
                         });
@@ -1174,6 +1178,73 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     RecyclerView reciclerViewMarcas;
 
     AdaptadorMarcaDesdeInicio adaptadorMarcaDesdeInicio;
+
+
+    private void MostrarModalAgregarNuevaUnidad(View view, Bundle bundleUsuario) {
+        ConsultarTiposUnidades();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.layout_mostrar_tipos_unidades, null);
+        builder.setView(ModalRedondeado(view.getContext(), customView));
+        AlertDialog dialogMarcas = builder.create();
+        dialogMarcas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogMarcas.show();
+
+        RecyclerView recyclerViewTiposUnidades = customView.findViewById(R.id.recyclerViewTiposUnidades);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
+        recyclerViewTiposUnidades.setLayoutManager(gridLayoutManager);
+        adaptadorTiposUnidadesDesdeInicio = new AdaptadorTiposUnidadesDesdeInicio(listaTiposUnidades, context);
+        recyclerViewTiposUnidades.setAdapter(adaptadorTiposUnidadesDesdeInicio);
+
+
+    }
+
+    AdaptadorTiposUnidadesDesdeInicio adaptadorTiposUnidadesDesdeInicio;
+
+    List<JSONObject> listaTiposUnidades = new ArrayList<>();
+
+    private void ConsultarTiposUnidades() {
+
+        listaTiposUnidades.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        listaTiposUnidades.add(jsonObject);
+                    }
+
+                    adaptadorTiposUnidadesDesdeInicio.setFilteredData(listaTiposUnidades);
+                    adaptadorTiposUnidadesDesdeInicio.filter("");
+
+
+                } catch (JSONException e) {
+                    crearToastPersonalizado(context, "Error al cargar los datos");
+                }
+                onLoadComplete();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                crearToastPersonalizado(context, "Error al cargar los datos");
+                onLoadComplete();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "90");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
 
     private void MostrarModalMarcas(View view, Bundle bundleUsuario) {
 
