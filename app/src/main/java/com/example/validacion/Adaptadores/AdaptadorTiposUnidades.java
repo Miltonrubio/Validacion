@@ -98,7 +98,7 @@ public class AdaptadorTiposUnidades extends RecyclerView.Adapter<AdaptadorTiposU
 
             setTextViewText(holder.TipoUnidad, nombre, "No se encontro el modelo");
 
-            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto;
+            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
 
             Glide.with(context)
                     .load(imageUrl)

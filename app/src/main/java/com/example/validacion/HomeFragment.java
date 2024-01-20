@@ -245,8 +245,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
             }
         });
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         dataList = new ArrayList<>();
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adaptadorCoches = new AdaptadorCoches(dataList, context, this);
         recyclerView.setAdapter(adaptadorCoches);
 

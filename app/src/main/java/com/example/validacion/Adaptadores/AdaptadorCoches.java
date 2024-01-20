@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.example.validacion.CheckListFragment;
 import com.example.validacion.CheckListSalidaFragment;
 import com.example.validacion.CheckListTecnicoFragment;
+import com.example.validacion.ChecksFragment;
 import com.example.validacion.DetalleFragment;
 import com.example.validacion.SubirFotosUnidadesActivity;
 import com.example.validacion.R;
@@ -73,7 +74,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         String fecha_ingreso = jsonObject2.optString("fecha_ingreso", "");
         String hora_ingreso = jsonObject2.optString("hora_ingreso", "");
         String id_ser_venta = jsonObject2.optString("id_ser_venta", "");
-        String nombre = jsonObject2.optString("nombre", "");
+        String nombre = jsonObject2.optString("NomCliente", "");
         String email = jsonObject2.optString("email", "");
         String telefono = jsonObject2.optString("telefono", "");
         String gasolina = jsonObject2.optString("gasolina", "");
@@ -209,24 +210,11 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
 
 
         LinearLayout LayoutDetalles = customView.findViewById(R.id.LayoutDetalles);
-        LinearLayout LayoutChecks = customView.findViewById(R.id.LayoutChecks);
+        LinearLayout LayoutCheckIngreso = customView.findViewById(R.id.LayoutCheckIngreso);
         LinearLayout LayoutTomarFotos = customView.findViewById(R.id.LayoutTomarFotos);
         LinearLayout LayoutChecksSalida = customView.findViewById(R.id.LayoutChecksSalida);
         LinearLayout LayoutCheckListTecnico = customView.findViewById(R.id.LayoutCheckListTecnico);
 
-
-        if (estatus.equalsIgnoreCase("LISTO PARA ENTREGA")) {
-            LayoutChecksSalida.setVisibility(View.VISIBLE);
-            LayoutChecks.setVisibility(View.GONE);
-
-        } else if (estatus.equalsIgnoreCase("ENTREGADO")) {
-            LayoutChecksSalida.setVisibility(View.VISIBLE);
-            LayoutChecks.setVisibility(View.VISIBLE);
-        } else {
-            LayoutChecksSalida.setVisibility(View.GONE);
-            LayoutChecks.setVisibility(View.VISIBLE);
-
-        }
 
 
         LayoutTomarFotos.setOnClickListener(new View.OnClickListener() {
@@ -238,6 +226,8 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                 intent.putExtra("id_ser_venta", bundle.getString("idventa"));
                 context.startActivity(intent);
                 dialogOpcionesCoches.dismiss();
+
+
             }
         });
 
@@ -259,9 +249,22 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         });
 
 
-        LayoutChecks.setOnClickListener(new View.OnClickListener() {
+        LayoutCheckIngreso.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                bundle.putString("tipo_check", "Entrada");
+                ChecksFragment checksFragment = new ChecksFragment();
+                checksFragment.setArguments(bundle);
+
+                FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
+                fragmentManagerCheck.beginTransaction()
+                        .replace(R.id.frame_layoutCoches, checksFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+/*
                 CheckListFragment checkListFragment = new CheckListFragment();
                 checkListFragment.setArguments(bundle);
 
@@ -270,7 +273,13 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                         .replace(R.id.frame_layoutCoches, checkListFragment)
                         .addToBackStack(null)
                         .commit();
+*/
+
+
                 dialogOpcionesCoches.dismiss();
+
+
+
             }
         });
 
@@ -278,6 +287,19 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         LayoutChecksSalida.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                bundle.putString("tipo_check", "Salida");
+                ChecksFragment checksFragment = new ChecksFragment();
+                checksFragment.setArguments(bundle);
+
+                FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
+                fragmentManagerCheck.beginTransaction()
+                        .replace(R.id.frame_layoutCoches, checksFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+                /*
                 CheckListSalidaFragment checkListSalidaFragment = new CheckListSalidaFragment();
                 checkListSalidaFragment.setArguments(bundle);
 
@@ -286,6 +308,8 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                         .replace(R.id.frame_layoutCoches, checkListSalidaFragment)
                         .addToBackStack(null)
                         .commit();
+
+                 */
                 dialogOpcionesCoches.dismiss();
 
             }
@@ -294,6 +318,17 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         LayoutCheckListTecnico.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                bundle.putString("tipo_check", "Tecnico");
+                ChecksFragment checksFragment = new ChecksFragment();
+                checksFragment.setArguments(bundle);
+
+                FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
+                fragmentManagerCheck.beginTransaction()
+                        .replace(R.id.frame_layoutCoches, checksFragment)
+                        .addToBackStack(null)
+                        .commit();
+                /*
                 CheckListTecnicoFragment checkListTecnicoFragment = new CheckListTecnicoFragment();
                 checkListTecnicoFragment.setArguments(bundle);
 
@@ -302,6 +337,8 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                         .replace(R.id.frame_layoutCoches, checkListTecnicoFragment)
                         .addToBackStack(null)
                         .commit();
+
+                 */
                 dialogOpcionesCoches.dismiss();
 
             }

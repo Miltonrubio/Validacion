@@ -1,6 +1,7 @@
 package com.example.validacion;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -79,6 +80,10 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
     ImageView imagenDesdeGaleriaIM;
     LottieAnimationView animacionSinImagenes;
 
+
+    AlertDialog.Builder builder;
+    AlertDialog modalCargando;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +104,8 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
         txtId.setText("Id de venta: " + idSerVenta);
         CargarImagenes(idSerVenta);
 
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
 
         SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
 
@@ -131,6 +138,7 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        modalCargando = Utiles.ModalCargando(context, builder);
 
         if (requestCode == 2 && resultCode == RESULT_OK && data != null) {
             // La imagen seleccionada desde la galería está en 'data.getData()'
@@ -143,6 +151,7 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
                 MandarFoto2(selectedBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
+                modalCargando.dismiss();
             }
         }
 
@@ -151,6 +160,9 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
             Bitmap imgBitmap = BitmapFactory.decodeFile(rutaImagen);
             imgBitmap = rotarImagen(imgBitmap, rutaImagen); // Rotar la imagen si es necesario
             MandarFoto2(imgBitmap);
+        }else {
+
+            modalCargando.dismiss();
         }
 
     }
@@ -284,8 +296,12 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             // Toast.makeText(SubirFotosUnidadesActivity.this, "Imagen " + idSerVenta + " Enviada al servidor", Toast.LENGTH_SHORT).show();
             Utiles.crearToastPersonalizado(context, "Imagen enviada al servidor");
-            Intent intent = new Intent(SubirFotosUnidadesActivity.this, Activity_Binding.class);
+       /*     Intent intent = new Intent(SubirFotosUnidadesActivity.this, Activity_Binding.class);
             startActivity(intent);
+        */
+
+            CargarImagenes(idSerVenta);
+            modalCargando.dismiss();
         }
     }
 

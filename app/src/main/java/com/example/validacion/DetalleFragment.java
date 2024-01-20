@@ -187,7 +187,6 @@ public class DetalleFragment extends Fragment {
             gasolina = bundle.getString("gasolina", "");
             anioI = bundle.getString("anioI", "");
             kilometraje = bundle.getString("kilometraje", "");
-
             nombreusuario = bundle.getString("nombre", "");
             telefonousuario = bundle.getString("telefono", "");
             emailusuario = bundle.getString("email", "");
