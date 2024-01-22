@@ -55,6 +55,297 @@ import java.util.List;
 import java.util.Map;
 
 
+import static android.app.PendingIntent.getActivity;
+
+import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
+import static com.example.validacion.Adaptadores.Utiles.crearToastPersonalizado;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.validacion.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.internal.Util;
+
+
+public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorModeloDesdeInicio.ViewHolder> {
+
+    public interface OnItemClickListener {
+        void onItemClick(String id_modelo, String nombreModelo);
+    }
+
+
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+
+    private List<JSONObject> filteredData;
+    private List<JSONObject> data;
+    Context context;
+
+    AlertDialog.Builder builder;
+
+    String url;
+
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_unidades_cliente, parent, false);
+
+        return new ViewHolder(view);
+
+    }
+/*
+    ConstraintLayout LayoutSeleccionarMarca;
+    ConstraintLayout LayoutAgregarDatos;
+    ConstraintLayout LayoutSeleccionarModelo;
+    RecyclerView reciclerViewModelos;
+    AdaptadorModeloDesdeInicio adaptadorModeloDesdeInicio;
+*/
+
+    @SuppressLint("ResourceAsColor")
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.LayoutAgregarServicio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onItemClickListener != null) {
+                    String id_modelo = filteredData.get(position).optString("id_car_model", "");
+                    String nombreModelo = filteredData.get(position).optString("name", "");
+                    onItemClickListener.onItemClick(id_modelo, nombreModelo);
+                }
+            }
+        });
+
+        try {
+            JSONObject jsonObject2 = filteredData.get(position);
+
+            String modelo = jsonObject2.optString("name", "");
+            String id_car_model = jsonObject2.optString("id_car_model", "");
+
+            setTextViewText(holder.NombreUnidad, modelo, "No se encontro el modelo");
+            holder.imagenCarrito.setVisibility(View.GONE);
+
+
+        } finally {
+        }
+    }
+
+    /*
+        private void VerModelos(String id, Context context) {
+            listaModelos.clear();
+            modalCargando = Utiles.ModalCargando(context, builder);
+            StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String id_car_make = jsonObject.getString("id_car_make");
+                            if (id_car_make.equalsIgnoreCase(id)) {
+                                listaModelos.add(jsonObject);
+                            }
+
+
+                            adaptadorModeloDesdeInicio.setFilteredData(listaModelos);
+                            adaptadorModeloDesdeInicio.filter("");
+
+                        }
+                    } catch (JSONException e) {
+                        crearToastPersonalizado(context, "No hay datos para mostrar");
+                    }
+                    onLoadComplete();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    crearToastPersonalizado(context, "Error al cargar los datos, revisa la conexion");
+                    onLoadComplete();
+                }
+            }) {
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("opcion", "33");
+                    return params;
+                }
+            };
+
+            Volley.newRequestQueue(context).add(postrequest);
+        }
+
+    */
+
+
+
+    Bundle bundleUsuario;
+
+    public AdaptadorModeloDesdeInicio(List<JSONObject> data, Context context, Bundle bundleUsuario) {
+        this.data = data;
+        this.context = context;
+        this.filteredData = new ArrayList<>(data);
+        url = context.getResources().getString(R.string.ApiBack);
+        this.bundleUsuario = bundleUsuario;
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+    }
+
+
+    @Override
+    public int getItemCount() {
+
+        return filteredData.size();
+
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView NombreUnidad;
+        ImageView imagenCarrito;
+        LinearLayout LayoutAgregarServicio;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            NombreUnidad = itemView.findViewById(R.id.NombreUnidad);
+            LayoutAgregarServicio = itemView.findViewById(R.id.LayoutAgregarServicio);
+            imagenCarrito = itemView.findViewById(R.id.imagenCarrito);
+        }
+
+
+        /*
+        TextView NombreUnidad;
+        ImageView imagenCarrito;
+        LinearLayout LayoutAgregarServicio;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            NombreUnidad = itemView.findViewById(R.id.NombreUnidad);
+            LayoutAgregarServicio = itemView.findViewById(R.id.LayoutAgregarServicio);
+            imagenCarrito = itemView.findViewById(R.id.imagenCarrito);
+        }
+
+
+         */
+    }
+
+    public void filter(String query) {
+        filteredData.clear();
+
+        if (TextUtils.isEmpty(query)) {
+            filteredData.addAll(data);
+        } else {
+            String[] keywords = query.toLowerCase().split(" ");
+
+            for (JSONObject item : data) {
+                String nombre = item.optString("name", "").toLowerCase();
+                boolean matchesAllKeywords = true;
+
+                for (String keyword : keywords) {
+                    if (!(nombre.contains(keyword))) {
+                        matchesAllKeywords = false;
+                        break;
+                    }
+                }
+
+                if (matchesAllKeywords) {
+                    filteredData.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void setFilteredData(List<JSONObject> filteredData) {
+        this.filteredData = new ArrayList<>(filteredData);
+        notifyDataSetChanged();
+    }
+
+    private void setTextViewText(TextView textView, String text, String defaultText) {
+        if (text.equals(null) || text.equals("") || text.equals(":null") || text.equals("null") || text.isEmpty()) {
+            textView.setText(defaultText);
+        } else {
+            textView.setText(text);
+        }
+    }
+
+/*
+    Bundle bundleUsuario;
+
+    AdaptadorModeloDesdeInicio.OnActivityActionListener actionListenerModelo;
+
+    AlertDialog dialogMarcas;
+
+
+    private void onLoadComplete() {
+        if (modalCargando.isShowing() && modalCargando != null) {
+            modalCargando.dismiss();
+        }
+    }
+
+    public AdaptadorMarcaDesdeInicio(List<JSONObject> data, Context context, Bundle bundleUsuario, AdaptadorModeloDesdeInicio.OnActivityActionListener actionListenerModelo, AlertDialog dialogMarcas) {
+        this.data = data;
+        this.context = context;
+        this.filteredData = new ArrayList<>(data);
+        url = context.getResources().getString(R.string.ApiBack);
+        this.bundleUsuario = bundleUsuario;
+        this.actionListenerModelo = actionListenerModelo;
+        this.dialogMarcas = dialogMarcas;
+
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+    }
+
+*/
+}
+
+
+
+/*
 public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorModeloDesdeInicio.ViewHolder> {
 
 
@@ -158,7 +449,7 @@ public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorMo
 
 
                     */
-
+/*
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_unidad, null);
                     builder.setView(ModalRedondeado(view.getContext(), customView));
@@ -326,7 +617,7 @@ public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorMo
                         }
                     });
 //  */
-
+/*
                 }
             });
 
@@ -450,3 +741,4 @@ public class AdaptadorModeloDesdeInicio extends RecyclerView.Adapter<AdaptadorMo
 
 }
 
+*/

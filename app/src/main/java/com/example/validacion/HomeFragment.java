@@ -42,9 +42,14 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -71,13 +76,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivityActionListener, AdaptadorSeleccionarCliente.OnActivityActionListener, AdaptadorSeleccionarUnidad.OnActivityActionListener, AdaptadorModeloDesdeInicio.OnActivityActionListener {
+public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivityActionListener, AdaptadorSeleccionarCliente.OnActivityActionListener, AdaptadorSeleccionarUnidad.OnActivityActionListener, AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener {
 
     private AdaptadorCoches.OnActivityActionListener cochesActionListener;
     private AdaptadorSeleccionarCliente.OnActivityActionListener clienteActionListener;
     private AdaptadorSeleccionarUnidad.OnActivityActionListener unidadActionListener;
-    private AdaptadorModeloDesdeInicio.OnActivityActionListener modeloActionListener;
-
+    //  private AdaptadorModeloDesdeInicio.OnActivityActionListener modeloActionListener;
+    private AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener tiposUnidadesActionListener;
     AdaptadorSeleccionarCliente adaptadorSeleccionarCliente;
     String valorGas = null;
     private String selectedIDCliente = "1";
@@ -144,8 +149,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         cochesActionListener = this;
         unidadActionListener = this;
         clienteActionListener = this;
-        modeloActionListener = this;
-
+//        modeloActionListener = this;
+        tiposUnidadesActionListener = this;
         return view;
     }
 
@@ -287,15 +292,18 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
                 Button buttonGuardar = customView.findViewById(R.id.buttonGuardar);
                 Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
-                Spinner SpinnerGasolina = customView.findViewById(R.id.SpinnerGasolina);
+                SpinnerGasolina = customView.findViewById(R.id.SpinnerGasolina);
                 textSeleccionarUnidad = customView.findViewById(R.id.textSeleccionarUnidad);
                 textSeleccionarCliente = customView.findViewById(R.id.textSeleccionarCliente);
                 ImageView btnAgregarCliente = customView.findViewById(R.id.btnAgregarCliente);
                 TextView textSeleccionarCliente = customView.findViewById(R.id.textSeleccionarCliente);
 
+                gasolinaTV = customView.findViewById(R.id.gasolina);
+                KilometrajeTV = customView.findViewById(R.id.Kilometraje);
 
-                EditText editTextKilometraje = customView.findViewById(R.id.editTextKilometraje);
-                EditText editTextMotivoIngreso = customView.findViewById(R.id.editTextMotivoIngreso);
+
+                editTextKilometraje = customView.findViewById(R.id.editTextKilometraje);
+                editTextMotivoIngreso = customView.findViewById(R.id.editTextMotivoIngreso);
 
 
                 ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, opciones);
@@ -333,8 +341,6 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         } else {
                             dialogNuevoServicio.dismiss();
                             AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio);
-
-
                         }
 
 
@@ -1037,7 +1043,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("opcion", "20");
+                params.put("opcion", "101");
                 params.put("id_ser_cliente", id_ser_cliente);
                 return params;
             }
@@ -1116,7 +1122,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     String marca, modelo, anio, placas, motor, vin;
 
     @Override
-    public void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas) {
+    public void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas, String tipo) {
         this.id_serv_unidad = id_serv_unidad;
         this.marca = marca;
         this.modelo = modelo;
@@ -1127,10 +1133,174 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
 
         textSeleccionarUnidad.setText(marca.toUpperCase() + " " + modelo.toUpperCase());
-
+        mostrarFormularios(tipo);
 
     }
 
+    List<JSONObject> listitaTiposUnidades = new ArrayList<>();
+    EditText editTextKilometraje;
+    EditText editTextMotivoIngreso;
+    Spinner SpinnerGasolina;
+    TextView gasolinaTV;
+    TextView KilometrajeTV;
+    private void mostrarFormularios(String tipoSeleccionado) {
+
+        Utiles.crearToastPersonalizado(context, tipoSeleccionado);
+        listitaTiposUnidades.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+
+                    // Buscar el objeto que coincide con el tipoSeleccionado
+                    JSONObject selectedObject = null;
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String nombre = jsonObject.getString("nombre");
+                        if (nombre.equalsIgnoreCase(tipoSeleccionado)) {
+                            selectedObject = jsonObject;
+                            break;
+                        }
+                    }
+
+                    // Verificar si se encontró el objeto
+                    if (selectedObject != null) {
+                        // Obtener los valores correspondientes
+                        String km = selectedObject.getString("km");
+                        String gasolina = selectedObject.getString("gasolina");
+
+                        // Aplicar la lógica según los valores obtenidos
+                        if (km.equalsIgnoreCase("1")) {
+                            editTextKilometraje.setVisibility(View.VISIBLE);
+                            KilometrajeTV.setVisibility(View.VISIBLE);
+                        } else {
+                            editTextKilometraje.setVisibility(View.GONE);
+                            KilometrajeTV.setVisibility(View.GONE);
+                        }
+
+                        if (gasolina.equalsIgnoreCase("1")) {
+                            SpinnerGasolina.setVisibility(View.VISIBLE);
+                            gasolinaTV.setVisibility(View.VISIBLE);
+                        } else {
+                            gasolinaTV.setVisibility(View.GONE);
+                            SpinnerGasolina.setVisibility(View.GONE);
+                        }
+                    } else {
+
+                        Utiles.crearToastPersonalizado(context, "No se encontraron coincidencias");
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Utiles.crearToastPersonalizado(context, "Error al procesar la respuesta JSON: " + e.getMessage());
+                }
+
+                modalCargando.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String errorMessage = "Hubo un error";
+                if (error instanceof NetworkError) {
+                    errorMessage = "Error de red";
+                } else if (error instanceof ServerError) {
+                    errorMessage = "Error del servidor";
+                } else if (error instanceof AuthFailureError) {
+                    errorMessage = "Error de autenticación";
+                } else if (error instanceof ParseError) {
+                    errorMessage = "Error de análisis";
+                } else if (error instanceof NoConnectionError) {
+                    errorMessage = "No hay conexión";
+                } else if (error instanceof TimeoutError) {
+                    errorMessage = "Tiempo de espera agotado";
+                }
+
+                Log.e("Error", errorMessage, error);
+                Utiles.crearToastPersonalizado(context, errorMessage);
+                modalCargando.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "90");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    /*
+    private void mostrarFormularios(String tipoSeleccionado) {
+        listitaTiposUnidades.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                if (km.equalsIgnoreCase("1")) {
+                    editTextKilometraje.setVisibility(View.VISIBLE);
+                    KilometrajeTV.setVisibility(View.VISIBLE);
+                } else {
+                    editTextKilometraje.setVisibility(View.GONE);
+                    KilometrajeTV.setVisibility(View.GONE);
+                }
+
+                if (gasolina.equalsIgnoreCase("1")) {
+                    SpinnerGasolina.setVisibility(View.VISIBLE);
+                    gasolinaTV.setVisibility(View.VISIBLE);
+                } else {
+                    gasolinaTV.setVisibility(View.GONE);
+                    SpinnerGasolina.setVisibility(View.GONE);
+                }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Utiles.crearToastPersonalizado(context, "Error al procesar la respuesta JSON: " + e.getMessage());
+
+                }
+
+                modalCargando.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String errorMessage = "Hubo un error";
+                if (error instanceof NetworkError) {
+                    errorMessage = "Error de red";
+                } else if (error instanceof ServerError) {
+                    errorMessage = "Error del servidor";
+                } else if (error instanceof AuthFailureError) {
+                    errorMessage = "Error de autenticación";
+                } else if (error instanceof ParseError) {
+                    errorMessage = "Error de análisis";
+                } else if (error instanceof NoConnectionError) {
+                    errorMessage = "No hay conexión";
+                } else if (error instanceof TimeoutError) {
+                    errorMessage = "Tiempo de espera agotado";
+                }
+
+                Log.e("Error", errorMessage, error);
+                Utiles.crearToastPersonalizado(context, errorMessage);
+                modalCargando.dismiss();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "90");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+*/
 
     private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -1194,7 +1364,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
         recyclerViewTiposUnidades.setLayoutManager(gridLayoutManager);
-        adaptadorTiposUnidadesDesdeInicio = new AdaptadorTiposUnidadesDesdeInicio(listaTiposUnidades, context);
+        adaptadorTiposUnidadesDesdeInicio = new AdaptadorTiposUnidadesDesdeInicio(listaTiposUnidades, context, tiposUnidadesActionListener, bundleUsuario);
         recyclerViewTiposUnidades.setAdapter(adaptadorTiposUnidadesDesdeInicio);
 
 
@@ -1277,7 +1447,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         LayoutAgregarDatos.setVisibility(View.GONE);
 
 
-        adaptadorMarcaDesdeInicio = new AdaptadorMarcaDesdeInicio(listaMarcas, context, bundleUsuario, modeloActionListener, dialogMarcas);
+        //   adaptadorMarcaDesdeInicio = new AdaptadorMarcaDesdeInicio(listaMarcas, context, bundleUsuario, modeloActionListener, dialogMarcas);
         reciclerViewMarcas.setLayoutManager(new LinearLayoutManager(context));
         reciclerViewMarcas.setAdapter(adaptadorMarcaDesdeInicio);
 
@@ -1343,13 +1513,16 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     }
 
 
-    public void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo) {
+    public void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo, String foto) {
         dialogUnidades.dismiss();
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("Respuesta de volley registrarUsuario", "idcliente" + idcliente + " idmarca" + idmarca + " idmodelo" + idmodelo + " anio" + anio + " placas" + placas + " vin" + vin + " motor" + motor + " tipo" + tipo);
-                crearToastPersonalizado(context, "Agregado correctamente");
+               // crearToastPersonalizado(context, "Agregado correctamente");
+
+                crearToastPersonalizado(context, response);
+
 
             }
         }, new Response.ErrorListener() {
@@ -1370,6 +1543,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 params.put("vin", vin);
                 params.put("motor", motor);
                 params.put("tipo", tipo);
+                params.put("foto", foto);
                 return params;
             }
         };

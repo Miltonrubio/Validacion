@@ -80,27 +80,27 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
         try {
             JSONObject jsonObject2 = filteredData.get(position);
             String placas = jsonObject2.optString("placas", "");
-            String Modelo = jsonObject2.optString("Modelo", "");
-            String Marca = jsonObject2.optString("Marca", "");
+            String modelo = jsonObject2.optString("modelo", "");
+            String marca = jsonObject2.optString("marca", "");
             String id_serv_unidad = jsonObject2.optString("id_serv_unidad", "");
             String foto = jsonObject2.optString("foto", "");
             String vin = jsonObject2.optString("vin", "");
             String motor = jsonObject2.optString("motor", "");
             String anio = jsonObject2.optString("anio", "");
-
+            String tipo = jsonObject2.optString("tipo", "");
 
             holder.LayoutAgregarServicio.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     dialogUnidades.dismiss();
-                    actionListener.onTomarUnidad(id_serv_unidad, Marca, Modelo, vin, motor, anio, placas);
+                    actionListener.onTomarUnidad(id_serv_unidad, marca, modelo, vin, motor, anio, placas, tipo);
 
                 }
             });
 
 
-            setTextViewText(holder.NombreUnidad, Marca.toUpperCase() + " " + Modelo.toUpperCase(), "No se encontro el nombre");
+            setTextViewText(holder.NombreUnidad, marca.toUpperCase() + " " + modelo.toUpperCase(), "No se encontro el nombre");
             setTextViewText(holder.PlacasUnidad, placas.toUpperCase(), "No se encontro el telefono");
             holder.PlacasUnidad.setVisibility(View.VISIBLE);
 
@@ -303,7 +303,7 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
 
 
     public interface OnActivityActionListener {
-        void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas);
+        void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas, String tipo);
     }
 
     private AdaptadorSeleccionarUnidad.OnActivityActionListener actionListener;

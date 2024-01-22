@@ -488,7 +488,7 @@ public class CrudTiposUnidades extends Fragment implements AdaptadorTiposUnidade
             }
         });
 
-        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto;
+        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto;
 
         if (foto.equalsIgnoreCase("") || foto.isEmpty()) {
 

@@ -58,6 +58,18 @@ import okhttp3.internal.Util;
 
 public class AdaptadorMarcaDesdeInicio extends RecyclerView.Adapter<AdaptadorMarcaDesdeInicio.ViewHolder> {
 
+    public interface OnItemClickListener {
+        void onItemClick(String id_marca, String nombreMarca);
+    }
+
+
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
     Context context;
@@ -72,26 +84,42 @@ public class AdaptadorMarcaDesdeInicio extends RecyclerView.Adapter<AdaptadorMar
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_unidades_cliente, parent, false);
+
         return new ViewHolder(view);
 
     }
-
+/*
     ConstraintLayout LayoutSeleccionarMarca;
     ConstraintLayout LayoutAgregarDatos;
     ConstraintLayout LayoutSeleccionarModelo;
     RecyclerView reciclerViewModelos;
     AdaptadorModeloDesdeInicio adaptadorModeloDesdeInicio;
-
+*/
 
     @SuppressLint("ResourceAsColor")
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.LayoutAgregarServicio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onItemClickListener != null) {
+                    String id_marca = filteredData.get(position).optString("id_car_make", "");
+                    String nombreMarca = filteredData.get(position).optString("name", "");
+                    onItemClickListener.onItemClick(id_marca, nombreMarca);
+                }
+            }
+        });
 
-
-        String nombreUsuario = bundleUsuario.getString("nombreUsuario");
-        String id_ser_cliente = bundleUsuario.getString("id_ser_cliente");
 
         try {
             JSONObject jsonObject2 = filteredData.get(position);
+
+            String marca = jsonObject2.optString("name", "");
+            String id_car_make = jsonObject2.optString("id_car_make", "");
+
+            setTextViewText(holder.NombreUnidad, marca, "No se encontro el modelo");
+            holder.imagenCarrito.setVisibility(View.GONE);
+
+        /*
             String marca = jsonObject2.optString("name", "");
             String id_car_make = jsonObject2.optString("id_car_make", "");
             setTextViewText(holder.NombreUnidad, marca, "No se encontro el modelo");
@@ -159,51 +187,71 @@ public class AdaptadorMarcaDesdeInicio extends RecyclerView.Adapter<AdaptadorMar
                 }
 
             });
+*/
 
         } finally {
         }
     }
 
-    private void VerModelos(String id, Context context) {
-        listaModelos.clear();
-        modalCargando = Utiles.ModalCargando(context, builder);
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String id_car_make = jsonObject.getString("id_car_make");
-                        if (id_car_make.equalsIgnoreCase(id)) {
-                            listaModelos.add(jsonObject);
+    /*
+        private void VerModelos(String id, Context context) {
+            listaModelos.clear();
+            modalCargando = Utiles.ModalCargando(context, builder);
+            StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String id_car_make = jsonObject.getString("id_car_make");
+                            if (id_car_make.equalsIgnoreCase(id)) {
+                                listaModelos.add(jsonObject);
+                            }
+
+
+                            adaptadorModeloDesdeInicio.setFilteredData(listaModelos);
+                            adaptadorModeloDesdeInicio.filter("");
+
                         }
-
-
-                        adaptadorModeloDesdeInicio.setFilteredData(listaModelos);
-                        adaptadorModeloDesdeInicio.filter("");
-
+                    } catch (JSONException e) {
+                        crearToastPersonalizado(context, "No hay datos para mostrar");
                     }
-                } catch (JSONException e) {
-                    crearToastPersonalizado(context, "No hay datos para mostrar");
+                    onLoadComplete();
                 }
-                onLoadComplete();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                crearToastPersonalizado(context, "Error al cargar los datos, revisa la conexion");
-                onLoadComplete();
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "33");
-                return params;
-            }
-        };
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    crearToastPersonalizado(context, "Error al cargar los datos, revisa la conexion");
+                    onLoadComplete();
+                }
+            }) {
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("opcion", "33");
+                    return params;
+                }
+            };
 
-        Volley.newRequestQueue(context).add(postrequest);
+            Volley.newRequestQueue(context).add(postrequest);
+        }
+
+    */
+
+
+
+    Bundle bundleUsuario;
+
+    public AdaptadorMarcaDesdeInicio(List<JSONObject> data, Context context, Bundle bundleUsuario) {
+        this.data = data;
+        this.context = context;
+        this.filteredData = new ArrayList<>(data);
+        url = context.getResources().getString(R.string.ApiBack);
+        this.bundleUsuario = bundleUsuario;
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+
+
     }
 
 
@@ -215,6 +263,7 @@ public class AdaptadorMarcaDesdeInicio extends RecyclerView.Adapter<AdaptadorMar
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+
         TextView NombreUnidad;
         ImageView imagenCarrito;
         LinearLayout LayoutAgregarServicio;
@@ -225,6 +274,22 @@ public class AdaptadorMarcaDesdeInicio extends RecyclerView.Adapter<AdaptadorMar
             LayoutAgregarServicio = itemView.findViewById(R.id.LayoutAgregarServicio);
             imagenCarrito = itemView.findViewById(R.id.imagenCarrito);
         }
+
+
+        /*
+        TextView NombreUnidad;
+        ImageView imagenCarrito;
+        LinearLayout LayoutAgregarServicio;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            NombreUnidad = itemView.findViewById(R.id.NombreUnidad);
+            LayoutAgregarServicio = itemView.findViewById(R.id.LayoutAgregarServicio);
+            imagenCarrito = itemView.findViewById(R.id.imagenCarrito);
+        }
+
+
+         */
     }
 
     public void filter(String query) {
@@ -267,7 +332,7 @@ public class AdaptadorMarcaDesdeInicio extends RecyclerView.Adapter<AdaptadorMar
         }
     }
 
-
+/*
     Bundle bundleUsuario;
 
     AdaptadorModeloDesdeInicio.OnActivityActionListener actionListenerModelo;
@@ -294,6 +359,6 @@ public class AdaptadorMarcaDesdeInicio extends RecyclerView.Adapter<AdaptadorMar
         builder.setCancelable(false);
     }
 
-
+*/
 }
 
