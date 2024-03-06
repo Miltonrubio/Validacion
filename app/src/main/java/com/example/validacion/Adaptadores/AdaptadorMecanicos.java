@@ -17,7 +17,7 @@ import com.example.validacion.R;
 
 import java.util.List;
 
-public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.ViewHolder>{
+public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.ViewHolder> {
 
     private List<Mecanicos> listaMecanicos;
 
@@ -36,25 +36,30 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Mecanicos mecanicos = listaMecanicos.get(position);
 
-        String nombreCompleto= mecanicos.getNombre();
+        String nombreCompleto = mecanicos.getNombre();
         String[] partes = nombreCompleto.split(" ");
         String nombre = partes[0];
         String primerApellido = partes[1];
         String formatoNombreApellido = nombre + " " + primerApellido;
 
 
-        holder.nombreMecanico.setText(formatoNombreApellido);
+        holder.nombreMecanico.setText(formatoNombreApellido.toUpperCase());
 
-        String fotoMecanico= mecanicos.getFoto();
+        String fotoMecanico = mecanicos.getFoto();
 
-        String fecha= mecanicos.getFecha_programada();
-        if(fecha.equals("null") || fecha.isEmpty()){
+        String fecha = mecanicos.getFecha_programada();
+        String observaciones = mecanicos.getObservaciones();
+
+
+        if (fecha.equals("null") || fecha.isEmpty()) {
             holder.fechaMecanico.setText("AUN SIN FECHA ESTIMADA");
 
             holder.fechaMecanico.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.rojo));
-        }else {
+        } else {
             holder.fechaMecanico.setText(fecha);
         }
+
+        holder.actividadMec.setText(observaciones);
 
 
         String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + fotoMecanico;
@@ -78,15 +83,17 @@ public class AdaptadorMecanicos extends RecyclerView.Adapter<AdaptadorMecanicos.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nombreMecanico, fechaMecanico;
+        TextView nombreMecanico, fechaMecanico, actividadMec;
 
         ImageView imageViewMecanico;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewMecanico = itemView.findViewById(R.id.imageViewMecanico);
-            fechaMecanico=itemView.findViewById(R.id.fechaMecanico);
+            fechaMecanico = itemView.findViewById(R.id.fechaMecanico);
             nombreMecanico = itemView.findViewById(R.id.nombreMecanico);
+            actividadMec = itemView.findViewById(R.id.actividadMec);
+
         }
     }
 

@@ -20,7 +20,7 @@
 
     <item
         android:id="@+id/herramientas"
-        android:icon="@drawable/baseline_construction_24"
+        android:icon="@drawable/gear_solid"
         android:iconTint="@color/azulito"
         android:title="Herramientas" />
 

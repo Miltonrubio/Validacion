@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -61,6 +62,9 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
     TextView textViewFaltantes;
     ImageView botonFinalizarRevision;
 
+    AlertDialog modalCargando;
+    AlertDialog.Builder builder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -74,6 +78,10 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
 
         context = requireContext();
         url = context.getString(R.string.ApiBack);
+
+
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
 
 
         Bundle bundle = getArguments();
@@ -110,8 +118,16 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
 
                 Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
                 Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                EditText Motivo = customView.findViewById(R.id.Motivo);
+                Motivo.setHint("Agrega una recomendación");
 
-                textView4.setText("¿Estas seguro que deseas finalizar esta revisión? \n\nRecuerda que no podras editarla despues");
+                if (!tipo_check.equalsIgnoreCase("Entrada") ) {
+                    textView4.setText("Antes de terminar la revisión, ¿deseas agregar alguna recomendacion de servicio?");
+                    Motivo.setVisibility(View.VISIBLE);
+                } else {
+                    textView4.setText("¿Estas seguro que deseas finalizar esta revisión? \n\nRecuerda que no podras editarla despues");
+                    Motivo.setVisibility(View.GONE);
+                }
 
 
                 buttonCancelar.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +142,14 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
                     public void onClick(View view) {
 
                         dialogConfirmacion.dismiss();
-                        FinalizarRevision();
+                        String Observaciones = Motivo.getText().toString();
+
+                        if (Motivo.getVisibility() == View.VISIBLE && (!Observaciones.equalsIgnoreCase("") || !Observaciones.equalsIgnoreCase("null") || !Observaciones.equalsIgnoreCase(null)  || !Observaciones.isEmpty() )) {
+                            FinalizarRevision(Observaciones);
+                        } else {
+                            FinalizarRevision("Vacio");
+                        }
+
                     }
                 });
 
@@ -141,6 +164,7 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
 
     private void mostrarChecks() {
         listaChecks.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -148,10 +172,7 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
                     JSONObject jsonResponse = new JSONObject(response);
 
                     int faltantes = jsonResponse.getInt("faltantes");
-
-
                     String finalizacion = jsonResponse.getString("mensaje");
-
 
                     if (faltantes > 0) {
                         textViewFaltantes.setText("Faltantes: " + faltantes);
@@ -179,11 +200,13 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
                 } catch (JSONException e) {
                     Utiles.crearToastPersonalizado(context, "Error al procesar la respuesta del servidor");
                 }
+                modalCargando.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Utiles.crearToastPersonalizado(context, "No se pudo obtener los checks");
+                modalCargando.dismiss();
             }
         }) {
             protected Map<String, String> getParams() {
@@ -224,7 +247,7 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
         Volley.newRequestQueue(context).add(postrequest);
     }
 
-    private void FinalizarRevision() {
+    private void FinalizarRevision(String observaciones) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -239,9 +262,20 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
+
+                if (observaciones.equalsIgnoreCase("Vacio")){
+
+                    params.put("opcion", "100");
+                    params.put("tipo_check", tipo_check);
+                    params.put("id_ser_venta", id_ser_venta);
+
+                }else {
+
                 params.put("opcion", "100");
                 params.put("tipo_check", tipo_check);
                 params.put("id_ser_venta", id_ser_venta);
+                params.put("observaciones", observaciones);
+                }
                 return params;
             }
         };

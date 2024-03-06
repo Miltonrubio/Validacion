@@ -94,7 +94,7 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
                 public void onClick(View view) {
 
                     dialogUnidades.dismiss();
-                    actionListener.onTomarUnidad(id_serv_unidad, marca, modelo, vin, motor, anio, placas, tipo);
+                    actionListener.onTomarUnidad(id_serv_unidad, marca, modelo, vin, motor, anio, placas, tipo, foto);
 
                 }
             });
@@ -303,7 +303,7 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
 
 
     public interface OnActivityActionListener {
-        void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas, String tipo);
+        void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas, String tipo, String foto);
     }
 
     private AdaptadorSeleccionarUnidad.OnActivityActionListener actionListener;

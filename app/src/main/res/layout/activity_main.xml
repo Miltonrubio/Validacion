@@ -20,7 +20,6 @@
             android:layout_height="118dp"
             android:layout_gravity="center"
             android:clickable="true"
-            android:onClick="enviarACamara"
             android:src="@drawable/tallergeorgiopng" />
 
         <LinearLayout

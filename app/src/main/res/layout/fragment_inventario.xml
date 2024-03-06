@@ -44,7 +44,7 @@
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
                 android:src="@drawable/truck_solid"
-                app:tint="@color/azulito" />
+                app:tint="@color/black" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="Tipos De Unidades"
-                android:textColor="@color/azulito"
+                android:textColor="@color/black"
                 android:textSize="29dp"
                 android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
-            android:background="@drawable/redondeado_verdesito"
+            android:background="@drawable/redondeado_azul"
             android:orientation="vertical"
             android:padding="19dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
-                android:src="@drawable/baseline_access_time_24"
+                android:src="@drawable/users_solid"
                 app:tint="@color/white" />
 
             <TextView
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="Ver productividad"
+                android:text="Ver personal"
                 android:textColor="@color/white"
                 android:textSize="29dp"
                 android:textStyle="bold" />
@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
-            android:background="@drawable/redondeado_contorno_verde"
+            android:background="@drawable/textview_outline"
             android:orientation="vertical"
             android:padding="19dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +112,7 @@
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
                 android:src="@drawable/list_ul_solid"
-                app:tint="@color/verdefuerte" />
+                app:tint="@color/azulito" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -120,7 +120,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="Lista de Actividades"
-                android:textColor="@color/verdefuerte"
+                android:textColor="@color/azulito"
                 android:textSize="29dp"
                 android:textStyle="bold" />
 

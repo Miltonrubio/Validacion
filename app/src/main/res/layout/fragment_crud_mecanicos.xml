@@ -1,196 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:id="@+id/swipeRefresh"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:background="@color/azulitoSuave">
 
-
-
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/LayoutConContenido"
         android:layout_width="match_parent"
-        android:background="@color/white"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/yourConstraintLayoutId"
+        <RelativeLayout
+            android:id="@+id/LayoutConContenido"
             android:layout_width="match_parent"
-            android:background="@color/verdesito"
-            android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/searchButton"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:clickable="true"
-                android:contentDescription="Buscar"
-                android:padding="8dp"
-                app:tint="@color/black"
-                android:src="@drawable/baseline_search_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/searchEditText"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/yourConstraintLayoutId"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:hint="Buscar mecanico"
-                android:inputType="textEmailAddress"
-                android:text=""
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btnFiltrarClientes"
-                app:layout_constraintStart_toEndOf="@id/searchButton"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_below="@+id/contenedorEncargado"
+                android:background="@color/azulitoSuave">
 
-            <!-- Nuevo ImageView -->
-            <ImageView
-                android:id="@+id/btnFiltrarClientes"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:clickable="true"
-                android:padding="8dp"
-                android:src="@drawable/baseline_filter_list_24"
+                <ImageView
+                    android:id="@+id/searchButton"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:clickable="true"
+                    android:contentDescription="Buscar"
+                    android:padding="8dp"
+                    android:src="@drawable/baseline_search_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/azulito" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/searchEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:hint="Buscar mecanico"
+                    android:inputType="textEmailAddress"
+                    android:text=""
+                    android:textColor="@color/azulito"
+                    android:textColorHint="@color/azulito"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btnFiltrarClientes"
+                    app:layout_constraintStart_toEndOf="@id/searchButton"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <ImageView
+                    android:id="@+id/btnFiltrarClientes"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:clickable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/baseline_filter_list_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/azulito" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contenedorEncargado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:padding="1dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/rounded_background">
+
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/imageViewEncargado"
+                    android:layout_width="60dp"
+                    app:riv_corner_radius="40dp"
+                    android:layout_height="60dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/baseline_person_24"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/tituloEncarg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:gravity="left"
+                    android:text="Encargado/a: "
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageViewEncargado"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/NombreEncargado"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="Nombre"
+                    android:textColor="@color/azulito"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/imageViewEncargado"
+                    app:layout_constraintTop_toBottomOf="@+id/tituloEncarg" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewMecanicos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/yourConstraintLayoutId"
+                android:layout_marginTop="2dp"
+                android:padding="4dp"
+                android:visibility="visible" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieNoClientes"
+                android:layout_width="wrap_content"
+                android:layout_height="517dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="74dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="140dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/black" />
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="nousuarios.json"
+                app:lottie_imageAssetsFolder="assets"
+                app:lottie_loop="true" />
+
+            <TextView
+                android:id="@+id/TextSinResultados"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="84dp"
+                android:gravity="center"
+                android:paddingHorizontal="12dp"
+                android:text="No se encontraron usuarios"
+                android:textSize="27dp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/LayoutSinInternet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:visibility="gone">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieNoInternet"
+                android:layout_width="322dp"
+                android:layout_height="322dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="nointernet.json"
+                app:lottie_imageAssetsFolder="assets"
+                app:lottie_loop="true" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewMecanicos"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/LayoutSinContenido"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/yourConstraintLayoutId"
-            android:layout_marginTop="2dp"
-            android:visibility="visible" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieNoClientes"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="517dp"
-            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="74dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginBottom="140dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="nousuarios.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true" />
+            android:layout_marginTop="0dp"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/TextSinResultados"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="84dp"
-            android:gravity="center"
-            android:paddingHorizontal="12dp"
-            android:text="No se encontraron usuarios"
-            android:textSize="27dp"
-            android:textStyle="bold" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieSinContenido"
+                android:layout_width="322dp"
+                android:layout_height="322dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="nousuarios.json"
+                app:lottie_imageAssetsFolder="assets"
+                app:lottie_loop="true" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/botonAgregarUsuarios"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="12dp"
+                android:src="@drawable/baseline_person_add_alt_1_24"
+                app:backgroundTint="@color/azulito"
+                app:tint="@color/white"
+                app:shapeAppearanceOverlay="@style/RoundedShape" />
+
 
     </RelativeLayout>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/LayoutSinInternet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:visibility="gone">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieNoInternet"
-            android:layout_width="322dp"
-            android:layout_height="322dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="nointernet.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/LayoutSinContenido"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:visibility="gone">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieSinContenido"
-            android:layout_width="322dp"
-            android:layout_height="322dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="nousuarios.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-<!--
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/botonAgregarClientes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/baseline_person_add_alt_1_24"
-        app:backgroundTint="@color/verdesito"
-        app:tint="@color/black"
-        app:shapeAppearanceOverlay="@style/RoundedShape" />
-
-        -->
-</RelativeLayout>
 
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

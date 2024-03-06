@@ -1,10 +1,12 @@
 package com.example.validacion;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,7 +17,10 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NoConnectionError;
@@ -40,6 +45,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+
+import android.Manifest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         inputPassword = findViewById(R.id.passwordET);
         checkBoxRememberMe = findViewById(R.id.checkBoxRememberMe);
 
+        solicitarPermisosDeCamara();
 
         tomarToken();
 
@@ -86,6 +94,33 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+
+
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
+
+    private void solicitarPermisosDeCamara() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Los permisos de la cámara no están concedidos, solicitarlos.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        } else {
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Utiles.crearToastPersonalizado(context, "No se aceptò el permiso");
+
+            }
+        }
+    }
+
 
     private void guardarCredenciales(String idusuario, String nombre, String password, String telefono, String email, String permisos, String estado, String tipo,
                                      String foto, boolean rememberMe) {
@@ -145,18 +180,18 @@ public class MainActivity extends AppCompatActivity {
 
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                              String  idusuario = jsonObject.getString("idusuario");
-                                String nombre= jsonObject.getString("nombre");
-                                String password= jsonObject.getString("password");
-                                String telefono= jsonObject.getString("telefono");
-                                String email= jsonObject.getString("email");
-                                String permisos= jsonObject.getString("permisos");
-                                String estado= jsonObject.getString("estado");
-                                String tipo= jsonObject.getString("tipo");
-                                String foto= jsonObject.getString("foto");
+                                String idusuario = jsonObject.getString("idusuario");
+                                String nombre = jsonObject.getString("nombre");
+                                String password = jsonObject.getString("password");
+                                String telefono = jsonObject.getString("telefono");
+                                String email = jsonObject.getString("email");
+                                String permisos = jsonObject.getString("permisos");
+                                String estado = jsonObject.getString("estado");
+                                String tipo = jsonObject.getString("tipo");
+                                String foto = jsonObject.getString("foto");
 
 
-                                guardarCredenciales(idusuario, nombre, password,telefono,email,permisos,estado,tipo,foto,rememberMe);
+                                guardarCredenciales(idusuario, nombre, password, telefono, email, permisos, estado, tipo, foto, rememberMe);
 
                                 RegistrarToken(idusuario);
                             }
@@ -217,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         StringRequest request2 = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             public void onResponse(String response) {
 
-              //  Toast.makeText(MainActivity.this, "Token actualizado", Toast.LENGTH_LONG).show();
+                //  Toast.makeText(MainActivity.this, "Token actualizado", Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -240,11 +275,5 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-public void  enviarACamara(View view){
-    Intent intent = new Intent(MainActivity.this, Prueba2.class);
-    startActivity(intent);
-}
 
 }

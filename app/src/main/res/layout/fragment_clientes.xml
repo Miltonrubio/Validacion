@@ -10,13 +10,13 @@
         android:id="@+id/LayoutConContenido"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/azulitoSuave">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/yourConstraintLayoutId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gris"
+            android:background="@color/azulitoSuave"
             android:padding="8dp">
 
             <ImageView
@@ -39,7 +39,7 @@
                 android:hint="Buscar cliente"
                 android:inputType="textEmailAddress"
                 android:text=""
-                android:textColor="@color/gris"
+                android:textColor="@color/azulito"
                 android:textColorHint="@color/azulito"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -176,8 +176,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/baseline_person_add_alt_1_24"
-        app:backgroundTint="@color/gris"
+        app:backgroundTint="@color/azulito"
         app:shapeAppearanceOverlay="@style/RoundedShape"
-        app:tint="@color/black" />
+        app:tint="@color/white" />
 </RelativeLayout>
 

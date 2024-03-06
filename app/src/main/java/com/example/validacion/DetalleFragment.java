@@ -33,6 +33,7 @@ import com.example.validacion.Adaptadores.AdaptadorActividadesUnidad;
 import com.example.validacion.Adaptadores.AdaptadorMecanicos;
 import com.example.validacion.Adaptadores.AdaptadorRefacciones;
 import com.example.validacion.Adaptadores.DownloadFileTask;
+import com.example.validacion.Adaptadores.NuevoDownloadFileTask;
 import com.example.validacion.Adaptadores.SlideAdapter;
 import com.example.validacion.Adaptadores.Utiles;
 import com.example.validacion.Objetos.Mecanicos;
@@ -152,6 +153,10 @@ public class DetalleFragment extends Fragment {
 
     String id_ser_cliente;
 
+
+    AlertDialog.Builder builder;
+    AlertDialog modalCargando;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -169,8 +174,11 @@ public class DetalleFragment extends Fragment {
         recyclerViewRefacciones = rootView.findViewById(R.id.recyclerViewRefacciones);
         recyclerViewMecanicos = rootView.findViewById(R.id.recyclerViewMecanicos);
         recyclerViewBitacora = rootView.findViewById(R.id.recyclerViewBitacora);
+        recyclerViewBitacora.setVisibility(View.GONE);
         viewPager2 = rootView.findViewById(R.id.ViewPager);
         animacionSinImagenes = rootView.findViewById(R.id.animacionSinImagenes);
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -197,7 +205,7 @@ public class DetalleFragment extends Fragment {
             CargarRefacciones(idventa);
             CargarMecanicos(idventa);
             CargarImagenes(idventa);
-            CargarBitacora(idventa);
+            //    CargarBitacora(idventa);
             //   CargarChecks(idventa);
 
             textMarca.setText(marca.toUpperCase() + " - " + modelo.toUpperCase());
@@ -224,7 +232,7 @@ public class DetalleFragment extends Fragment {
                         SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
                         String hora_formateada = outputFormatHora.format(time);
 
-                        textfecha.setText("Ingresado: " + "el " + fecha_formateada + " a las " + hora_formateada);
+                        textfecha.setText("Ingresado el dia: \n" + fecha_formateada + " a las " + hora_formateada);
 
                     } catch (Exception e) {
 
@@ -283,6 +291,153 @@ public class DetalleFragment extends Fragment {
             public void onClick(View view) {
 
 
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_nuevo_modal_pdfs, null);
+                builder.setView(ModalRedondeado(context, customView));
+                AlertDialog dialogConBotones = builder.create();
+                dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogConBotones.show();
+
+
+                LinearLayout LayoutPDFServicio = customView.findViewById(R.id.LayoutPDFServicio);
+                //    LinearLayout pdfCheckEntrada = customView.findViewById(R.id.pdfCheckEntrada);
+                LinearLayout LayoutPDFSalida = customView.findViewById(R.id.LayoutPDFSalida);
+                LinearLayout LayoutPDFTecnico = customView.findViewById(R.id.LayoutPDFTecnico);
+                LinearLayout PDFRefacciones = customView.findViewById(R.id.PDFRefacciones);
+                LinearLayout LayoutPDFMecanicos = customView.findViewById(R.id.LayoutPDFMecanicos);
+
+                PDFRefacciones.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "82");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new NuevoDownloadFileTask(context, postData).execute(url);
+
+                    }
+                });
+
+
+                LayoutPDFMecanicos.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        // Mostrar diálogo de carga
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "81");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        // Iniciar la tarea de descarga del archivo PDF
+                        new NuevoDownloadFileTask(context, postData).execute(url);
+
+
+/*
+                        modalCargando = Utiles.ModalCargando(context, builder);
+
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "81");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", id_ser_venta);
+
+                        new DownloadFileTask(context, postData).execute(url);
+
+
+
+                        modalCargando.dismiss();
+
+ */
+                    }
+                });
+
+
+                LayoutPDFServicio.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "83");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new NuevoDownloadFileTask(context, postData).execute(url);
+/*
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "50");
+                        postData.put("idventa", idventa);
+
+                        new DownloadFileTask(context, postData).execute(url);
+*/
+
+
+                    }
+                });
+
+/*
+                pdfCheckEntrada.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        modalCargando = Utiles.ModalCargando(context, builder);
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "78");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", id_ser_venta);
+
+                        new DownloadFileTask(context, postData).execute(url);
+                        modalCargando.dismiss();
+
+                    }
+                });
+
+ */
+
+                LayoutPDFSalida.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "79");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new NuevoDownloadFileTask(context, postData).execute(url);
+
+                    }
+                });
+
+                LayoutPDFTecnico.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Map<String, String> postData = new HashMap<>();
+                        postData.put("opcion", "80");
+                        postData.put("idcliente", id_ser_cliente);
+                        postData.put("idventa", idventa);
+
+                        new NuevoDownloadFileTask(context, postData).execute(url);
+
+                    }
+                });
+/*
+                Map<String, String> postData = new HashMap<>();
+                postData.put("opcion", "50");
+                postData.put("idventa", idventa);
+
+                new DownloadFileTask(context, postData).execute(url);
+
+
+ */
+
+                /*
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.opciones_pdfs, null);
                 builder.setView(ModalRedondeado(view.getContext(), customView));
@@ -302,12 +457,17 @@ public class DetalleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+
+                        modalCargando = Utiles.ModalCargando(context, builder);
+
                         Map<String, String> postData = new HashMap<>();
                         postData.put("opcion", "82");
                         postData.put("idcliente", id_ser_cliente);
                         postData.put("idventa", idventa);
 
                         new DownloadFileTask(context, postData).execute(url);
+                        modalCargando.dismiss();
+
                     }
                 });
 
@@ -316,12 +476,14 @@ public class DetalleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+                        modalCargando = Utiles.ModalCargando(context, builder);
                         Map<String, String> postData = new HashMap<>();
                         postData.put("opcion", "81");
                         postData.put("idcliente", id_ser_cliente);
                         postData.put("idventa", idventa);
 
                         new DownloadFileTask(context, postData).execute(url);
+                        modalCargando.dismiss();
                     }
                 });
 
@@ -330,6 +492,7 @@ public class DetalleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+                        modalCargando = Utiles.ModalCargando(context, builder);
 
                         Map<String, String> postData = new HashMap<>();
                         postData.put("opcion", "83");
@@ -337,17 +500,7 @@ public class DetalleFragment extends Fragment {
                         postData.put("idventa", idventa);
 
                         new DownloadFileTask(context, postData).execute(url);
-/*
-                        Map<String, String> postData = new HashMap<>();
-                        postData.put("opcion", "50");
-                        postData.put("idventa", idventa);
-
-                        new DownloadFileTask(context, postData).execute(url);
-*/
-
-
-
-
+                        modalCargando.dismiss();
 
                     }
                 });
@@ -356,6 +509,7 @@ public class DetalleFragment extends Fragment {
                 pdfCheckEntrada.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        modalCargando = Utiles.ModalCargando(context, builder);
 
                         Map<String, String> postData = new HashMap<>();
                         postData.put("opcion", "78");
@@ -363,6 +517,7 @@ public class DetalleFragment extends Fragment {
                         postData.put("idventa", idventa);
 
                         new DownloadFileTask(context, postData).execute(url);
+                        modalCargando.dismiss();
 
                     }
                 });
@@ -371,12 +526,14 @@ public class DetalleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+                        modalCargando = Utiles.ModalCargando(context, builder);
                         Map<String, String> postData = new HashMap<>();
                         postData.put("opcion", "79");
                         postData.put("idcliente", id_ser_cliente);
                         postData.put("idventa", idventa);
 
                         new DownloadFileTask(context, postData).execute(url);
+                        modalCargando.dismiss();
 
                     }
                 });
@@ -385,24 +542,19 @@ public class DetalleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+                        modalCargando = Utiles.ModalCargando(context, builder);
                         Map<String, String> postData = new HashMap<>();
                         postData.put("opcion", "80");
                         postData.put("idcliente", id_ser_cliente);
                         postData.put("idventa", idventa);
 
                         new DownloadFileTask(context, postData).execute(url);
+                        modalCargando.dismiss();
 
                     }
                 });
-/*
-                Map<String, String> postData = new HashMap<>();
-                postData.put("opcion", "50");
-                postData.put("idventa", idventa);
 
-                new DownloadFileTask(context, postData).execute(url);
-
-
- */
+                */
             }
         });
 
@@ -510,8 +662,9 @@ public class DetalleFragment extends Fragment {
                                     String foto = jsonObject.getString("foto");
                                     String nombre = jsonObject.getString("nombre");
                                     String idusuario = jsonObject.getString("idusuario");
+                                    String observaciones = jsonObject.getString("observaciones");
                                     String fecha_programada = jsonObject.getString("fecha");
-                                    Mecanicos mecanicos = new Mecanicos(foto, nombre, fecha_programada, idusuario);
+                                    Mecanicos mecanicos = new Mecanicos(foto, nombre, fecha_programada, idusuario, observaciones);
                                     listaMecanicos.add(mecanicos);
                                 }
 
@@ -549,8 +702,8 @@ public class DetalleFragment extends Fragment {
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("opcion", "6");
-                params.put("idventa", idventa);
+                params.put("opcion", "104");
+                params.put("ID_ser_venta", idventa);
                 return params;
             }
         };
@@ -623,7 +776,7 @@ public class DetalleFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-
+/*
     private void CargarBitacora(String idservicio) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -693,7 +846,7 @@ public class DetalleFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
     }
-
+*/
 
     private Runnable sliderRunnable = new Runnable() {
         @Override

@@ -32,6 +32,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -119,6 +120,13 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_clientes, null);
+
+                    builder.setView(ModalRedondeado(view.getContext(), customView));
+                    AlertDialog dialogUnidadesDeCliente = builder.create();
+                    dialogUnidadesDeCliente.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogUnidadesDeCliente.show();
+
+
                     LayoutSinInternet = customView.findViewById(R.id.LayoutSinInternet);
                     LayoutConContenido = customView.findViewById(R.id.LayoutConContenido);
                     LayoutSinContenido = customView.findViewById(R.id.LayoutSinContenido);
@@ -129,18 +137,10 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
                     EditText searchEditText = customView.findViewById(R.id.searchEditText);
 
 
-
-
-
                     RecyclerViewUnidadesUsuario = customView.findViewById(R.id.RecyclerViewUnidadesUsuario);
                     TextView NombreclIENTE = customView.findViewById(R.id.NombreclIENTE);
 
                     NombreclIENTE.setText("Unidades de " + nombre);
-                    builder.setView(ModalRedondeado(view.getContext(), customView));
-                    AlertDialog dialogUnidadesDeCliente = builder.create();
-                    dialogUnidadesDeCliente.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    dialogUnidadesDeCliente.show();
-
 
                     MostrarUnidadesClientes(id_ser_cliente);
                     RecyclerViewUnidadesUsuario.setLayoutManager(new LinearLayoutManager(context));
@@ -166,8 +166,10 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
                     AgregarNuevaUnidad.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            dialogUnidadesDeCliente.dismiss();
+                            MostrarModalAgregarNuevaUnidad(view, bundle);
 
-                            MostrarModalMarcas(view, bundle, dialogUnidadesDeCliente);
+                //            MostrarModalMarcas(view, bundle, dialogUnidadesDeCliente);
 /*
                             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                             View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_agregar_unidad, null);
@@ -211,8 +213,9 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
                     btnAgregarUnidad.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
-                            MostrarModalMarcas(view, bundle, dialogUnidadesDeCliente);
+                            dialogUnidadesDeCliente.dismiss();
+                            MostrarModalAgregarNuevaUnidad(view, bundle);
+                            //   MostrarModalMarcas(view, bundle, dialogUnidadesDeCliente);
 
                             /*
 
@@ -256,6 +259,141 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
         } finally {
         }
     }
+
+    AdaptadorTiposUnidadesDesdeInicio adaptadorTiposUnidadesDesdeInicio;
+
+    List<JSONObject> listaTiposUnidades = new ArrayList<>();
+
+    private void MostrarModalAgregarNuevaUnidad(View view, Bundle bundleUsuario) {
+        ConsultarTiposUnidades();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.layout_mostrar_tipos_unidades, null);
+        builder.setView(ModalRedondeado(view.getContext(), customView));
+        AlertDialog dialogListaUnidades = builder.create();
+        dialogListaUnidades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogListaUnidades.show();
+
+        RecyclerView recyclerViewTiposUnidades = customView.findViewById(R.id.recyclerViewTiposUnidades);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
+        recyclerViewTiposUnidades.setLayoutManager(gridLayoutManager);
+        adaptadorTiposUnidadesDesdeInicio = new AdaptadorTiposUnidadesDesdeInicio(listaTiposUnidades, context, tiposUnidadesActionListener, bundleUsuario, dialogListaUnidades);
+        recyclerViewTiposUnidades.setAdapter(adaptadorTiposUnidadesDesdeInicio);
+
+    }
+
+
+    private void ConsultarTiposUnidades() {
+
+        listaTiposUnidades.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        listaTiposUnidades.add(jsonObject);
+                    }
+
+                    adaptadorTiposUnidadesDesdeInicio.setFilteredData(listaTiposUnidades);
+                    adaptadorTiposUnidadesDesdeInicio.filter("");
+
+
+                } catch (JSONException e) {
+                    crearToastPersonalizado(context, "Error al cargar los datos");
+                }
+                onLoadComplete();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                crearToastPersonalizado(context, "Error al cargar los datos");
+                onLoadComplete();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "90");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private void onLoadComplete() {
+        if (modalCargando.isShowing() && modalCargando != null) {
+            modalCargando.dismiss();
+        }
+    }
+
+
+    private void MostrarUnidadesClientes(String id_ser_cliente) {
+        listaUnidades.clear();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                listaUnidades.add(jsonObject);
+                            }
+
+                            AdaptadorUnidadesClientes.notifyDataSetChanged();
+                            AdaptadorUnidadesClientes.setFilteredData(listaUnidades);
+                            AdaptadorUnidadesClientes.filter("");
+
+
+                            if (listaUnidades.size() > 0) {
+                                LayoutConContenido.setVisibility(View.VISIBLE);
+                                LayoutSinInternet.setVisibility(View.GONE);
+                                LayoutSinContenido.setVisibility(View.GONE);
+                            } else {
+
+                                LayoutSinContenido.setVisibility(View.VISIBLE);
+                                LayoutConContenido.setVisibility(View.GONE);
+                                LayoutSinInternet.setVisibility(View.GONE);
+                            }
+
+                        } catch (JSONException e) {
+                            LayoutSinContenido.setVisibility(View.VISIBLE);
+                            LayoutConContenido.setVisibility(View.GONE);
+                            LayoutSinInternet.setVisibility(View.GONE);
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        LayoutConContenido.setVisibility(View.GONE);
+                        LayoutSinContenido.setVisibility(View.GONE);
+                        LayoutSinInternet.setVisibility(View.VISIBLE);
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "101");
+                params.put("id_ser_cliente", id_ser_cliente);
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
+    }
+
+
+
+    /*
 
     private void MostrarModalMarcas(View view, Bundle bundle, AlertDialog dialogUnidadesDeCliente) {
 
@@ -349,63 +487,7 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
     }
 
 
-    private void MostrarUnidadesClientes(String id_ser_cliente) {
-        listaUnidades.clear();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                listaUnidades.add(jsonObject);
-                            }
-
-                            AdaptadorUnidadesClientes.notifyDataSetChanged();
-                            AdaptadorUnidadesClientes.setFilteredData(listaUnidades);
-                            AdaptadorUnidadesClientes.filter("");
-
-
-                            if (listaUnidades.size() > 0) {
-                                LayoutConContenido.setVisibility(View.VISIBLE);
-                                LayoutSinInternet.setVisibility(View.GONE);
-                                LayoutSinContenido.setVisibility(View.GONE);
-                            } else {
-
-                                LayoutSinContenido.setVisibility(View.VISIBLE);
-                                LayoutConContenido.setVisibility(View.GONE);
-                                LayoutSinInternet.setVisibility(View.GONE);
-                            }
-
-                        } catch (JSONException e) {
-                            LayoutSinContenido.setVisibility(View.VISIBLE);
-                            LayoutConContenido.setVisibility(View.GONE);
-                            LayoutSinInternet.setVisibility(View.GONE);
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        LayoutConContenido.setVisibility(View.GONE);
-                        LayoutSinContenido.setVisibility(View.GONE);
-                        LayoutSinInternet.setVisibility(View.VISIBLE);
-                    }
-                }
-        ) {
-            @Override
-            public Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("opcion", "20");
-                params.put("id_ser_cliente", id_ser_cliente);
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(stringRequest);
-    }
+*/
 
 
     @Override
@@ -486,13 +568,22 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
     private AdaptadorClientes.OnActivityActionListener actionListenerClientes;
 
 
-    public AdaptadorClientes(List<JSONObject> data, Context context, AdaptadorModelos.OnActivityActionListener actionListener, AdaptadorClientes.OnActivityActionListener actionListenerClientes) {
+    AlertDialog modalCargando;
+    AlertDialog.Builder builder;
+    AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener tiposUnidadesActionListener;
+
+
+    public AdaptadorClientes(List<JSONObject> data, Context context, AdaptadorModelos.OnActivityActionListener actionListener, AdaptadorClientes.OnActivityActionListener actionListenerClientes, AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener tiposUnidadesActionListener) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
         this.actionListener = actionListener;
         this.actionListenerClientes = actionListenerClientes;
+        this.tiposUnidadesActionListener = tiposUnidadesActionListener;
+
         url = context.getResources().getString(R.string.ApiBack);
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
     }
 
 

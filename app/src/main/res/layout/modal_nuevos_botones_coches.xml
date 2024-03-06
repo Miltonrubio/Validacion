@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="13dp"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/LayoutDetalles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/baseline_remove_red_eye_24"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="VISUALIZAR \nDETALLES"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/LayoutCheckIngreso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="232dp">
+
+
+                <ImageView
+                    android:id="@+id/iconoCheckIngreso"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/car_side_solid"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:id="@+id/tvCheckIngreso"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="REVISIÓN \nDE INGRESO"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+            <LinearLayout
+                android:id="@+id/LayoutCheckListTecnico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:id="@+id/iconoCheckTecnico"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/baseline_checklist_24"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:id="@+id/textCheckTecnico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="REVISIÓN \nTECNICA"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/LayoutChecksSalida"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="232dp">
+
+
+                <ImageView
+                    android:id="@+id/iconoCheckSalida"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/arrow_right_from_bracket_solid"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:id="@+id/textCheckSalida"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="REVISIÓN \nDE SALIDA"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+
+            <LinearLayout
+                android:id="@+id/LayoutCambiarStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/baseline_car_repair_24"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="CAMBIAR \nESTATUS"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/LayoutAsignarMecanico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="232dp">
+
+
+                <ImageView
+                    android:id="@+id/iconoMecanico"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/baseline_person_24"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:id="@+id/TextoASIGNARMECANICOS"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="MANO DE \nOBRA"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+            <LinearLayout
+                android:id="@+id/LayoutTomarFotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:id="@+id/iconoCamara"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/baseline_camera_alt_24"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:id="@+id/TextoSUBIRFOTOS"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="SUBIR FOTOS"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/LayoutConsultarPago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="232dp">
+
+
+                <ImageView
+                    android:id="@+id/iconoPago"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@drawable/money_bill_wave_solid"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:id="@+id/TextoPAGO"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="PAGOS"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+            <LinearLayout
+                android:id="@+id/LayoutRefacciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:id="@+id/iconoRefacciones"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:padding="6dp"
+                    android:gravity="center"
+                    android:src="@drawable/screwdriver_wrench_solid"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:id="@+id/TextoRefacciones"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="REFACCIONES"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/LayoutReportes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:padding="6dp"
+                    android:gravity="center"
+                    android:src="@drawable/file_pdf_solid"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="REPORTES"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -24,13 +24,10 @@ public class AdaptadorRefacciones extends RecyclerView.Adapter<AdaptadorRefaccio
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (listaRefacciones.isEmpty()) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_no_refacciones, parent, false);
-            return new ViewHolder(view);
-        } else {
+
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_refacciones, parent, false);
             return new ViewHolder(view);
-        }
+
     }
 
     @Override

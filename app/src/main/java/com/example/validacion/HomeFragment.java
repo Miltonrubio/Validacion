@@ -165,6 +165,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         String permisosUsuario = sharedPreferences.getString("permisos", "");
         String idusuario = sharedPreferences.getString("idusuario", "");
 
+
         if (permisosUsuario.equals("RECEPCION") || permisosUsuario.equals("SUPERADMIN")) {
             botonAgregarActividad.setVisibility(View.VISIBLE);
             VisualizarServicios();
@@ -331,16 +332,31 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                     public void onClick(View view) {
 
                         String motivoIngreso = editTextMotivoIngreso.getText().toString().trim();
-                        String km = editTextKilometraje.getText().toString().trim();
 
+                        String km;
 
-                        if (valorGas.isEmpty() || motivoIngreso.isEmpty() || km.isEmpty() || id_serv_unidad.isEmpty() || id_ser_cliente.isEmpty()) {
+                        if (motivoIngreso.isEmpty() || id_serv_unidad.isEmpty() || id_ser_cliente.isEmpty()) {
 
                             Utiles.crearToastPersonalizado(context, "Debes completar todos los campos");
 
                         } else {
+
                             dialogNuevoServicio.dismiss();
-                            AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio);
+
+                            if (editTextKilometraje.getVisibility() == View.VISIBLE) {
+                                km = editTextKilometraje.getText().toString().trim();
+
+                            } else {
+                                km = "N/A";
+                            }
+
+                            if (SpinnerGasolina.getVisibility() == View.VISIBLE) {
+                                valorGas = valorGas;
+                            } else {
+                                valorGas = "N/A";
+                            }
+
+                            AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad);
                         }
 
 
@@ -372,7 +388,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         bundleUsuario.putString("nombreUsuario", nombreCliente);
                         bundleUsuario.putString("id_ser_cliente", id_ser_cliente);
 
-
+                        TextView NombreclIENTE = customView.findViewById(R.id.NombreclIENTE);
+                        NombreclIENTE.setText("UNIDADES DE " + nombreCliente.toUpperCase());
                         LayoutConContenidoUnidades = customView.findViewById(R.id.LayoutConContenido);
                         LayoutSinInternetUnidades = customView.findViewById(R.id.LayoutSinInternet);
                         LayoutSinContenidoUnidades = customView.findViewById(R.id.LayoutSinContenido);
@@ -440,6 +457,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
                         VerClientes(view.getContext());
 
+                        TextView NombreclIENTE = customView.findViewById(R.id.NombreclIENTE);
+                        NombreclIENTE.setText("LISTADO DE CLIENTES");
                         EditText searchEditText = customView.findViewById(R.id.searchEditText);
 
                         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -1119,10 +1138,10 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     }
 
 
-    String marca, modelo, anio, placas, motor, vin;
+    String marca, modelo, anio, placas, motor, vin, fotoUnidad, tipoUnidad;
 
     @Override
-    public void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas, String tipo) {
+    public void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas, String tipo, String foto) {
         this.id_serv_unidad = id_serv_unidad;
         this.marca = marca;
         this.modelo = modelo;
@@ -1130,9 +1149,12 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         this.motor = motor;
         this.anio = anio;
         this.placas = placas;
-
+        this.fotoUnidad = foto;
+        this.tipoUnidad = tipo;
 
         textSeleccionarUnidad.setText(marca.toUpperCase() + " " + modelo.toUpperCase());
+
+      //  Utiles.crearToastPersonalizado(context, "Foto: " + foto);
         mostrarFormularios(tipo);
 
     }
@@ -1143,9 +1165,9 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     Spinner SpinnerGasolina;
     TextView gasolinaTV;
     TextView KilometrajeTV;
+
     private void mostrarFormularios(String tipoSeleccionado) {
 
-        Utiles.crearToastPersonalizado(context, tipoSeleccionado);
         listitaTiposUnidades.clear();
         modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -1222,7 +1244,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 Utiles.crearToastPersonalizado(context, errorMessage);
                 modalCargando.dismiss();
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
@@ -1302,7 +1324,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     }
 */
 
-    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio) {
+    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio, String foto, String tipounidad) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1320,6 +1342,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
+                /*
                 params.put("opcion", "21");
                 params.put("id_ser_cliente", id_ser_cliente);
                 params.put("idunidad", idunidad);
@@ -1332,6 +1355,22 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 params.put("vin", vin);
                 params.put("placas", placas);
                 params.put("anio", anio);
+                return params;*/
+
+                params.put("opcion", "102");
+                params.put("id_ser_cliente", id_ser_cliente);
+                params.put("idunidad", idunidad);
+                params.put("km", km);
+                params.put("gas", gas);
+                params.put("motivo", motivo);
+                params.put("marca", marca);
+                params.put("modelo", modelo);
+                params.put("motor", motor);
+                params.put("vin", vin);
+                params.put("placas", placas);
+                params.put("anio", anio);
+                params.put("tipounidad", tipounidad);
+                params.put("foto", foto);
                 return params;
             }
         };
@@ -1356,15 +1395,15 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
         View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.layout_mostrar_tipos_unidades, null);
         builder.setView(ModalRedondeado(view.getContext(), customView));
-        AlertDialog dialogMarcas = builder.create();
-        dialogMarcas.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialogMarcas.show();
+        AlertDialog dialogListaUnidades = builder.create();
+        dialogListaUnidades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogListaUnidades.show();
 
         RecyclerView recyclerViewTiposUnidades = customView.findViewById(R.id.recyclerViewTiposUnidades);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
         recyclerViewTiposUnidades.setLayoutManager(gridLayoutManager);
-        adaptadorTiposUnidadesDesdeInicio = new AdaptadorTiposUnidadesDesdeInicio(listaTiposUnidades, context, tiposUnidadesActionListener, bundleUsuario);
+        adaptadorTiposUnidadesDesdeInicio = new AdaptadorTiposUnidadesDesdeInicio(listaTiposUnidades, context, tiposUnidadesActionListener, bundleUsuario, dialogListaUnidades);
         recyclerViewTiposUnidades.setAdapter(adaptadorTiposUnidadesDesdeInicio);
 
 
@@ -1519,11 +1558,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
             @Override
             public void onResponse(String response) {
                 Log.d("Respuesta de volley registrarUsuario", "idcliente" + idcliente + " idmarca" + idmarca + " idmodelo" + idmodelo + " anio" + anio + " placas" + placas + " vin" + vin + " motor" + motor + " tipo" + tipo);
-               // crearToastPersonalizado(context, "Agregado correctamente");
-
-                crearToastPersonalizado(context, response);
-
-
+                crearToastPersonalizado(context, "Agregado correctamente");
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1551,6 +1586,96 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         Volley.newRequestQueue(context).add(postrequest);
     }
 
+
+    public void cambiarEstado(String ID_ser_venta, String nuevoEstado) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                crearToastPersonalizado(context, "Actualizado correctamente");
+                VisualizarServicios();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                crearToastPersonalizado(context, "Hubo un error al actualizar, por favor revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "103");
+                params.put("nuevoEstado", nuevoEstado);
+                params.put("ID_ser_venta", ID_ser_venta);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+    @Override
+    public void asignarActividadAServicio(String ID_ser_venta, String idpersonal, String observaciones) {
+        StringRequest stringRequest2 = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //    CargarMecanicos(ID_ser_venta);
+                        VisualizarServicios();
+                        Utiles.crearToastPersonalizado(context, "Se asigno el mecanico");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Utiles.crearToastPersonalizado(context, "Algo fallo");
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "105");
+                params.put("ID_ser_venta", ID_ser_venta);
+                params.put("observaciones", observaciones);
+                params.put("idpersonal", idpersonal);
+
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue2 = Volley.newRequestQueue(context);
+        requestQueue2.add(stringRequest2);
+    }
+
+    @Override
+    public void AsignarFolio(String iddoc, String id_ser_venta) {
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Utiles.crearToastPersonalizado(context, "Se asigno la nota correctamente");
+                VisualizarServicios();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "109");
+                params.put("iddoc", iddoc);
+                params.put("id_ser_venta", id_ser_venta);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
 }
 
 

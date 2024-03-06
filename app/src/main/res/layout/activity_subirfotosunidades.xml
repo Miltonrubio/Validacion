@@ -14,11 +14,10 @@
 
         <TextView
             android:id="@+id/txtId"
+            android:layout_marginVertical="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="25dp"
             android:gravity="center"
             android:text="MODIFICANDO:"
             android:textColor="@color/azulito"
@@ -28,14 +27,15 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/ViewPagerImagenes"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="630dp"
+            android:visibility="gone"
             android:layout_marginStart="9dp"
             android:layout_marginEnd="9dp" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animacionSinImagenes"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="610dp"
             android:layout_marginStart="9dp"
             android:layout_marginEnd="9dp"
             app:lottie_autoPlay="true"
@@ -54,24 +54,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/guardarFoto"
-                android:layout_width="170dp"
-                android:layout_height="60dp"
-                android:layout_margin="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:textSize="17dp"
+                android:textStyle="bold"
                 android:backgroundTint="@color/azulito"
                 android:text="Tomar foto" />
 
             <Button
                 android:id="@+id/fotoDesdeGaleria"
-                android:layout_width="170dp"
-                android:layout_height="60dp"
-                android:layout_margin="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:textSize="17dp"
+                android:textStyle="bold"
                 android:backgroundTint="@color/gris"
                 android:text="Abrir galeria"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
         </LinearLayout>
 

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="25dp">
+
+
+        <TextView
+            android:id="@+id/textView38"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="AGREGAR NUEVA REFACCION "
+            android:textColor="@color/azulito"
+            android:textSize="23dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/textView39"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Ingresa la clave"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView38" />
+
+        <EditText
+            android:id="@+id/editTextClave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/textview_outline"
+            android:hint="Clave"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView39"
+            tools:layout_editor_absoluteX="0dp" />
+
+
+        <TextView
+            android:id="@+id/textViewCantidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ingresa la cantidad"
+            android:textSize="16dp"
+            android:phoneNumber="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextClave" />
+
+        <EditText
+            android:id="@+id/editCantidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/textview_outline"
+            android:hint="Cantidad"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/textViewCantidad"
+            tools:layout_editor_absoluteX="0dp" />
+
+
+        <TextView
+            android:id="@+id/textViewUnidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ingresa el tipo de unidad"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editCantidad" />
+
+        <EditText
+            android:id="@+id/editTipoDeUnidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/textview_outline"
+            android:hint="Unidad"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/textViewUnidad"
+            tools:layout_editor_absoluteX="0dp" />
+
+
+        <TextView
+            android:id="@+id/textViewDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ingresa la descripcion "
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTipoDeUnidad" />
+
+        <EditText
+            android:id="@+id/editTextDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/textview_outline"
+            android:hint="Descripcion"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDescripcion"
+            tools:layout_editor_absoluteX="0dp" />
+
+
+        <TextView
+            android:id="@+id/textViewPrecio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ingresa el precio unitario"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextDescripcion" />
+
+        <EditText
+            android:id="@+id/editTextPrecio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/textview_outline"
+            android:hint="Precio unitario $"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="15dp"
+            android:phoneNumber="true"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPrecio"
+            tools:layout_editor_absoluteX="0dp" />
+
+
+
+
+        <TextView
+            android:id="@+id/textViewDescuento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Descuento"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextPrecio" />
+
+        <EditText
+            android:id="@+id/editTextDescuento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/textview_outline"
+            android:hint="Descuento"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="15dp"
+            android:phoneNumber="true"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDescuento"
+            tools:layout_editor_absoluteX="0dp" />
+
+
+
+
+
+        <TextView
+            android:id="@+id/textViewImporte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Importe total "
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextDescuento" />
+
+        <EditText
+            android:id="@+id/editTextImporte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/textview_outline"
+            android:enabled="false"
+            android:hint="Importe total"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="15dp"
+            android:phoneNumber="true"
+            app:layout_constraintTop_toBottomOf="@+id/textViewImporte"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
+            android:id="@+id/buttonCancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="12dp"
+            android:backgroundTint="@color/rojo"
+            android:text="Cancelar"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextImporte" />
+
+
+
+        <Button
+            android:id="@+id/buttonAceptar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="12dp"
+            android:backgroundTint="@color/azulito"
+            android:text="Aceptar"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextImporte" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -90,7 +90,6 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
 
-
         try {
             JSONObject jsonObject2 = filteredData.get(position);
             String nombre = jsonObject2.optString("nombre", "");
@@ -126,6 +125,9 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
             holder.LayoutUnidad.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+
+
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_registrar_unidad, null);
@@ -206,14 +208,17 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
                         VinUnidad.setVisibility(View.GONE);
                     }
 
+
+
                     buttonGuardar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             String VinIngresado;
                             String MotorIngresado;
-                      //      String KmIngresado;
+                            //      String KmIngresado;
                             String PlacasIngresadas;
                             String anioIngresado;
+                            String cantidadInyectoresIngresada;
 
                             if (VinUnidad.getVisibility() == View.VISIBLE) {
                                 VinIngresado = VinUnidad.getText().toString();
@@ -226,16 +231,19 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
                             } else {
                                 MotorIngresado = "N/A";
                             }
-/*
+
+
+                            /*
                             if (kmUnidad.getVisibility() == View.VISIBLE) {
                                 KmIngresado = kmUnidad.getText().toString();
                             } else {
                                 KmIngresado = "0";
                             }
 */
-
                             if (PlacasUnidad.getVisibility() == View.VISIBLE) {
-                                PlacasIngresadas = PlacasUnidad.getText().toString();
+                                String placasRaw = PlacasUnidad.getText().toString();
+                                // Eliminar guiones ("-") de la cadena
+                                PlacasIngresadas = placasRaw.replace("-", "");
                             } else {
                                 PlacasIngresadas = "N/A";
                             }
@@ -251,7 +259,9 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
                             if (PlacasIngresadas.equalsIgnoreCase("") || PlacasIngresadas.isEmpty() || PlacasIngresadas.equalsIgnoreCase("null") || PlacasIngresadas.equalsIgnoreCase(null)) {
                                 Utiles.crearToastPersonalizado(context, "Debes ingresar las placas");
                             } else {
-                                actionListener.onAgregarUnidad(id_ser_cliente, id_marcaSeleccionada, id_modeloSeleccionado, anioIngresado, PlacasIngresadas, VinIngresado, MotorIngresado, nombre, foto);
+                                dialogAgregarUnidad.dismiss();
+                                dialogListaUnidades.dismiss();
+                                actionListener.onAgregarUnidad(id_ser_cliente, id_marcaSeleccionada, id_modeloSeleccionado, anioIngresado, PlacasIngresadas.toUpperCase(), VinIngresado, MotorIngresado, nombre, foto);
                             }
 
                         }
@@ -520,7 +530,7 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
 
 
     public interface OnActivityActionListener {
-        void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo,String foto);
+        void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo, String foto);
     }
 
     private AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener actionListener;
@@ -528,16 +538,18 @@ public class AdaptadorTiposUnidadesDesdeInicio extends RecyclerView.Adapter<Adap
     String id_ser_cliente;
     String nombreUsuario;
 
-    public AdaptadorTiposUnidadesDesdeInicio(List<JSONObject> data, Context context, AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener actionListener, Bundle bundleUsuario) {
+    AlertDialog dialogListaUnidades;
+
+    public AdaptadorTiposUnidadesDesdeInicio(List<JSONObject> data, Context context, AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener actionListener, Bundle bundleUsuario, AlertDialog dialogListaUnidades) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
         this.actionListener = actionListener;
         url = context.getResources().getString(R.string.ApiBack);
 
-         this.nombreUsuario = bundleUsuario.getString("nombreUsuario");
-         this.id_ser_cliente = bundleUsuario.getString("id_ser_cliente");
-
+        this.nombreUsuario = bundleUsuario.getString("nombreUsuario");
+        this.id_ser_cliente = bundleUsuario.getString("id_ser_cliente");
+        this.dialogListaUnidades = dialogListaUnidades;
 
     }
 

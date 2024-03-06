@@ -63,13 +63,23 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
     String ID_registro;
     String estado;
 
-    public AdaptadorCheckActividades(List<JSONObject> data, Context context, String ID_registro, String estado) {
+
+    public interface OnActivityActionListener {
+        void onActualizarCheck(String ID_check_actividad, String valor_check);
+    }
+
+    private AdaptadorCheckActividades.OnActivityActionListener actionListener;
+
+
+    public AdaptadorCheckActividades(List<JSONObject> data, Context context, String ID_registro, String estado, AdaptadorCheckActividades.OnActivityActionListener actionListener) {
         this.data = data;
         this.estado = estado;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
         this.ID_registro = ID_registro;
+        this.actionListener = actionListener;
     }
+
 
     @NonNull
     @Override
@@ -100,11 +110,11 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
             holder.nombreActividad.setText(nombre_actividad);
 
 
-            if(estado.equalsIgnoreCase("iniciado")){
+            if (estado.equalsIgnoreCase("iniciado")) {
                 holder.radioButtonNo.setEnabled(true);
                 holder.radioButtonSi.setEnabled(true);
 
-            }else {
+            } else {
 
                 holder.radioButtonNo.setEnabled(false);
                 holder.radioButtonSi.setEnabled(false);
@@ -131,7 +141,7 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
 
                     holder.radioButtonNo.setChecked(true);
                     holder.radioButtonSi.setChecked(false);
-                    ActualizarCheck(ID_check_actividad, "No", nombre_actividad);
+                    actionListener.onActualizarCheck(ID_check_actividad, "No");
 
                 }
             });
@@ -143,7 +153,7 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
                     holder.radioButtonSi.setChecked(true);
                     holder.radioButtonNo.setChecked(false);
 
-                    ActualizarCheck(ID_check_actividad, "Si", nombre_actividad);
+                   actionListener.onActualizarCheck(ID_check_actividad, "Si");
                 }
             });
 
@@ -163,33 +173,7 @@ public class AdaptadorCheckActividades extends RecyclerView.Adapter<AdaptadorChe
     }
 
 
-    public void ActualizarCheck(String ID_check_actividad, String valor_check, String nombreActividad) {
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Utiles.crearToastPersonalizado(context, "Error al cargar, revisa la conexión");
-
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "76");
-                params.put("ID_check_actividad", ID_check_actividad);
-                params.put("valor_check", valor_check);
-
-
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-
-    }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

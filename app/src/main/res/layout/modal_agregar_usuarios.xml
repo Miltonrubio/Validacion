@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="18dp">
+
+        <TextView
+            android:id="@+id/textViewSeleccionaArea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/redondeado_contorno_azul"
+            android:gravity="center"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="18dp"
+            android:text="Selecciona el area de empleado"
+            android:textSize="19dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.666"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewArea" />
+
+        <TextView
+            android:id="@+id/textViewArea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="20dp"
+            android:text="Ingresa la Area del empleado"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView37" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="11dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textClave"
+            app:shapeAppearanceOverlay="@style/RoundedTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextClave"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:autofillHints="id"
+                android:hint="Clave"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textClave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="28dp"
+            android:text="Ingresa la clave del empleado"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.714"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutTelefono" />
+
+        <TextView
+            android:id="@+id/textViewTipoEmpresa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:background="@drawable/redondeado_contorno_azul"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="18dp"
+            android:text="Selecciona una empresa"
+            android:textSize="19dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewEmpresa" />
+
+        <TextView
+            android:id="@+id/textViewEmpresa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="28dp"
+            android:text="Ingresa la empresa"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewSeleccionaArea" />
+
+        <TextView
+            android:id="@+id/textViewTipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="28dp"
+            android:text="Ingresa el tipo del empleado"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.571"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPassword" />
+
+        <TextView
+            android:id="@+id/textView37"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/redondeado_contorno_azul"
+            android:gravity="center"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="18dp"
+            android:text="Selecciona un tipo de empleado"
+            android:textSize="19dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTipo" />
+
+
+        <Button
+            android:id="@+id/botonCancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="22dp"
+            android:backgroundTint="@color/rojo"
+            android:text="Cancelar"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTipoEmpresa"></Button>
+
+        <TextView
+            android:id="@+id/textViewTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="28dp"
+            android:text="Ingresa el telefono del cliente"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutDomicilio" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.562"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTelefono"
+            app:shapeAppearanceOverlay="@style/RoundedTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextTelefono"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:autofillHints="id"
+                android:hint="Telefono"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <TextView
+            android:id="@+id/textView36"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="REGISTRAR NUEVO USUARIO"
+            android:textColor="@color/azulito"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.714"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="28dp"
+            android:text="Ingresa el nombre del empleado"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.428"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView36" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:shapeAppearanceOverlay="@style/RoundedTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextNombre"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:autofillHints="id"
+                android:hint="Nombre completo" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <TextView
+            android:id="@+id/textViewCorreo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="28dp"
+            android:text="Ingresa el correo del empleado"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.714"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutNombre" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutDomicilio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.562"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewCorreo"
+            app:shapeAppearanceOverlay="@style/RoundedTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:autofillHints="id"
+                android:hint="Correo" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/botonAceptar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/azulito"
+            android:text="Agregar"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTipoEmpresa"></Button>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -103,7 +103,7 @@ public class AdaptadorListadoActividades extends RecyclerView.Adapter<AdaptadorL
 
             if (estatus.equalsIgnoreCase("alta")) {
 
-                holder.nombreActividad.setBackgroundResource(R.drawable.redondeado_verde);
+                holder.nombreActividad.setBackgroundResource(R.drawable.redondeado_azul);
                 int colorIcono = ContextCompat.getColor(context, R.color.white);
                 holder.nombreActividad.setTextColor(colorIcono);
             } else {

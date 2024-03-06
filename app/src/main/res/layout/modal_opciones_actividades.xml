@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="48dp"
-        android:background="@color/verdefuerte"
+        android:background="@color/azulitoSuave"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -22,12 +22,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_weight=".1"
             android:padding="4dp"
             android:src="@drawable/baseline_access_time_24"
-            app:tint="@color/white" />
+            app:tint="@color/black" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
             android:layout_weight="2.9"
             android:gravity="center"
             android:text="CONSULTAR REPORTES"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -58,8 +58,8 @@
         app:layout_constraintTop_toBottomOf="@+id/LyoutConsultarReportes">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_weight=".1"
             android:padding="8dp"
             android:src="@drawable/clipboard_regular"
@@ -76,4 +76,79 @@
             android:textSize="18dp"
             android:textStyle="bold" />
     </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutEncargado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/contorno_amarillo"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:visibility="gone"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutGenerarRegistro">
+
+        <ImageView
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_weight=".1"
+            android:padding="8dp"
+            android:src="@drawable/prueba"
+            app:tint="@color/amarillo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_weight="2.9"
+            android:gravity="center"
+            android:text="ASIGNAR COMO ENCARGADO"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/LayoutEditar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/textview_outline3"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:visibility="visible"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutEncargado">
+
+        <ImageView
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_weight=".1"
+            android:padding="8dp"
+            android:src="@drawable/user_pen_solid"
+            app:tint="@color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="7dp"
+            android:layout_weight="2.9"
+            android:gravity="center"
+            android:text="EDITAR"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

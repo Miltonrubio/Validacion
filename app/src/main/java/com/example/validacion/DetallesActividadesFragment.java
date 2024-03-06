@@ -143,14 +143,23 @@ public class DetallesActividadesFragment extends Fragment {
                     Utiles.crearToastPersonalizado(context, "Debes seleccionar una fecha");
                 } else {
 
-
                     Map<String, String> postData = new HashMap<>();
+                    String urlPDFActividades = context.getString(R.string.urlPDFActividades);
+
+                    postData.put("idPersonal", ID_usuario);
+                    postData.put("fechaInicio", fechaInicialSeleccionada);
+                    postData.put("fechaFin", fechaFinalSeleccionada);
+
+/*
                     postData.put("opcion", "85");
                     postData.put("ID_usuario", ID_usuario);
                     postData.put("fechaInicio", fechaInicialSeleccionada);
                     postData.put("fechaFin", fechaFinalSeleccionada);
 
                     new DownloadFileTask(context, postData).execute(url);
+
+ */
+                    new DownloadFileTask(context, postData).execute(urlPDFActividades);
                 }
             }
         });

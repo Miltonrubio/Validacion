@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -26,6 +27,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
@@ -66,6 +69,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
+
 public class SubirFotosUnidadesActivity extends AppCompatActivity {
 
     private Handler sliderHandler = new Handler();
@@ -101,7 +106,7 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         idSerVenta = intent.getStringExtra("id_ser_venta");
-        txtId.setText("Id de venta: " + idSerVenta);
+        txtId.setText("FOTOS DEL SERVICIO: #" + idSerVenta);
         CargarImagenes(idSerVenta);
 
         builder = new AlertDialog.Builder(context);
@@ -117,6 +122,7 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
             fotoDesdeGaleria.setVisibility(View.GONE);
         }
 
+
         fotoDesdeGaleria.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,11 +134,51 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                AbrirCamara();
-
+           //     AbrirCamara();
+                solicitarPermisosDeCamara();
             }
         });
 
+    }
+
+
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
+
+    private void solicitarPermisosDeCamara() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Los permisos de la cámara no están concedidos, solicitarlos.
+            ActivityCompat.requestPermissions(this,  new String[]{Manifest.permission.CAMERA},  REQUEST_CAMERA_PERMISSION);
+        } else {
+            AbrirCamara();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            // Verificar si el permiso de la cámara está concedido.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso de cámara concedido, proceder a abrir la cámara.
+                AbrirCamara();
+            } else {
+                // Permiso de cámara denegado, mostrar un mensaje o tomar otra acción.
+                //   Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
+                Utiles.crearToastPersonalizado(context, "No se aceptò el permiso");
+
+            }
+        }
+    }
+
+
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Activity_Binding.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -160,7 +206,7 @@ public class SubirFotosUnidadesActivity extends AppCompatActivity {
             Bitmap imgBitmap = BitmapFactory.decodeFile(rutaImagen);
             imgBitmap = rotarImagen(imgBitmap, rutaImagen); // Rotar la imagen si es necesario
             MandarFoto2(imgBitmap);
-        }else {
+        } else {
 
             modalCargando.dismiss();
         }

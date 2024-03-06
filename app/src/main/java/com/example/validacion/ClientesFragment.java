@@ -38,6 +38,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.validacion.Adaptadores.AdaptadorChecks;
 import com.example.validacion.Adaptadores.AdaptadorClientes;
 import com.example.validacion.Adaptadores.AdaptadorModelos;
+import com.example.validacion.Adaptadores.AdaptadorTiposUnidadesDesdeInicio;
 import com.example.validacion.Adaptadores.Utiles;
 import com.example.validacion.Objetos.Cheks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -52,7 +53,10 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ClientesFragment extends Fragment implements AdaptadorModelos.OnActivityActionListener, AdaptadorClientes.OnActivityActionListener {
+public class ClientesFragment extends Fragment implements AdaptadorModelos.OnActivityActionListener, AdaptadorClientes.OnActivityActionListener, AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener {
+
+
+    AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener tiposUnidadesActionListener;
 
 
     public ClientesFragment() {
@@ -107,14 +111,14 @@ public class ClientesFragment extends Fragment implements AdaptadorModelos.OnAct
         TextSinResultados = view.findViewById(R.id.TextSinResultados);
         FloatingActionButton botonAgregarClientes = view.findViewById(R.id.botonAgregarClientes);
 
-
+        tiposUnidadesActionListener = this;
         CargarClientes();
 
 
         List<JSONObject> listaModelos = new ArrayList<>();
         Bundle bundle = new Bundle();
         AdaptadorModelos adaptadorModelos = new AdaptadorModelos(listaModelos, context, bundle, this, null, null, null);
-        adaptadorClientes = new AdaptadorClientes(listaClientes, context, this, this);
+        adaptadorClientes = new AdaptadorClientes(listaClientes, context, this, this, tiposUnidadesActionListener);
         recyclerViewCliente.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewCliente.setAdapter(adaptadorClientes);
 
@@ -364,5 +368,42 @@ public class ClientesFragment extends Fragment implements AdaptadorModelos.OnAct
             LayoutSinContenido.setVisibility(View.VISIBLE);
             TextSinResultados.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onAgregarUnidad(String idcliente, String idmarca, String idmodelo, String anio, String placas, String vin, String motor, String tipo, String foto) {
+        //  dialogUnidades.dismiss();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Respuesta de volley registrarUsuario", "idcliente" + idcliente + " idmarca" + idmarca + " idmodelo" + idmodelo + " anio" + anio + " placas" + placas + " vin" + vin + " motor" + motor + " tipo" + tipo);
+                crearToastPersonalizado(context, "Agregado correctamente");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                crearToastPersonalizado(context, "Hubo un error al registrar al usuario, por favor revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "34");
+                params.put("idcliente", idcliente);
+                params.put("idmarca", idmarca);
+                params.put("idmodelo", idmodelo);
+                params.put("anio", anio);
+                params.put("placas", placas);
+                params.put("vin", vin);
+                params.put("motor", motor);
+                params.put("tipo", tipo);
+                params.put("foto", foto);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+
+
     }
 }

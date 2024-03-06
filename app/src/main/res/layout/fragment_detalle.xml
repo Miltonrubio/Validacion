@@ -4,52 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp"
-    android:paddingBottom="12dp"
+    android:background="@color/azulitoSuave"
+    android:paddingBottom="2dp"
     tools:context=".DetalleFragment">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="4dp"
+        android:background="@drawable/rounded_background"
         android:elevation="4dp"
-        android:padding="1dp"
         android:scrollbars="none">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="13dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/rounded_background"
             android:elevation="4dp"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:paddingBottom="15dp"
+            android:padding="12dp"
 
             >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:orientation="horizontal"
-                android:paddingBottom="15dp">
-
-                <TextView
-                    android:id="@+id/tvstatus"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="Status"
-                    android:textSize="19sp" />
-
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -57,45 +33,93 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv1"
+                    android:id="@+id/tvstatus"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
                     android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Marca"
-                    android:textColor="@color/azulito"
-                    android:textSize="32dp"
+                    android:gravity="right"
+                    android:text="Status"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
 
             </LinearLayout>
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/ViewPager"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
-                android:layout_marginStart="9dp"
-                android:layout_marginEnd="9dp"
-                android:visibility="visible" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:orientation="horizontal">
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animacionSinImagenes"
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Marca"
+                    android:textColor="@color/azulito"
+                    android:textSize="26dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
-                android:layout_marginStart="9dp"
-                android:layout_marginEnd="9dp"
-                android:visibility="gone"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="sinimagenes.json"
-                app:lottie_imageAssetsFolder="assets"
-                app:lottie_loop="true" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/contorno_azulito"
+                android:padding="12dp"
+                android:orientation="vertical">
+
+
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/ViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="390dp"
+                    android:layout_marginStart="9dp"
+                    android:layout_marginEnd="9dp"
+                    android:visibility="visible" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animacionSinImagenes"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp"
+                    android:layout_marginStart="9dp"
+                    android:layout_marginEnd="9dp"
+                    android:visibility="gone"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="sinimagenes.json"
+                    app:lottie_imageAssetsFolder="assets"
+                    app:lottie_loop="true" />
+
+                <TextView
+                    android:id="@+id/tvMotivoingreso"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Motivo de ingreso: "
+                    android:textStyle="bold"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Motivo"
+                    android:textSize="19sp"/>
+
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="14dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -103,40 +127,18 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:gravity="left"
                     android:text="Fecha"
                     android:textColor="@color/black"
-                    android:textSize="19sp" />
+                    android:textSize="17sp" />
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Motivo"
-                    android:textSize="23sp" />
-
-
-            </LinearLayout>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/textview_outline"
+                android:background="@drawable/contorno_verdesito"
                 android:orientation="horizontal">
 
                 <TextView
@@ -146,8 +148,10 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="Refacciones"
-                    android:textSize="23sp" />
+                    android:text="REFACCIONES"
+                    android:textColor="@color/verdesito"
+                    android:textSize="23sp"
+                    android:textStyle="bold" />
 
 
             </LinearLayout>
@@ -194,14 +198,12 @@
                 android:id="@+id/recyclerViewRefacciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:paddingBottom="10dp" />
+                android:layout_marginBottom="12dp" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="13dp"
                 android:background="@drawable/textview_outlinegris"
                 android:orientation="horizontal">
 
@@ -212,8 +214,10 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="Mecanico"
-                    android:textSize="23sp" />
+                    android:text="MECANICOS"
+                    android:textColor="@color/gris"
+                    android:textSize="23sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -254,8 +258,7 @@
                 android:id="@+id/recyclerViewMecanicos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:paddingBottom="10dp" />
+                android:layout_marginBottom="5dp" />
 
             <!-- Para bitacora -->
 
@@ -264,7 +267,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="13dp"
                 android:background="@drawable/textview_outline"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tvBitacora"
@@ -281,7 +285,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/LayoutNoActividades"
@@ -316,26 +321,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:paddingBottom="10dp" />
+                android:paddingBottom="10dp"
+                android:visibility="gone" />
 
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnImprimirPdf"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_margin="12dp"
         android:elevation="6dp"
         android:src="@drawable/file_pdf_solid"
-        app:backgroundTint="@color/azulitoSuave"
+        app:backgroundTint="@color/azulito"
+        app:tint="@color/white"
         app:elevation="6dp"
-        app:layout_behavior="com.google.android.material.floatingactionbutton.FloatingActionButton$Behavior" />
+
+        app:shapeAppearanceOverlay="@style/RoundedShape"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

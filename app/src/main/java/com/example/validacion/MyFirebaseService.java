@@ -12,6 +12,37 @@ import com.google.gson.Gson;
 
 import java.util.Random;
 
+
+
+public class MyFirebaseService extends FirebaseMessagingService {
+
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        super.onNewToken(token);
+        Log.d(Utils.TAG, token);
+
+    }
+
+
+    @Override
+    public void onMessageReceived(@NonNull RemoteMessage message) {
+        super.onMessageReceived(message);
+        String title = message.getNotification().getTitle();
+        String content = message.getNotification().getBody();
+        String data = new Gson().toJson(message.getData());
+        Utils.showNotification(this, title, content);
+        Log.d(Utils.TAG, data);
+
+    }
+
+
+}
+
+
+
+
+/*
 public class MyFirebaseService extends FirebaseMessagingService {
 
     @Override
@@ -57,3 +88,4 @@ public class MyFirebaseService extends FirebaseMessagingService {
         Utils.showNotifications(this, title, content, pendingIntent, notificationId);
     }
 }
+*/

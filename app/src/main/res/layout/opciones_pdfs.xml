@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="12dp"
-    android:paddingBottom="35dp">
+    android:paddingVertical="20dp">
 
     <LinearLayout
         android:id="@+id/checkTecnico"
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="20dp"
-        android:background="@color/gris"
+        android:background="@color/azulitoSuave"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -29,7 +29,7 @@
             android:layout_weight=".1"
             android:padding="8dp"
             android:src="@drawable/baseline_checklist_24"
-            app:tint="@color/white" />
+            app:tint="@color/black" />
 
         <TextView
             android:layout_width="315dp"
@@ -38,7 +38,7 @@
             android:layout_weight="2.9"
             android:gravity="center"
             android:text="PDF checklist tecnico"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="20dp"
-        android:background="@color/light_blue_600"
+        android:background="@drawable/contorno_azulito"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -67,7 +67,7 @@
             android:layout_weight=".1"
             android:padding="11dp"
             android:src="@drawable/screwdriver_wrench_solid"
-            app:tint="@color/white" />
+            app:tint="@color/black" />
 
         <TextView
             android:layout_width="match_parent"
@@ -76,7 +76,7 @@
             android:layout_weight="2.9"
             android:gravity="center"
             android:text="PDF REFACCIONES"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="20dp"
-        android:background="@color/verde"
+        android:background="@drawable/contorno_amarillo"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -103,8 +103,8 @@
             android:layout_height="50dp"
             android:layout_weight=".1"
             android:padding="11dp"
-            android:src="@drawable/screwdriver_wrench_solid"
-            app:tint="@color/white" />
+            android:src="@drawable/users_solid"
+            app:tint="@color/black" />
 
         <TextView
             android:layout_width="match_parent"
@@ -113,7 +113,7 @@
             android:layout_weight="2.9"
             android:gravity="center"
             android:text="PDF MECANICOS"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -127,6 +127,7 @@
         android:layout_marginTop="20dp"
         android:background="@color/azulito"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:padding="5dp"
         android:weightSum="3"
@@ -154,19 +155,19 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+
     <LinearLayout
         android:id="@+id/pdfServicio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="48dp"
-        android:background="@color/verdefuerte"
+        android:layout_marginTop="4dp"
+        android:background="@color/azulito"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
         android:weightSum="3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -191,14 +192,13 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/checkSalida"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="20dp"
-        android:background="@color/verdesito"
+        android:background="@color/gris"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -212,7 +212,6 @@
             android:layout_height="50dp"
             android:layout_weight=".1"
             android:padding="8dp"
-            android:scaleX="-1"
             android:src="@drawable/car_side_solid"
             app:tint="@color/white" />
 

@@ -28,20 +28,22 @@ public class Activity_Binding extends AppCompatActivity {
 
         binding = ActivityBindingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+/*
         SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
 
         String permisosUsuario = sharedPreferences.getString("permisos", "");
-
+*/
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.menu_home):
                     replaceFragment(new HomeFragment());
                     break;
-                case (R.id.menu_actividades):
+            /*    case (R.id.menu_actividades):
                     replaceFragment(new ActividadesFragment());
                     break;
+
+             */
                 case (R.id.menu_usuario):
                     replaceFragment(new UsuariosFragment());
                     break;
@@ -56,10 +58,12 @@ public class Activity_Binding extends AppCompatActivity {
             return true;
         });
 
-        setupMenu(permisosUsuario);
+ //       setupMenu(permisosUsuario);
+        binding.bottomNavigationView.setSelectedItemId(R.id.menu_home);
+        binding.bottomNavigationView.getMenu().findItem(R.id.menu_actividades).setVisible(false);
 
     }
-
+/*
     private void setupMenu(String permisosUsuario) {
 
     //    binding.bottomNavigationView.getMenu().findItem(R.id.herramientas).setVisible(false);
@@ -72,7 +76,7 @@ public class Activity_Binding extends AppCompatActivity {
             binding.bottomNavigationView.setSelectedItemId(R.id.menu_home);
         }
     }
-
+*/
     public void onBackPressed() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment currentFragment = fragmentManager.findFragmentById(R.id.frame_layoutCoches);
@@ -92,7 +96,7 @@ public class Activity_Binding extends AppCompatActivity {
                     }
                 }, 2000);
             }
-        } else {
+        }else {
             super.onBackPressed();
         }
     }

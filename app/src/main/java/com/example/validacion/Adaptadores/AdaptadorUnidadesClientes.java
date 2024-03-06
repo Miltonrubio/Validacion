@@ -81,8 +81,8 @@ public class AdaptadorUnidadesClientes extends RecyclerView.Adapter<AdaptadorUni
         try {
             JSONObject jsonObject = filteredData.get(position);
             String id_serv_unidad = jsonObject.optString("id_serv_unidad", "");
-            String Marca = jsonObject.optString("Marca", "");
-            String Modelo = jsonObject.optString("Modelo", "");
+            String Marca = jsonObject.optString("marca", "");
+            String Modelo = jsonObject.optString("modelo", "");
             String anio = jsonObject.optString("anio", "");
             String placas = jsonObject.optString("placas", "");
             String motor = jsonObject.optString("motor", "");

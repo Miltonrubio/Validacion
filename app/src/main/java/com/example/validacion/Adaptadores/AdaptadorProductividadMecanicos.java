@@ -21,11 +21,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -70,6 +72,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -104,6 +111,11 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
             String idusuario = jsonObject2.optString("idusuario", "");
             String telefono = jsonObject2.optString("telefono", "");
             String nombre = jsonObject2.optString("nombre", "");
+            String empresa = jsonObject2.optString("empresa", "");
+            String area = jsonObject2.optString("area", "");
+            String email = jsonObject2.optString("email", "");
+            String password = jsonObject2.optString("password", "");
+            String tipo = jsonObject2.optString("tipo", "");
             String permisos = jsonObject2.optString("permisos", "");
 
 
@@ -118,7 +130,7 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
             holder.telefonoMec.setText(telefono);
 
 
-            Glide.with(holder.itemView.getContext())
+            Glide.with(context)
                     .load(imageUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.mecanico)
@@ -127,20 +139,43 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
 
             holder.NombreMecanico.setText(nombre.toUpperCase());
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                     View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_actividades, null);
                     builder.setView(ModalRedondeado(view.getContext(), customView));
-                    AlertDialog dialogOpcionesActividades = builder.create();
-                    dialogOpcionesActividades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    dialogOpcionesActividades.show();
+                    AlertDialog dialogOpcionesUsuarios = builder.create();
+                    dialogOpcionesUsuarios.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogOpcionesUsuarios.show();
 
                     LinearLayout LyoutConsultarReportes = customView.findViewById(R.id.LyoutConsultarReportes);
                     LinearLayout LayoutGenerarRegistro = customView.findViewById(R.id.LayoutGenerarRegistro);
+                    LinearLayout LayoutEncargado = customView.findViewById(R.id.LayoutEncargado);
+                    LinearLayout LayoutEditar = customView.findViewById(R.id.LayoutEditar);
+
+
+                    LayoutEncargado.setVisibility(View.VISIBLE);
+
+                    LayoutEditar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            AbrirModalEditar(idusuario, nombre, email, telefono, password, dialogOpcionesUsuarios);
+                        }
+                    });
+
+
+                    LayoutEncargado.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            ConsultarEncargado(idusuario, dialogOpcionesUsuarios);
+
+                        }
+                    });
 
 
                     LyoutConsultarReportes.setOnClickListener(new View.OnClickListener() {
@@ -155,7 +190,7 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
                                     .replace(R.id.frame_layoutCoches, detallesActividadesFragment)
                                     .addToBackStack(null)
                                     .commit();
-                            dialogOpcionesActividades.dismiss();
+                            dialogOpcionesUsuarios.dismiss();
                         }
                     });
 
@@ -168,7 +203,107 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
                     });
 
 
+                    return false;
                 }
+            });
+
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+
+                    if (!permisos.equalsIgnoreCase("SUPERADMIN")) {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_actividades, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogOpcionesUsuarios = builder.create();
+                        dialogOpcionesUsuarios.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogOpcionesUsuarios.show();
+
+                        LinearLayout LyoutConsultarReportes = customView.findViewById(R.id.LyoutConsultarReportes);
+                        LinearLayout LayoutGenerarRegistro = customView.findViewById(R.id.LayoutGenerarRegistro);
+                        LinearLayout LayoutEditar = customView.findViewById(R.id.LayoutEditar);
+
+
+                        LayoutEditar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                AbrirModalEditar(idusuario, nombre, email, telefono, password, dialogOpcionesUsuarios);
+                            }
+                        });
+
+
+                        LyoutConsultarReportes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                DetallesActividadesFragment detallesActividadesFragment = new DetallesActividadesFragment();
+                                detallesActividadesFragment.setArguments(bundle);
+
+                                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.frame_layoutCoches, detallesActividadesFragment)
+                                        .addToBackStack(null)
+                                        .commit();
+                                dialogOpcionesUsuarios.dismiss();
+                            }
+                        });
+
+                        LayoutGenerarRegistro.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                actionListener.onValidarCheckDiario(idusuario, view, nombre);
+
+                            }
+                        });
+
+
+                    } else {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_actividades, null);
+                        builder.setView(ModalRedondeado(view.getContext(), customView));
+                        AlertDialog dialogOpcionesUsuarios = builder.create();
+                        dialogOpcionesUsuarios.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogOpcionesUsuarios.show();
+
+                        LinearLayout LyoutConsultarReportes = customView.findViewById(R.id.LyoutConsultarReportes);
+                        LinearLayout LayoutGenerarRegistro = customView.findViewById(R.id.LayoutGenerarRegistro);
+                        LinearLayout LayoutEncargado = customView.findViewById(R.id.LayoutEncargado);
+
+                        LayoutEncargado.setVisibility(View.VISIBLE);
+                        LayoutGenerarRegistro.setVisibility(View.GONE);
+                        LyoutConsultarReportes.setVisibility(View.GONE);
+
+                        LinearLayout LayoutEditar = customView.findViewById(R.id.LayoutEditar);
+
+
+                        LayoutEditar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                AbrirModalEditar(idusuario, nombre, email, telefono, password, dialogOpcionesUsuarios);
+                            }
+                        });
+
+
+                        LayoutEncargado.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                ConsultarEncargado(idusuario, dialogOpcionesUsuarios);
+
+                            }
+                        });
+
+
+                    }
+
+                }
+
             });
 
 
@@ -250,11 +385,455 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
  */
 
 
+    public void ConsultarEncargado(String idusuario, AlertDialog dialogOpcionesActividades) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    if (jsonArray.length() > 0) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_encargado, null);
+                        builder.setView(ModalRedondeado(context, customView));
+                        AlertDialog dialogEncargado = builder.create();
+                        dialogEncargado.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogEncargado.show();
+
+                        TextView NombreEncargado = customView.findViewById(R.id.NombreEncargado);
+                        ImageView ImagenEncargado = customView.findViewById(R.id.ImagenEncargado);
+
+                        Button btnCancelar = customView.findViewById(R.id.btnCancelar);
+                        Button btnAceptar = customView.findViewById(R.id.btnAceptar);
+
+
+                        String nombre = jsonObject.getString("nombre");
+                        String email = jsonObject.getString("email");
+                        String telefono = jsonObject.getString("telefono");
+                        String fotoEncargado = jsonObject.getString("foto");
+
+
+                        NombreEncargado.setText(nombre.toUpperCase());
+
+
+                        String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + fotoEncargado;
+
+
+                        Glide.with(context)
+                                .load(imageUrl)
+                                .skipMemoryCache(true)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .placeholder(R.drawable.usuarios)
+                                .error(R.drawable.usuarios)
+                                .into(ImagenEncargado);
+
+
+                        //  String mensaje = "Nombre: " + nombre + "\nEmail: " + email + "\nTeléfono: " + telefono;
+
+
+                        btnAceptar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+
+                                dialogEncargado.dismiss();
+                                dialogOpcionesActividades.dismiss();
+                                actionListener.onActualizarEncargado(idusuario);
+
+                            }
+                        });
+
+                        btnCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogEncargado.dismiss();
+                            }
+                        });
+
+
+                    } else {
+                        Utiles.crearToastPersonalizado(context, "No se encontraron datos en la respuesta");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Utiles.crearToastPersonalizado(context, "Error al parsear la respuesta JSON");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Utiles.crearToastPersonalizado(context, "Error al cargar, revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "107");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
     @Override
     public int getItemCount() {
 
         //return filteredData.size();
         return filteredData.size();
+
+    }
+
+
+    private void AbrirModalEditar(String id, String nombre, String email, String telefono, String password, AlertDialog dialogOpcionesUsuarios) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View customView = LayoutInflater.from(context).inflate(R.layout.modal_agregar_usuarios, null);
+        builder.setView(Utiles.ModalRedondeado(context, customView));
+        AlertDialog dialogNuevoEmpleado = builder.create();
+        dialogNuevoEmpleado.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogNuevoEmpleado.show();
+
+
+        Button botonCancelar = customView.findViewById(R.id.botonCancelar);
+        Button botonAceptar = customView.findViewById(R.id.botonAceptar);
+        botonAceptar.setText("Actualizar");
+
+
+        EditText EditTextNombre = customView.findViewById(R.id.EditTextNombre);
+        EditText EditTextCorreo = customView.findViewById(R.id.EditTextCorreo);
+        EditText EditTextTelefono = customView.findViewById(R.id.EditTextTelefono);
+        EditText EditTextClave = customView.findViewById(R.id.EditTextClave);
+
+        TextView textViewSeleccionaArea = customView.findViewById(R.id.textViewSeleccionaArea);
+        TextView textViewTipoEmpresa = customView.findViewById(R.id.textViewTipoEmpresa);
+        TextView textView37 = customView.findViewById(R.id.textView37);
+
+        EditTextNombre.setText(nombre);
+        EditTextCorreo.setText(email);
+        EditTextTelefono.setText(telefono);
+        EditTextClave.setText(password);
+
+        textViewSeleccionaArea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_seleccionar_area, null);
+                builder.setView(Utiles.ModalRedondeado(context, customView));
+                AlertDialog dialogArea = builder.create();
+                dialogArea.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogArea.show();
+
+                LinearLayout LayoutALMACEN = customView.findViewById(R.id.LayoutALMACEN);
+                LinearLayout LayoutAdministrativo = customView.findViewById(R.id.LayoutAdministrativo);
+                LinearLayout LayoutCajas = customView.findViewById(R.id.LayoutCajas);
+                LinearLayout LayoutChofer = customView.findViewById(R.id.LayoutChofer);
+                LinearLayout LayoutGerencia = customView.findViewById(R.id.LayoutGerencia);
+                LinearLayout LayoutHojalateria = customView.findViewById(R.id.LayoutHojalateria);
+                LinearLayout LayoutJefeDeTaller = customView.findViewById(R.id.LayoutJefeDeTaller);
+                LinearLayout LayoutMecanico = customView.findViewById(R.id.LayoutMecanico);
+                LinearLayout LayoutRecepcion = customView.findViewById(R.id.LayoutRecepcion);
+                LinearLayout LayoutRepartidor = customView.findViewById(R.id.LayoutRepartidor);
+                LinearLayout LayoutVendedor = customView.findViewById(R.id.LayoutVendedor);
+                LinearLayout LayoutOtros = customView.findViewById(R.id.LayoutOtros);
+
+
+                LayoutOtros.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("OTROS");
+                        dialogArea.dismiss();
+                    }
+                });
+
+                LayoutVendedor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("VENDEDOR");
+                        dialogArea.dismiss();
+                    }
+                });
+                LayoutRepartidor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("REPARTIDOR");
+                        dialogArea.dismiss();
+                    }
+                });
+
+
+                LayoutRecepcion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("RECEPCION");
+                        dialogArea.dismiss();
+                    }
+                });
+
+                LayoutMecanico.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("MECANICO");
+                        dialogArea.dismiss();
+                    }
+                });
+
+                LayoutJefeDeTaller.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("JEFE DE TALLER");
+                        dialogArea.dismiss();
+                    }
+                });
+                LayoutHojalateria.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("HOJALATERIA");
+                        dialogArea.dismiss();
+                    }
+                });
+
+                LayoutGerencia.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("GERENCIA");
+                        dialogArea.dismiss();
+                    }
+                });
+
+
+                LayoutChofer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("CHOFER");
+                        dialogArea.dismiss();
+                    }
+                });
+
+                LayoutCajas.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("CAJAS");
+                        dialogArea.dismiss();
+                    }
+                });
+                LayoutAdministrativo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("ADMINISTRATIVO");
+                        dialogArea.dismiss();
+                    }
+                });
+
+
+                LayoutALMACEN.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        textViewSeleccionaArea.setText("ALMACEN");
+                        dialogArea.dismiss();
+                    }
+                });
+
+
+            }
+        });
+
+
+        textView37.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_seleccoion_tipo_usuario, null);
+                builder.setView(Utiles.ModalRedondeado(context, customView));
+                AlertDialog dialogTipoUsuario = builder.create();
+                dialogTipoUsuario.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogTipoUsuario.show();
+
+                LinearLayout LayoutSuperAdmin = customView.findViewById(R.id.LayoutSuperAdmin);
+                LinearLayout LayoutChofer = customView.findViewById(R.id.LayoutChofer);
+                LinearLayout LayoutMecanico = customView.findViewById(R.id.LayoutMecanico);
+                LinearLayout LayoutCortes = customView.findViewById(R.id.LayoutCortes);
+                LinearLayout LayoutRecepcion = customView.findViewById(R.id.LayoutRecepcion);
+                LinearLayout LayoutJefeDeTaller = customView.findViewById(R.id.LayoutJefeDeTaller);
+                LinearLayout LayoutAlmacenista = customView.findViewById(R.id.LayoutAlmacenista);
+                LinearLayout LayoutPreventa = customView.findViewById(R.id.LayoutPreventa);
+                LinearLayout LayoutRepartidor = customView.findViewById(R.id.LayoutRepartidor);
+
+                LayoutRepartidor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("REPARTIDOR");
+                    }
+                });
+
+                LayoutPreventa.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("PREVENTA");
+                    }
+                });
+
+
+                LayoutAlmacenista.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("ALMACENISTA");
+                    }
+                });
+                LayoutJefeDeTaller.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("JEFE DE TALLER");
+                    }
+                });
+                LayoutRecepcion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("RECEPCION");
+                    }
+                });
+                LayoutCortes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("CORTES");
+                    }
+                });
+                LayoutMecanico.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("MECANICO");
+                    }
+                });
+
+                LayoutChofer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("CHOFER");
+                    }
+                });
+
+                LayoutSuperAdmin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogTipoUsuario.dismiss();
+                        textView37.setText("SUPERADMIN");
+                    }
+                });
+
+
+            }
+        });
+
+        textViewTipoEmpresa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_seleccionar_empresa, null);
+                builder.setView(Utiles.ModalRedondeado(context, customView));
+                AlertDialog dialogEmpresa = builder.create();
+                dialogEmpresa.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogEmpresa.show();
+
+                LinearLayout LayoutAbarroteraHidalgo = customView.findViewById(R.id.LayoutAbarroteraHidalgo);
+                LinearLayout LayoutBitala = customView.findViewById(R.id.LayoutBitala);
+                LinearLayout LayoutAlcobo = customView.findViewById(R.id.LayoutAlcobo);
+                LinearLayout LayoutLicJorge = customView.findViewById(R.id.LayoutLicJorge);
+                LinearLayout LayoutTallerGeorgio = customView.findViewById(R.id.LayoutTallerGeorgio);
+
+                LayoutAbarroteraHidalgo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogEmpresa.dismiss();
+                        textViewTipoEmpresa.setText("ABARROTERA HIDALGO");
+                    }
+                });
+
+                LayoutBitala.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogEmpresa.dismiss();
+                        textViewTipoEmpresa.setText("BITALA");
+                    }
+                });
+
+                LayoutAlcobo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogEmpresa.dismiss();
+                        textViewTipoEmpresa.setText("ALCOBO");
+                    }
+                });
+
+                LayoutLicJorge.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogEmpresa.dismiss();
+                        textViewTipoEmpresa.setText("LIC JORGE");
+                    }
+                });
+
+                LayoutTallerGeorgio.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogEmpresa.dismiss();
+                        textViewTipoEmpresa.setText("TALLER GEORGIO");
+                    }
+                });
+
+
+            }
+        });
+
+
+        botonAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                String nombreUsuario = EditTextNombre.getText().toString();
+                String correoUsuario = EditTextCorreo.getText().toString();
+                String telefonoUsuario = EditTextTelefono.getText().toString().trim();
+                String password = EditTextClave.getText().toString();
+
+                String area = textViewSeleccionaArea.getText().toString().trim();
+                String empresa = textViewTipoEmpresa.getText().toString();
+                String tipoEmpleado = textView37.getText().toString().trim();
+
+
+
+
+                if (nombreUsuario.isEmpty() || correoUsuario.isEmpty() || telefonoUsuario.isEmpty() || password.isEmpty() || area.equalsIgnoreCase("Selecciona el area de empleado")
+                        || empresa.equalsIgnoreCase("Selecciona una empresa") || tipoEmpleado.equalsIgnoreCase("Selecciona un tipo de empleado")) {
+                    Utiles.crearToastPersonalizado(context, "Debes llenar todos los campos");
+                } else {
+                    dialogNuevoEmpleado.dismiss();
+                    actionListener.EditarUsuario(nombreUsuario, correoUsuario, telefonoUsuario, password, tipoEmpleado, empresa, area, id, dialogOpcionesUsuarios);
+
+                }
+
+
+            }
+        });
+
+        botonCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogNuevoEmpleado.dismiss();
+            }
+        });
+
 
     }
 
@@ -333,6 +912,11 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
 
         void onValidarCheckDiario(String ID_usuario, View view, String nombre);
 
+        void onActualizarEncargado(String idusuario);
+
+        void AgregarUsuario(String nombre, String correo, String telefono, String clave, String permisos, String empresa, String area);
+
+        void EditarUsuario(String nombre, String correo, String telefono, String clave, String permisos, String empresa, String area, String id, AlertDialog dialogOpcionesUsuarios);
     }
 
     private AdaptadorProductividadMecanicos.OnActivityActionListener actionListener;

@@ -76,15 +76,17 @@ public class AdaptadorNuevosChecks extends RecyclerView.Adapter<AdaptadorNuevosC
                 holder.buenoRadioButton.setChecked(true);
                 holder.regularRadioButton.setChecked(false);
                 holder.textPendiente.setVisibility(View.GONE);
-                holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_verdesito);
+         //       holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_verdesito);
 
+                holder.textPendiente.setBackgroundResource(0);
             } else if (valor_check.equalsIgnoreCase("Malo")) {
                 holder.maloRadioButton.setChecked(true);
                 holder.buenoRadioButton.setChecked(false);
                 holder.regularRadioButton.setChecked(false);
                 holder.textPendiente.setVisibility(View.GONE);
 
-                holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_verdesito);
+                holder.textPendiente.setBackgroundResource(0);
+         //       holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_verdesito);
 
             } else if (valor_check.equalsIgnoreCase("Regular")) {
 
@@ -93,12 +95,14 @@ public class AdaptadorNuevosChecks extends RecyclerView.Adapter<AdaptadorNuevosC
                 holder.regularRadioButton.setChecked(true);
                 holder.textPendiente.setVisibility(View.GONE);
 
-                holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_verdesito);
+                holder.textPendiente.setBackgroundResource(0);
+         //       holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_verdesito);
 
             } else {
 
 
-                holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_amarillo);
+                holder.textPendiente.setBackgroundResource(R.drawable.textview_outline3);
+          //      holder.contenedorChecks.setBackgroundResource(R.drawable.contorno_amarillo);
 
                 holder.maloRadioButton.setChecked(false);
                 holder.buenoRadioButton.setChecked(false);

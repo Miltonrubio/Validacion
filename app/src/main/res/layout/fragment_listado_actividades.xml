@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/verdesito"
+    android:background="@color/azulitoSuave"
     tools:context=".ListadoActividadesFragment">
 
 
@@ -96,12 +96,12 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/gris"
+            android:backgroundTint="@color/azulitoSuave"
             android:src="@drawable/baseline_add_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:shapeAppearanceOverlay="@style/RoundedShape"
-            app:tint="@color/verdefuerte" />
+            app:tint="@color/black" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
