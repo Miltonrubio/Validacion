@@ -307,6 +307,13 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 editTextMotivoIngreso = customView.findViewById(R.id.editTextMotivoIngreso);
 
 
+                tvNumInyectores = customView.findViewById(R.id.tvNumInyectores);
+                EditTextNumInyectores = customView.findViewById(R.id.EditTextNumInyectores);
+
+
+                tvNumInyectores.setVisibility(View.GONE);
+                EditTextNumInyectores.setVisibility(View.GONE);
+
                 ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, opciones);
                 adaptadorGas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 SpinnerGasolina.setAdapter(adaptadorGas);
@@ -335,13 +342,14 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
                         String km;
 
+                        String numeroInyectores;
+
                         if (motivoIngreso.isEmpty() || id_serv_unidad.isEmpty() || id_ser_cliente.isEmpty()) {
 
                             Utiles.crearToastPersonalizado(context, "Debes completar todos los campos");
 
                         } else {
 
-                            dialogNuevoServicio.dismiss();
 
                             if (editTextKilometraje.getVisibility() == View.VISIBLE) {
                                 km = editTextKilometraje.getText().toString().trim();
@@ -350,15 +358,41 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                                 km = "N/A";
                             }
 
+
                             if (SpinnerGasolina.getVisibility() == View.VISIBLE) {
                                 valorGas = valorGas;
                             } else {
                                 valorGas = "N/A";
                             }
 
-                            AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad);
-                        }
 
+                            if (EditTextNumInyectores.getVisibility() == View.VISIBLE) {
+                                numeroInyectores = EditTextNumInyectores.getText().toString().trim();
+
+                                try {
+                                    int numeroInyect = Integer.parseInt(numeroInyectores);
+                                    if (numeroInyect < 1) {
+                                        Utiles.crearToastPersonalizado(context, "No puedes ingresar un número menor a 1");
+
+                                    } else {
+
+                                        AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad, numeroInyectores);
+
+                                        dialogNuevoServicio.dismiss();
+                                    }
+                                } catch (NumberFormatException e) {
+
+                                    Utiles.crearToastPersonalizado(context, "No puedes ingresar decimales u otros digitos");
+                                }
+
+                            } else {
+                                numeroInyectores = "NoAplica";
+
+                                AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad,numeroInyectores);
+
+                                dialogNuevoServicio.dismiss();
+                            }
+                        }
 
                     }
                 });
@@ -1154,7 +1188,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
         textSeleccionarUnidad.setText(marca.toUpperCase() + " " + modelo.toUpperCase());
 
-      //  Utiles.crearToastPersonalizado(context, "Foto: " + foto);
+        //  Utiles.crearToastPersonalizado(context, "Foto: " + foto);
         mostrarFormularios(tipo);
 
     }
@@ -1165,6 +1199,10 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     Spinner SpinnerGasolina;
     TextView gasolinaTV;
     TextView KilometrajeTV;
+
+    EditText EditTextNumInyectores;
+    TextView tvNumInyectores;
+
 
     private void mostrarFormularios(String tipoSeleccionado) {
 
@@ -1200,6 +1238,16 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         } else {
                             editTextKilometraje.setVisibility(View.GONE);
                             KilometrajeTV.setVisibility(View.GONE);
+                        }
+
+
+                        if (tipoSeleccionado.equalsIgnoreCase("Inyector")) {
+                            EditTextNumInyectores.setVisibility(View.VISIBLE);
+                            tvNumInyectores.setVisibility(View.VISIBLE);
+                        } else {
+
+                            EditTextNumInyectores.setVisibility(View.GONE);
+                            tvNumInyectores.setVisibility(View.GONE);
                         }
 
                         if (gasolina.equalsIgnoreCase("1")) {
@@ -1324,10 +1372,11 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     }
 */
 
-    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio, String foto, String tipounidad) {
+    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio, String foto, String tipounidad,String numeroInyectores) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.d("Insertar servicio: ", response);
 
                 VisualizarServicios();
                 Utiles.crearToastPersonalizado(context, "Servicio Agregado");
@@ -1336,26 +1385,12 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Utiles.crearToastPersonalizado(context, "Hubo un error");
+                Utiles.crearToastPersonalizado(context, "Error " + error.getMessage());
 
             }
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                /*
-                params.put("opcion", "21");
-                params.put("id_ser_cliente", id_ser_cliente);
-                params.put("idunidad", idunidad);
-                params.put("km", km);
-                params.put("gas", gas);
-                params.put("motivo", motivo);
-                params.put("marca", marca);
-                params.put("modelo", modelo);
-                params.put("motor", motor);
-                params.put("vin", vin);
-                params.put("placas", placas);
-                params.put("anio", anio);
-                return params;*/
 
                 params.put("opcion", "102");
                 params.put("id_ser_cliente", id_ser_cliente);
@@ -1371,6 +1406,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 params.put("anio", anio);
                 params.put("tipounidad", tipounidad);
                 params.put("foto", foto);
+                params.put("numeroInyectores", numeroInyectores);
                 return params;
             }
         };

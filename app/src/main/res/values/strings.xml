@@ -6,42 +6,20 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <!--
- <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgiotemp/ApiTallerGeorgio-GeorgioMovil/Controllers/Apiback.php</string>
-
-    <string name="ApiBack">http://192.168.16.162/apitallergeorgio-georgiomovil/Controllers/Apiback.php</string>
 
 
 
-    URLS SERVIDOR DE PRUEBA:
-
-    <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgiotemp/ApiTallerGeorgio-GeorgioMovil/Controllers/Apiback.php</string>
-
-    <string name="urlPDFActividades">http://tallergeorgio.hopto.org:5611/georgiotemp/web/Controlador/ReportePDFActMec.php</string>
-
-
-    <string name="ApiBack">http://192.168.16.162/apitallergeorgio-georgiomovil/Controllers/Apiback.php</string>
-
-    <string name="urlPDFActividades">http://tallergeorgio.hopto.org:5611/georgiotemp/web/Controlador/ReportePDFActMec.php</string>
-
-
-    <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgiotemp/ApiTallerGeorgio-GeorgioMovil/Controllers/Apiback.php</string>
-
-    <string name="ApiBack">http://192.168.16.162/apitallergeorgio-georgiomovil/Controllers/Apiback.php</string>
-
-    <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php</string>
-
-
-    <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php</string>
-
-
-    <string name="ApiBack">http://192.168.16.162:8888/apitallergeorgio-georgiomovil/Controllers/Apiback.php</string>
-    -->
-
+    <string name="ApiBack">http://192.168.16.192/apitallergeorgio-georgiomovil/Controllers/Apiback.php</string>
 
     <string name="ApiBack">http://tallergeorgio.hopto.org:5611/georgioapp/georgioapi/Controllers/Apiback.php</string>
 
     <string name="urlPDFActividades">http://tallergeorgio.hopto.org:5611/georgioapp/georgio/web/Controlador/ReportePDFActMec.php</string>
 
+-->
+
+
+    <string name="ApiBack">http://192.168.0.37:8888/ApiTallerGeorgio-GeorgioMovil/Controllers/Apiback.php</string>
+    <string name="urlPDFActividades">http://tallergeorgio.hopto.org:5611/georgioapp/georgio/web/Controlador/ReportePDFActMec.php</string>
 
 
     <!--

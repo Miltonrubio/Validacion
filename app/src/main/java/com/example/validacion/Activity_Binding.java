@@ -28,22 +28,12 @@ public class Activity_Binding extends AppCompatActivity {
 
         binding = ActivityBindingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-/*
-        SharedPreferences sharedPreferences = getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-
-        String permisosUsuario = sharedPreferences.getString("permisos", "");
-*/
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.menu_home):
                     replaceFragment(new HomeFragment());
                     break;
-            /*    case (R.id.menu_actividades):
-                    replaceFragment(new ActividadesFragment());
-                    break;
-
-             */
                 case (R.id.menu_usuario):
                     replaceFragment(new UsuariosFragment());
                     break;
@@ -54,13 +44,17 @@ public class Activity_Binding extends AppCompatActivity {
                     replaceFragment(new InventarioFragment());
                     break;
 
+                case (R.id.inyectores):
+                    replaceFragment(new InyectoresFragment());
+                    break;
+
             }
             return true;
         });
 
  //       setupMenu(permisosUsuario);
         binding.bottomNavigationView.setSelectedItemId(R.id.menu_home);
-        binding.bottomNavigationView.getMenu().findItem(R.id.menu_actividades).setVisible(false);
+      //  binding.bottomNavigationView.getMenu().findItem(R.id.menu_actividades).setVisible(false);
 
     }
 /*

@@ -13,6 +13,55 @@
 
 
         <LinearLayout
+            android:id="@+id/linearLayout8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:src="@drawable/screwdriver_wrench_solid"
+                    app:tint="@color/azulito" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="REFACCIONES"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -269,6 +318,44 @@
 
 
             </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/LayoutGestionarInyectores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:src="@drawable/gear_solid"
+                    app:tint="@color/azulito" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="GESTIONAR INYECTORES"
+                    android:textColor="@color/azulito"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -388,8 +475,8 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
-                    android:padding="6dp"
                     android:gravity="center"
+                    android:padding="6dp"
                     android:src="@drawable/screwdriver_wrench_solid"
                     app:tint="@color/azulito" />
 
@@ -425,8 +512,8 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
-                    android:padding="6dp"
                     android:gravity="center"
+                    android:padding="6dp"
                     android:src="@drawable/file_pdf_solid"
                     app:tint="@color/azulito" />
 
@@ -443,6 +530,8 @@
 
 
             </LinearLayout>
+
+
         </LinearLayout>
 
 

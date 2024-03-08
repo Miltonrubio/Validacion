@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -110,32 +109,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/EditTextNumInyectores" />
 
-        <TextView
-            android:id="@+id/gasolina"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="Gasolina con la que ingreso:"
-            android:textSize="17dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextKilometraje" />
-
-        <TextView
-            android:id="@+id/Kilometraje"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="Kilometraje con el que ingreso:"
-            android:textSize="17dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textSeleccionarUnidad" />
-
 
         <EditText
             android:id="@+id/editTextMotivoIngreso"
@@ -151,24 +124,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ingreso" />
-
-        <EditText
-            android:id="@+id/editTextKilometraje"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/textview_outline"
-            android:hint="Ingresa el kilometraje"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="16dp"
-            android:phoneNumber="true"
-            android:textSize="18dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Kilometraje" />
 
 
         <TextView
@@ -223,23 +178,6 @@
                 android:src="@drawable/user_plus_solid" />
 
         </LinearLayout>
-
-        <Spinner
-            android:id="@+id/SpinnerGasolina"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="14dp"
-            android:background="@drawable/textview_outline"
-            android:hint="Ingresa el kilometraje"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="16dp"
-            android:textSize="18dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gasolina" />
 
         <Button
             android:id="@+id/buttonGuardar"

@@ -207,7 +207,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
             @Override
             public void onClick(View view) {
 
-                mostrarModalOpciones(context, bundle, estatus, id_ser_venta, hayfoto, haymecanico, haychecklist, haycheckTecnico, haycheckSalida, iddoc, haypago, id_ser_cliente);
+                mostrarModalOpciones(context, bundle, estatus, id_ser_venta, hayfoto, haymecanico, haychecklist, haycheckTecnico, haycheckSalida, iddoc, haypago, id_ser_cliente, tipounidad);
 
 
                 /*
@@ -248,7 +248,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
     }
 
 
-    private void mostrarModalOpciones(Context context, Bundle bundle, String estatus, String id_ser_venta, String hayfoto, String haymecanico, String haychecklist, String haycheckTecnico, String haycheckSalida, String iddoc, String haypago, String id_ser_cliente) {
+    private void mostrarModalOpciones(Context context, Bundle bundle, String estatus, String id_ser_venta, String hayfoto, String haymecanico, String haychecklist, String haycheckTecnico, String haycheckSalida, String iddoc, String haypago, String id_ser_cliente, String tipounidad) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View customView = LayoutInflater.from(context).inflate(R.layout.modal_nuevos_botones_coches, null);
@@ -264,6 +264,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         LinearLayout LayoutCheckListTecnico = customView.findViewById(R.id.LayoutCheckListTecnico);
         LinearLayout LayoutCambiarStatus = customView.findViewById(R.id.LayoutCambiarStatus);
         LinearLayout LayoutAsignarMecanico = customView.findViewById(R.id.LayoutAsignarMecanico);
+        LinearLayout LayoutGestionarInyectores = customView.findViewById(R.id.LayoutGestionarInyectores);
         LinearLayout LayoutConsultarPago = customView.findViewById(R.id.LayoutConsultarPago);
         LinearLayout LayoutRefacciones = customView.findViewById(R.id.LayoutRefacciones);
         LinearLayout LayoutReportes = customView.findViewById(R.id.LayoutReportes);
@@ -293,6 +294,37 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         int colorIconoCheck = 0;
         int colorIconoTecnico = 0;
         int colorIconoCerdito = 0;
+
+
+        if (tipounidad.equalsIgnoreCase("Inyectores") || tipounidad.equalsIgnoreCase("Inyector")) {
+            LayoutGestionarInyectores.setVisibility(View.VISIBLE);
+            LayoutAsignarMecanico.setVisibility(View.GONE);
+        } else {
+            LayoutGestionarInyectores.setVisibility(View.GONE);
+            LayoutAsignarMecanico.setVisibility(View.VISIBLE);
+        }
+
+
+        LayoutGestionarInyectores.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ConsultarInyectoresDeUnidad(id_ser_venta);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_inyectores, null);
+                builder.setView(ModalRedondeado(context, customView));
+                AlertDialog dialogConBotones = builder.create();
+                dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogConBotones.show();
+
+                RecyclerView recyclerViewInyectores = customView.findViewById(R.id.recyclerViewInyectores);
+
+                adaptadorInyectores = new AdaptadorInyectores(listaInyectores, context);
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
+                recyclerViewInyectores.setLayoutManager(gridLayoutManager);
+                recyclerViewInyectores.setAdapter(adaptadorInyectores);
+            }
+        });
 
 
         //  if (iddoc.equalsIgnoreCase("") || iddoc.isEmpty() || iddoc.equalsIgnoreCase("null") || iddoc.equalsIgnoreCase(null)) {
@@ -2434,6 +2466,59 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
     RecyclerView recyclerRefacciones;
 
     TextView textSinRef;
+
+
+    AdaptadorInyectores adaptadorInyectores;
+
+    List<JSONObject> listaInyectores = new ArrayList<>();
+
+    private void ConsultarInyectoresDeUnidad(String id_ser_venta) {
+        modalCargando = Utiles.ModalCargando(context, builder);
+        listaInyectores.clear();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("Respuesta de api de inyectores", response);
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        listaInyectores.add(jsonObject);
+                    }
+                    adaptadorInyectores.notifyDataSetChanged();
+                    adaptadorInyectores.setFilteredData(listaInyectores);
+                    adaptadorInyectores.filter("");
+                    modalCargando.dismiss();
+
+                } catch (JSONException e) {
+
+                    Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+                    modalCargando.dismiss();
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+                modalCargando.dismiss();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "116");
+                params.put("id_ser_venta", id_ser_venta);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
 
     private void ConsultarHerramientasFerrum() {
         modalCargando = Utiles.ModalCargando(context, builder);
