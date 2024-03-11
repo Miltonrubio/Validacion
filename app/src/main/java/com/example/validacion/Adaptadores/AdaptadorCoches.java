@@ -295,12 +295,12 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         int colorIconoTecnico = 0;
         int colorIconoCerdito = 0;
 
-
+        LayoutGestionarInyectores.setVisibility(View.GONE);
+/*
         if (tipounidad.equalsIgnoreCase("Inyectores") || tipounidad.equalsIgnoreCase("Inyector")) {
             LayoutGestionarInyectores.setVisibility(View.VISIBLE);
             LayoutAsignarMecanico.setVisibility(View.GONE);
         } else {
-            LayoutGestionarInyectores.setVisibility(View.GONE);
             LayoutAsignarMecanico.setVisibility(View.VISIBLE);
         }
 
@@ -313,19 +313,19 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 View customView = LayoutInflater.from(context).inflate(R.layout.modal_inyectores, null);
                 builder.setView(ModalRedondeado(context, customView));
-                AlertDialog dialogConBotones = builder.create();
-                dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialogConBotones.show();
+                AlertDialog dialogInyectoresPorServicio = builder.create();
+                dialogInyectoresPorServicio.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogInyectoresPorServicio.show();
 
                 RecyclerView recyclerViewInyectores = customView.findViewById(R.id.recyclerViewInyectores);
 
-                adaptadorInyectores = new AdaptadorInyectores(listaInyectores, context);
+                adaptadorInyectores = new AdaptadorInyectores(listaInyectores, context, dialogInyectoresPorServicio);
                 GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
                 recyclerViewInyectores.setLayoutManager(gridLayoutManager);
                 recyclerViewInyectores.setAdapter(adaptadorInyectores);
             }
         });
-
+*/
 
         //  if (iddoc.equalsIgnoreCase("") || iddoc.isEmpty() || iddoc.equalsIgnoreCase("null") || iddoc.equalsIgnoreCase(null)) {
 

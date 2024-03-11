@@ -23,14 +23,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="5"
+            android:gravity="center"
             android:orientation="vertical">
 
 
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/imageView2"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                app:riv_corner_radius="40dp"
+                android:scaleType="centerCrop"
                 android:layout_weight="1"
                 android:src="@drawable/inyectorpng"
                 app:layout_constraintStart_toStartOf="parent"
@@ -85,6 +89,22 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView2"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
+            <TextView
+                android:id="@+id/motivoIngreso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondeado_azulito"
+                android:gravity="center"
+                android:padding="6dp"
+                android:text="Motivo de ingreso"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </LinearLayout>
 

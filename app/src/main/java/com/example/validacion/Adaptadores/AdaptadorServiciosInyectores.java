@@ -33,9 +33,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<AdaptadorServiciosInyectores.ViewHolder> {
@@ -72,29 +76,55 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
             String MarcaCoche = jsonObject2.optString("MarcaCoche", "");
             String ModeloCoche = jsonObject2.optString("ModeloCoche", "");
             String iddoc = jsonObject2.optString("iddoc", "");
-            String hay_foto = jsonObject2.optString("hay_foto", "");
+            String foto_inyector = jsonObject2.optString("foto_inyector", "");
             String nombre = jsonObject2.optString("nombre", "");
+            String motivo_ingreso = jsonObject2.optString("motivo_ingreso", "");
 
-            holder.fechaServicio.setText(fecha_ingreso + " " + hora_ingreso);
-            holder.MarcaModelo.setText(MarcaCoche.toUpperCase() + " " + ModeloCoche.toUpperCase());
+
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date_inicio = inputFormat.parse(fecha_ingreso);
+
+                SimpleDateFormat outputFormatFecha = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new DateFormatSymbols(new Locale("es", "ES")));
+                String fecha_formateada = outputFormatFecha.format(date_inicio);
+
+                try {
+                    SimpleDateFormat inputFormatHora = new SimpleDateFormat("HH:mm:ss");
+                    Date time = inputFormatHora.parse(hora_ingreso);
+
+                    SimpleDateFormat outputFormatHora = new SimpleDateFormat("hh:mm a");
+                    String hora_formateada_inicio = outputFormatHora.format(time);
+
+                    holder.fechaServicio.setText(fecha_formateada + ". A las " + hora_formateada_inicio);
+                } catch (Exception e) {
+                    holder.fechaServicio.setText("Fecha no disponible");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            holder.MarcaModelo.setText(MarcaCoche.toUpperCase() + " - " + ModeloCoche.toUpperCase());
             holder.nombrecliente.setText(nombre);
 
+            holder.motivoIngreso.setText(motivo_ingreso);
 
             holder.contenedorServicioInyector.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    ConsultarInyectoresDeUnidad(ID_serv_inyector);
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     View customView = LayoutInflater.from(context).inflate(R.layout.modal_inyectores, null);
                     builder.setView(ModalRedondeado(context, customView));
-                    AlertDialog dialogConBotones = builder.create();
-                    dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    dialogConBotones.show();
+                    AlertDialog dialogInyectoresPorServicio = builder.create();
+                    dialogInyectoresPorServicio.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogInyectoresPorServicio.show();
 
                     RecyclerView recyclerViewInyectores = customView.findViewById(R.id.recyclerViewInyectores);
 
-                    adaptadorInyectores = new AdaptadorInyectores(listaInyectores, context);
+                    ConsultarInyectoresDeUnidad(ID_serv_inyector);
+                    adaptadorInyectores = new AdaptadorInyectores(listaInyectores, context, dialogInyectoresPorServicio,actionListenerInyectores );
                     GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
                     recyclerViewInyectores.setLayoutManager(gridLayoutManager);
                     recyclerViewInyectores.setAdapter(adaptadorInyectores);
@@ -175,6 +205,8 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
         TextView fechaServicio;
         ConstraintLayout contenedorServicioInyector;
 
+        TextView motivoIngreso;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nombrecliente = itemView.findViewById(R.id.nombrecliente);
@@ -182,7 +214,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
             nombrecliente = itemView.findViewById(R.id.nombrecliente);
             fechaServicio = itemView.findViewById(R.id.fechaServicio);
             contenedorServicioInyector = itemView.findViewById(R.id.contenedorServicioInyector);
-
+            motivoIngreso = itemView.findViewById(R.id.motivoIngreso);
         }
     }
 
@@ -224,7 +256,10 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
     AlertDialog.Builder builder;
     AlertDialog modalCargando;
 
-    public AdaptadorServiciosInyectores(List<JSONObject> data, Context context) {
+
+    AdaptadorInyectores.OnActivityActionListener actionListenerInyectores;
+
+    public AdaptadorServiciosInyectores(List<JSONObject> data, Context context, AdaptadorInyectores.OnActivityActionListener actionListenerInyectores ) {
 
         this.data = data;
         this.context = context;
@@ -233,7 +268,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
         builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
-
+        this.actionListenerInyectores=actionListenerInyectores;
     }
 
 }
