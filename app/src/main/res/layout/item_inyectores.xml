@@ -11,12 +11,12 @@
     android:elevation="6dp"
     android:foregroundGravity="center"
     android:paddingHorizontal="6dp"
-    android:paddingVertical="13dp">
+    android:paddingVertical="6dp">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imageView2"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:scaleType="centerCrop"
         android:src="@drawable/inyectorpng"
 
@@ -33,7 +33,7 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="nombre inyector"
-        android:textSize="17dp"
+        android:textSize="14dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -9,7 +9,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +58,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +100,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
             String hay_check = jsonObject2.optString("hay_check", "");
             String hay_mecanico = jsonObject2.optString("hay_mecanico", "");
 
+            String tipo = jsonObject2.optString("tipo", "");
 
             Bundle bundle = new Bundle();
             bundle.putString("ID_inyector", ID_inyector);
@@ -106,7 +110,12 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
             holder.nombreinyector.setText(nombre_inyector.toUpperCase());
 
 
+
+
             String image = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto_inyector;
+
+            
+
             Glide.with(context)
                     .load(image)
                     .skipMemoryCache(false)
@@ -131,7 +140,10 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
 
                     LinearLayout LayoutCheckSalida = customView.findViewById(R.id.LayoutCheckSalida);
                     LinearLayout LayoutAsigMec = customView.findViewById(R.id.LayoutAsigMec);
+                    LinearLayout LayoutRefacciones = customView.findViewById(R.id.LayoutRefacciones);
                     LinearLayout LayoutFotoInyector = customView.findViewById(R.id.LayoutFotoInyector);
+                    LinearLayout finalizarInyector = customView.findViewById(R.id.finalizarInyector);
+                    LinearLayout ContendorBotonFinalizar = customView.findViewById(R.id.ContendorBotonFinalizar);
 
 
                     ImageView iconoFoto = customView.findViewById(R.id.iconoFoto);
@@ -148,7 +160,61 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                     int colorIconoMecanico = 0;
                     int colorIconoFoto = 0;
 
-                    if (foto_inyector.equalsIgnoreCase("Default,jpg") || foto_inyector.equalsIgnoreCase("") || foto_inyector.isEmpty() || foto_inyector == null) {
+
+                    if (foto_inyector.equalsIgnoreCase("Default.jpg") || foto_inyector.equalsIgnoreCase("") || foto_inyector.isEmpty() || foto_inyector == null || hay_check.equalsIgnoreCase("NO") || hay_mecanico.equalsIgnoreCase("NO")) {
+
+                        ContendorBotonFinalizar.setVisibility(View.GONE);
+
+                    } else if (status_inyector.equalsIgnoreCase("Finalizado")) {
+
+                        ContendorBotonFinalizar.setVisibility(View.GONE);
+                    } else {
+                        ContendorBotonFinalizar.setVisibility(View.VISIBLE);
+
+                    }
+
+
+                    finalizarInyector.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
+                            builder.setView(ModalRedondeado(context, customView));
+                            AlertDialog dialogConfirmacion = builder.create();
+                            dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogConfirmacion.show();
+
+
+                            TextView textView4 = customView.findViewById(R.id.textView4);
+                            textView4.setText("¿Seguro que deseas finalizar la revision de este inyector? \n\nRecuerda que no podras modificarlo despues");
+
+                            Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                            Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+
+                            buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogConfirmacion.dismiss();
+                                    dialogOpcionesInyectores.dismiss();
+                                   actionListener.FinalizarRevisionInyector(ID_inyector);
+                                }
+                            });
+
+
+                            buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogConfirmacion.dismiss();
+                                }
+                            });
+                        }
+                    });
+
+
+                    if (foto_inyector.equalsIgnoreCase("Default.jpg") || foto_inyector.equalsIgnoreCase("") || foto_inyector.isEmpty() || foto_inyector == null) {
 
                         colorIconoFoto = ContextCompat.getColor(context, R.color.rojo);
                         textFoto.setTextColor(ContextCompat.getColor(context, R.color.rojo));
@@ -185,12 +251,20 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                     iconoFoto.setColorFilter(colorIconoFoto);
 
 
+                    LayoutRefacciones.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ModalRefacciones(status_inyector, ID_inyector);
+                        }
+                    });
+
+
                     LayoutCheckSalida.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
                             dialogOpcionesInyectores.dismiss();
-                            dialogInyectoresPorServicio.dismiss();
+                            //   dialogInyectoresPorServicio.dismiss();
                             ChecksInyectoresFragment checksFragment = new ChecksInyectoresFragment();
                             checksFragment.setArguments(bundle);
 
@@ -381,9 +455,9 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                                                 dialogAgregarMecanico.dismiss();
                                                 dialogMostrarMecanicosAsignados.dismiss();
                                                 //   dialogOpcionesCoches.dismiss();
-
-                                              actionListener.onAsignarManoDeObraInyector( ID_inyector,  ID_mecSelec, descripcionActividad);
-                                              //  Utiles.crearToastPersonalizado(context, ID_inyector + " " + ID_mecSelec + " " + descripcionActividad);
+                                                dialogOpcionesInyectores.dismiss();
+                                                actionListener.onAsignarManoDeObraInyector(ID_inyector, ID_mecSelec, descripcionActividad);
+                                                //  Utiles.crearToastPersonalizado(context, ID_inyector + " " + ID_mecSelec + " " + descripcionActividad);
                                             }
                                         }
                                     });
@@ -512,16 +586,696 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
         notifyDataSetChanged();
     }
 
-    AlertDialog dialogInyectoresPorServicio;
+
+    ConstraintLayout SinContenido;
+    RecyclerView recyclerViewRefaccionesUnidades;
+    AdaptadorRefaccionesDeUnidad adaptadorRefaccionesDeUnidad;
+
+    List<JSONObject> listaRefaccionesDeUnidad = new ArrayList<>();
+
+    private void ModalRefacciones(String estatus, String id_inyector) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View customView = LayoutInflater.from(context).inflate(R.layout.modal_refacciones_coches, null);
+        builder.setView(ModalRedondeado(context, customView));
+        AlertDialog dialogBuscarRefacciones = builder.create();
+        dialogBuscarRefacciones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogBuscarRefacciones.show();
+
+        FloatingActionButton botonAgregar = customView.findViewById(R.id.botonAgregar);
+
+        if (estatus.equalsIgnoreCase("ENTREGADO")) {
+            botonAgregar.setVisibility(View.GONE);
+        } else {
+            botonAgregar.setVisibility(View.VISIBLE);
+        }
+
+
+        SinContenido = customView.findViewById(R.id.SinContenido);
+        recyclerViewRefaccionesUnidades = customView.findViewById(R.id.recyclerViewRefaccionesUnidades);
+
+        TextView textView32 = customView.findViewById(R.id.textView32);
+        textView32.setText("REFACCIONES DEL INYECTOR: #" + id_inyector);
+
+
+        ConsultarHerramientasDeUnidad(id_inyector);
+
+        adaptadorRefaccionesDeUnidad = new AdaptadorRefaccionesDeUnidad(listaRefaccionesDeUnidad, context);
+        recyclerViewRefaccionesUnidades.setLayoutManager(new LinearLayoutManager(context));
+
+
+        adaptadorRefaccionesDeUnidad.setOnItemClickListener(new AdaptadorRefaccionesDeUnidad.OnItemClickListener() {
+            @Override
+            public void onItemClick(String idrefaccion, String descripcion, String clave, String observaciones) {
+                      /*  id_modeloSeleccionado = id_modelo;
+                        modeloSeleccionado = nombreModelo;
+                        dialogModelos.dismiss();
+*/
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_opciones_refacciones, null);
+                builder.setView(ModalRedondeado(context, customView));
+                AlertDialog dialogOpcionesDeRefaccion = builder.create();
+                dialogOpcionesDeRefaccion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogOpcionesDeRefaccion.show();
+
+
+                LinearLayout btnComentario = customView.findViewById(R.id.btnComentario);
+                LinearLayout btnEliminar = customView.findViewById(R.id.btnEliminar);
+
+
+                btnComentario.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
+                        builder.setView(ModalRedondeado(context, customView));
+                        AlertDialog dialogConfirmacion = builder.create();
+                        dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogConfirmacion.show();
+
+
+                        EditText Motivo = customView.findViewById(R.id.Motivo);
+                        Motivo.setVisibility(View.VISIBLE);
+
+                        if (observaciones.isEmpty() || observaciones == null || observaciones.equalsIgnoreCase("null") || observaciones.equalsIgnoreCase("")) {
+
+                            Motivo.setHint("Ingresa un comentario");
+                        } else {
+
+                            Motivo.setText(observaciones);
+                        }
+
+
+                        TextView textView4 = customView.findViewById(R.id.textView4);
+                        textView4.setText("Agrega un comentario a esta refacciòn");
+                        Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                        Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+
+                        if (estatus.equalsIgnoreCase("ENTREGADO")) {
+                            buttonAceptar.setEnabled(false);
+                            Motivo.setEnabled(false);
+                        } else {
+                            buttonAceptar.setEnabled(true);
+                            Motivo.setEnabled(true);
+                        }
+
+                        buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                String comentarioingresado = Motivo.getText().toString();
+
+
+                                if (comentarioingresado.isEmpty()) {
+                                    Utiles.crearToastPersonalizado(context, "Debes ingresar un comentario");
+                                } else {
+                                    dialogConfirmacion.dismiss();
+                                    dialogOpcionesDeRefaccion.dismiss();
+                                    AgregarComentario(idrefaccion, id_inyector, comentarioingresado);
+                                }
+
+                            }
+                        });
+
+
+                        buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogConfirmacion.dismiss();
+                            }
+                        });
+
+
+                    }
+                });
+
+
+                btnEliminar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (estatus.equalsIgnoreCase("ENTREGADO")) {
+                            Utiles.crearToastPersonalizado(context, "No puedes editar una unidad ya entregada");
+                        } else {
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
+                            builder.setView(ModalRedondeado(context, customView));
+                            AlertDialog dialogConfirmacion = builder.create();
+                            dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogConfirmacion.show();
+
+                            TextView textView4 = customView.findViewById(R.id.textView4);
+                            textView4.setText("¿Seguro deseas eliminar la refaccion: " + clave + " de la unidad #" + id_inyector + " ?");
+
+                            Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                            Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+
+                            buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogConfirmacion.dismiss();
+                                    dialogOpcionesDeRefaccion.dismiss();
+                                    EliminarRefaccionDeUnidad(idrefaccion, id_inyector);
+
+
+                                }
+                            });
+
+
+                            buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogConfirmacion.dismiss();
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+            }
+        });
+
+
+        recyclerViewRefaccionesUnidades.setAdapter(adaptadorRefaccionesDeUnidad);
+
+        botonAgregar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_botones_refacciones, null);
+                builder.setView(ModalRedondeado(context, customView));
+                AlertDialog dialogBotonRefaccion = builder.create();
+                dialogBotonRefaccion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogBotonRefaccion.show();
+
+                LinearLayout btnRefaccionesExternas = customView.findViewById(R.id.btnRefaccionesExternas);
+                LinearLayout btnFerrum = customView.findViewById(R.id.btnFerrum);
+
+
+                btnRefaccionesExternas.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_agregar_refacciones, null);
+                        builder.setView(ModalRedondeado(context, customView));
+                        AlertDialog dialogAgregarRefacciones = builder.create();
+                        dialogAgregarRefacciones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogAgregarRefacciones.show();
+
+                        Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                        Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+
+                        editTextClave = customView.findViewById(R.id.editTextClave);
+                        editCantidad = customView.findViewById(R.id.editCantidad);
+                        editCantidad.setText("1");
+                        editTipoDeUnidad = customView.findViewById(R.id.editTipoDeUnidad);
+                        editTipoDeUnidad.setText("Unidad");
+                        editTextDescripcion = customView.findViewById(R.id.editTextDescripcion);
+                        editTextPrecio = customView.findViewById(R.id.editTextPrecio);
+                        editTextPrecio.setText("0");
+                        editTextDescuento = customView.findViewById(R.id.editTextDescuento);
+                        editTextDescuento.setText("0");
+                        editTextImporte = customView.findViewById(R.id.editTextImporte);
+
+
+                        Double suma = 0.0;
+                        Double cantidades = Double.valueOf(editCantidad.getText().toString());
+                        Double precioIngresado = Double.valueOf(editTextPrecio.getText().toString());
+                        Double descIngresado = Double.valueOf(editTextDescuento.getText().toString());
+
+                        suma = ((precioIngresado * cantidades) - descIngresado);
+
+                        editTextImporte.setText("" + suma);
+
+
+                        editCantidad.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                Double sumita = calculateAndSetSum();
+
+                                editTextImporte.setText(String.valueOf(sumita));
+                                //     editTextImporte.setText("" + finalSuma);
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+
+                        editTextPrecio.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                Double sumita = calculateAndSetSum();
+
+                                editTextImporte.setText(String.valueOf(sumita));
+                                //     editTextImporte.setText("" + finalSuma);
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+
+                        editTextDescuento.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                Double sumita = calculateAndSetSum();
+
+                                editTextImporte.setText(String.valueOf(sumita));
+                                //     editTextImporte.setText("" + finalSuma);
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+
+                        buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                String claveIngresada = editTextClave.getText().toString();
+                                String cantidadIngresada = editCantidad.getText().toString();
+                                String tipounidadIngresada = editTipoDeUnidad.getText().toString();
+                                String descripcionIngresada = editTextDescripcion.getText().toString();
+                                String precioIngresado = editTextPrecio.getText().toString();
+                                String descuentoIngresado = editTextDescuento.getText().toString();
+                                String importeTotal = editTextImporte.getText().toString();
+
+                                if (claveIngresada.isEmpty() || precioIngresado.isEmpty() || tipounidadIngresada.isEmpty()
+                                        || cantidadIngresada.isEmpty() || descripcionIngresada.isEmpty()) {
+                                    Utiles.crearToastPersonalizado(context, "Debes llenar todos los campos");
+                                } else {
+                                    if (precioIngresado.equalsIgnoreCase("0") || precioIngresado.equalsIgnoreCase("0.0")) {
+                                        Utiles.crearToastPersonalizado(context, "Debes ingresar el precio");
+                                    } else {
+                                        double descuentoIngresadoD = Double.parseDouble(descuentoIngresado);
+                                        double importeTotalD = Double.parseDouble(importeTotal);
+
+                                        if (descuentoIngresadoD > importeTotalD) {
+
+                                            // Realiza la acción correspondiente si el descuento es mayor que el importe total
+                                            Utiles.crearToastPersonalizado(context, "No puedes ingresar un descuento mayor al total");
+
+                                        } else {
+                                            RegistrarRefaccion(id_inyector, claveIngresada, cantidadIngresada, precioIngresado,
+                                                    tipounidadIngresada, descripcionIngresada, importeTotal, descuentoIngresado,
+                                                    "externo", dialogAgregarRefacciones, null, dialogBotonRefaccion);
+
+                                        }
+
+                                    }
+                                }
+                            }
+                        });
+
+
+                        buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogAgregarRefacciones.dismiss();
+                            }
+                        });
+                    }
+                });
+
+
+                btnFerrum.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_buscar_refacciones, null);
+                        builder.setView(ModalRedondeado(context, customView));
+                        AlertDialog dialogBuscarRefacciones = builder.create();
+                        dialogBuscarRefacciones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialogBuscarRefacciones.show();
+
+                        recyclerRefacciones = customView.findViewById(R.id.recyclerRefacciones);
+
+
+                        EditText searchEditText = customView.findViewById(R.id.searchEditText);
+
+
+                        lottieSinInternetRef = customView.findViewById(R.id.lottieSinInternetRef);
+
+                        textSinRef = customView.findViewById(R.id.textSinRef);
+
+
+                        ConsultarHerramientasFerrum();
+                        adaptadorRefaccionesferrum = new AdaptadorRefaccionesFerrum(listaRefacciones, context);
+                        recyclerRefacciones.setLayoutManager(new LinearLayoutManager(context));
+
+                        adaptadorRefaccionesferrum.setOnItemClickListener(new AdaptadorRefaccionesFerrum.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(String precio, String DESCRIPCIO, String existencia, String CLAVE) {
+                            /*    id_modeloSeleccionado = id_modelo;
+                                modeloSeleccionado = nombreModelo;
+                                dialogModelos.dismiss();
+*/
+
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                View customView = LayoutInflater.from(context).inflate(R.layout.modal_agregar_refacciones, null);
+                                builder.setView(ModalRedondeado(context, customView));
+                                AlertDialog dialogAgregarRefacciones = builder.create();
+                                dialogAgregarRefacciones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                dialogAgregarRefacciones.show();
+
+                                Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                                Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                                editTextClave = customView.findViewById(R.id.editTextClave);
+                                editCantidad = customView.findViewById(R.id.editCantidad);
+                                editTipoDeUnidad = customView.findViewById(R.id.editTipoDeUnidad);
+                                editTextDescripcion = customView.findViewById(R.id.editTextDescripcion);
+                                editTextPrecio = customView.findViewById(R.id.editTextPrecio);
+                                editTextDescuento = customView.findViewById(R.id.editTextDescuento);
+                                editTextImporte = customView.findViewById(R.id.editTextImporte);
+
+
+                                editCantidad.setText("1");
+                                editTextPrecio.setEnabled(false);
+                                editTextClave.setEnabled(false);
+
+                                editTipoDeUnidad.setText("Unidad");
+                                editTextClave.setText(CLAVE);
+                                editTextDescripcion.setText(DESCRIPCIO);
+                                editTextPrecio.setText(precio);
+                                editTextDescuento.setText("0");
+
+
+                                Double suma = 0.0;
+                                Double cantidades = Double.valueOf(editCantidad.getText().toString());
+                                Double precioIngresado = Double.valueOf(editTextPrecio.getText().toString());
+                                Double descIngresado = Double.valueOf(editTextDescuento.getText().toString());
+
+                                suma = ((precioIngresado * cantidades) - descIngresado);
+
+                                editTextImporte.setText("" + suma);
+
+                                // Double finalSuma = suma;
+
+                                editTextDescuento.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        Double sumita = calculateAndSetSum();
+
+                                        editTextImporte.setText(String.valueOf(sumita));
+                                        //     editTextImporte.setText("" + finalSuma);
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                    }
+                                });
+
+
+                                editCantidad.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        Double sumita = calculateAndSetSum();
+                                        editTextImporte.setText(String.valueOf(sumita));
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                    }
+                                });
+
+
+                                buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+
+                                        editTextClave = customView.findViewById(R.id.editTextClave);
+                                        editCantidad = customView.findViewById(R.id.editCantidad);
+                                        editTipoDeUnidad = customView.findViewById(R.id.editTipoDeUnidad);
+                                        editTextDescripcion = customView.findViewById(R.id.editTextDescripcion);
+                                        editTextPrecio = customView.findViewById(R.id.editTextPrecio);
+                                        editTextDescuento = customView.findViewById(R.id.editTextDescuento);
+                                        editTextImporte = customView.findViewById(R.id.editTextImporte);
+
+
+                                        String claveIngresada = editTextClave.getText().toString();
+                                        String cantidadIngresada = editCantidad.getText().toString();
+                                        String tipoUnidadIngresado = editTipoDeUnidad.getText().toString();
+                                        String descripcionIngresada = editTextDescripcion.getText().toString();
+                                        String precioIngresado = editTextPrecio.getText().toString();
+                                        String descuentoIngresado = editTextDescuento.getText().toString();
+                                        String importeTotal = editTextImporte.getText().toString();
+
+
+                                        double descuentoIngresadoD = Double.parseDouble(descuentoIngresado);
+                                        double importeTotalD = Double.parseDouble(importeTotal);
+
+                                        if (descuentoIngresadoD > importeTotalD) {
+
+                                            // Realiza la acción correspondiente si el descuento es mayor que el importe total
+                                            Utiles.crearToastPersonalizado(context, "No puedes ingresar un descuento mayor al total");
+
+
+                                        } else {
+                                            // Realiza la acción correspondiente si el descuento no es mayor que el importe total
+                                            RegistrarRefaccion(id_inyector, claveIngresada, cantidadIngresada, precioIngresado,
+                                                    tipoUnidadIngresado, descripcionIngresada, importeTotal, descuentoIngresado,
+                                                    "ferrum", dialogAgregarRefacciones, dialogBuscarRefacciones, dialogBotonRefaccion);
+                                        }
+
+                                    }
+                                });
+
+
+                                buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dialogAgregarRefacciones.dismiss();
+                                    }
+                                });
+
+                            }
+                        });
+
+
+                        searchEditText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                adaptadorRefaccionesferrum.filter(s.toString().toLowerCase());
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+
+
+                        recyclerRefacciones.setAdapter(adaptadorRefaccionesferrum);
+
+
+                        //      ConsultarHerramientasDeUnidad(String idventa)
+                        searchEditText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                adaptadorRefaccionesferrum.filter(s.toString().toLowerCase());
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+
+    }
+
+
+    private void ConsultarHerramientasDeUnidad(String id_inyector) {
+        modalCargando = Utiles.ModalCargando(context, builder);
+        listaRefaccionesDeUnidad.clear();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        listaRefaccionesDeUnidad.add(jsonObject);
+                    }
+
+                    if (listaRefaccionesDeUnidad.size() > 0) {
+
+                        recyclerViewRefaccionesUnidades.setVisibility(View.VISIBLE);
+                        SinContenido.setVisibility(View.GONE);
+
+                    } else {
+
+                        recyclerViewRefaccionesUnidades.setVisibility(View.GONE);
+                        SinContenido.setVisibility(View.VISIBLE);
+                    }
+
+                    adaptadorRefaccionesDeUnidad.setFilteredData(listaRefaccionesDeUnidad);
+                    adaptadorRefaccionesDeUnidad.filter("");
+                    modalCargando.dismiss();
+
+                } catch (JSONException e) {
+
+                    modalCargando.dismiss();
+
+                    recyclerViewRefaccionesUnidades.setVisibility(View.GONE);
+                    SinContenido.setVisibility(View.VISIBLE);
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+                modalCargando.dismiss();
+
+                recyclerViewRefaccionesUnidades.setVisibility(View.GONE);
+                SinContenido.setVisibility(View.VISIBLE);
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "128");
+                params.put("id_inyector", id_inyector);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private void EliminarRefaccionDeUnidad(String idrefaccion, String id_inyector) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Utiles.crearToastPersonalizado(context, "Se eliminó la refacción");
+                ConsultarHerramientasDeUnidad(id_inyector);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "113");
+                params.put("idrefaccion", idrefaccion);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private void AgregarComentario(String idrefaccion, String id_inyector, String observaciones) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Utiles.crearToastPersonalizado(context, "Se agregó la observación a la refacción ");
+                ConsultarHerramientasDeUnidad(id_inyector);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "114");
+                params.put("idrefaccion", idrefaccion);
+                params.put("observaciones", observaciones);
+
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    EditText editTextClave;
+    EditText editCantidad;
+    EditText editTipoDeUnidad;
+    EditText editTextDescripcion;
+    EditText editTextPrecio;
+    EditText editTextDescuento;
+    EditText editTextImporte;
 
 
     public interface OnActivityActionListener {
         void onActualizarFoto(String ID_inyector, AlertDialog dialogFotoInyector, AlertDialog dialogOpcionesInyectores);
 
-
-
-
         void onAsignarManoDeObraInyector(String ID_inyector, String ID_mecanico, String observaciones);
+
+        void FinalizarRevisionInyector(String ID_inyector);
     }
 
     String ID_mecSelec = "";
@@ -651,14 +1405,173 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
     }
 
 
-    public AdaptadorInyectores(List<JSONObject> data, Context context, AlertDialog dialogInyectoresPorServicio, AdaptadorInyectores.OnActivityActionListener actionListener) {
+    private Double calculateAndSetSum() {
+        Double suma = 0.0;
+
+        String cantidadStr = editCantidad.getText().toString().trim();
+        String precioStr = editTextPrecio.getText().toString().trim();
+        String descuentoStr = editTextDescuento.getText().toString().trim();
+
+        if (!cantidadStr.isEmpty() && !precioStr.isEmpty()) {
+            try {
+                Double cantidades = Double.parseDouble(cantidadStr);
+                Double precioIngresado = Double.parseDouble(precioStr);
+                Double descIngresado;
+
+                if (descuentoStr.isEmpty()) {
+                    descIngresado = 0.0;
+                } else {
+                    if (isValidDecimal(descuentoStr)) {
+                        descIngresado = Double.parseDouble(descuentoStr);
+                    } else {
+                        descIngresado = 0.0;
+                    }
+                }
+
+                suma = ((precioIngresado * cantidades) - descIngresado);
+                DecimalFormat df = new DecimalFormat("#.##");
+                suma = Double.valueOf(df.format(suma));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return suma;
+    }
+
+    private boolean isValidDecimal(String input) {
+        return input.matches("^\\d*\\.?\\d+$") && !input.startsWith(".") && !input.endsWith(".");
+    }
+
+
+    AlertDialog modalCargando;
+    AlertDialog.Builder builder;
+    RecyclerView recyclerRefacciones;
+    LottieAnimationView lottieSinInternetRef;
+    TextView textSinRef;
+    AdaptadorRefaccionesFerrum adaptadorRefaccionesferrum;
+    List<JSONObject> listaRefacciones = new ArrayList<>();
+
+
+    private void RegistrarRefaccion(String id_inyector, String clave, String cantidad, String precio,
+                                    String unidad, String descripcion, String importe, String descuento,
+                                    String tipo, AlertDialog refaccionesDeUnidades, AlertDialog dialogBuscarRefacciones, AlertDialog dialogBotonRefaccion) {
+        StringRequest stringRequest2 = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        ConsultarHerramientasDeUnidad(id_inyector);
+                        refaccionesDeUnidades.dismiss();
+                        if (dialogBuscarRefacciones != null) {
+                            dialogBuscarRefacciones.dismiss();
+                        }
+                        dialogBotonRefaccion.dismiss();
+                        Utiles.crearToastPersonalizado(context, "Se registro la refacción correctamente");
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Utiles.crearToastPersonalizado(context, "Algo fallo");
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("opcion", "129");
+                params.put("id_inyector", id_inyector);
+                params.put("clave", clave);
+                params.put("cantidad", cantidad);
+                params.put("precio", precio);
+                params.put("unidad", unidad);
+                params.put("descripcion", descripcion);
+                params.put("importe", importe);
+                params.put("descuento", descuento);
+                params.put("tipo", tipo);
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue2 = Volley.newRequestQueue(context);
+        requestQueue2.add(stringRequest2);
+    }
+
+
+    private void ConsultarHerramientasFerrum() {
+        modalCargando = Utiles.ModalCargando(context, builder);
+        listaRefacciones.clear();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, urlPagos, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equalsIgnoreCase("fallo")) {
+
+                    modalCargando.dismiss();
+                } else {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            listaRefacciones.add(jsonObject);
+                        }
+
+                        lottieSinInternetRef.setVisibility(View.GONE);
+                        textSinRef.setVisibility(View.GONE);
+                        recyclerRefacciones.setVisibility(View.VISIBLE);
+
+
+                        adaptadorRefaccionesferrum.setFilteredData(listaRefacciones);
+                        adaptadorRefaccionesferrum.filter("");
+                        modalCargando.dismiss();
+
+                    } catch (JSONException e) {
+
+                        modalCargando.dismiss();
+
+
+                        lottieSinInternetRef.setVisibility(View.VISIBLE);
+                        textSinRef.setVisibility(View.VISIBLE);
+                        recyclerRefacciones.setVisibility(View.GONE);
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+                modalCargando.dismiss();
+
+                lottieSinInternetRef.setVisibility(View.VISIBLE);
+                textSinRef.setVisibility(View.VISIBLE);
+                recyclerRefacciones.setVisibility(View.GONE);
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "1");
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    String urlPagos;
+
+    public AdaptadorInyectores(List<JSONObject> data, Context context, AdaptadorInyectores.OnActivityActionListener actionListener) {
 
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
         url = context.getResources().getString(R.string.ApiBack);
-        this.dialogInyectoresPorServicio = dialogInyectoresPorServicio;
+        //    this.dialogInyectoresPorServicio = dialogInyectoresPorServicio;
         this.actionListener = actionListener;
+
+        this.builder = new AlertDialog.Builder(context);
+        this.builder.setCancelable(false);
+        urlPagos = context.getString(R.string.urlPagos);
     }
 
 }

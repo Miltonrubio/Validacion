@@ -27,8 +27,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdaptadorRefaccionesDeUnidad extends RecyclerView.Adapter<AdaptadorRefaccionesDeUnidad.ViewHolder> {
+public class AdaptadorInsumosDeServicio extends RecyclerView.Adapter<AdaptadorInsumosDeServicio.ViewHolder> {
 
+    private AdaptadorInsumosDeServicio.OnItemClickListener onItemClickListener;
     private Context context;
     private List<JSONObject> filteredData;
     private List<JSONObject> data;
@@ -40,7 +41,7 @@ public class AdaptadorRefaccionesDeUnidad extends RecyclerView.Adapter<Adaptador
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_refacciones, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_insumos, parent, false);
         return new ViewHolder(view);
 
     }
@@ -60,7 +61,6 @@ public class AdaptadorRefaccionesDeUnidad extends RecyclerView.Adapter<Adaptador
     }
 
 
-    private AdaptadorRefaccionesDeUnidad.OnItemClickListener onItemClickListener;
 
     /*
     public void setOnItemClickListener(AdaptadorRefaccionesFerrum.OnItemClickListener listener) {
@@ -184,7 +184,7 @@ public class AdaptadorRefaccionesDeUnidad extends RecyclerView.Adapter<Adaptador
     }
 
 
-    public AdaptadorRefaccionesDeUnidad(List<JSONObject> data, Context context) {
+    public AdaptadorInsumosDeServicio(List<JSONObject> data, Context context) {
 
         this.data = data;
         this.context = context;

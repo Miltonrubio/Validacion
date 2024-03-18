@@ -4,37 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="10dp"
-    android:paddingVertical="20dp"
-    >
-
-
-    <TextView
-        android:id="@+id/textView32"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="REFACCIONES DE LA UNIDAD"
-        android:textColor="@color/azulito"
-        android:textSize="22dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/yourConstraintLayoutId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:background="@color/azulitoSuave"
-        android:padding="3dp"
-        android:visibility="gone"
+        android:padding="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView32">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/searchButton"
@@ -53,160 +33,197 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:hint="Buscar refacciones"
+            android:hint="Buscar inyector"
             android:inputType="textEmailAddress"
             android:text=""
-            android:textColor="@color/gris"
+            android:textColor="@color/azulito"
             android:textColorHint="@color/azulito"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnFiltrarClientes"
             app:layout_constraintStart_toEndOf="@id/searchButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btnFiltrarClientes"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/baseline_filter_list_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/azulito" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="@+id/yourConstraintLayoutId"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/yourConstraintLayoutId">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/buttonPendientes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/azulito"
+                android:text="Pendientes" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/buttonEntregados"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/azulito"
+                android:text="Entregadas"
+
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contenedorContenido"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reciclerViewInyectores"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewRefaccionesUnidades"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="6dp"
-        android:paddingHorizontal="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/yourConstraintLayoutId"
-        app:layout_constraintVertical_bias="0.0" />
-
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/SinContenido"
+        android:id="@+id/contenedorNoInternet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
 
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieNoRefacciones"
-            android:layout_width="256dp"
-            android:layout_height="238dp"
-            android:layout_alignParentStart="true"
+            android:id="@+id/lottieNoInternet"
+            android:layout_width="322dp"
+            android:layout_height="322dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="74dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginBottom="140dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="0.254"
             app:lottie_autoPlay="true"
-            app:lottie_fileName="noInventarios.json"
+            app:lottie_fileName="nointernet.json"
             app:lottie_imageAssetsFolder="assets"
             app:lottie_loop="true" />
 
         <TextView
-            android:id="@+id/sinContenidoRef"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="No hay refacciones para esta unidad"
-            android:textColor="@color/azulito"
-            android:textSize="23dp"
+            android:text="No hay internet, revisa la conexión"
+            android:textSize="28dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lottieNoRefacciones" />
+            app:layout_constraintTop_toBottomOf="@+id/lottieNoInternet" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/SinContenidoInsumos"
+        android:id="@+id/contenedorNoContenido"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieNoInsumos"
-            android:layout_width="256dp"
-            android:layout_height="238dp"
-            android:layout_alignParentStart="true"
+            android:id="@+id/lottieNoContenido"
+            android:layout_width="322dp"
+            android:layout_height="322dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="74dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginBottom="140dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="0.227"
             app:lottie_autoPlay="true"
-            app:lottie_fileName="insumos.json"
+            app:lottie_fileName="sinContenido.json"
             app:lottie_imageAssetsFolder="assets"
             app:lottie_loop="true" />
 
         <TextView
-            android:id="@+id/sinContenidoInsumos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="No hay refacciones para esta unidad"
-            android:textColor="@color/azulito"
-            android:textSize="23dp"
+            android:text="No hay servicios activos en este momento"
+            android:textSize="28dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lottieNoInsumos" />
+            app:layout_constraintTop_toBottomOf="@+id/lottieNoContenido" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/botonAgregar"
+        android:id="@+id/botonAgregarInyector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
         android:src="@drawable/baseline_add_24"
-        android:visibility="visible"
         app:backgroundTint="@color/azulito"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/RoundedShape"
         app:tint="@color/white" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+

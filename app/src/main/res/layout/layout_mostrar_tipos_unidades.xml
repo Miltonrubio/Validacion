@@ -54,6 +54,28 @@
         app:lottie_imageAssetsFolder="assets"
         app:lottie_loop="true" />
 
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieNoContenido"
+        android:layout_width="256dp"
+        android:layout_height="238dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView30"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="noInventarios.json"
+        app:lottie_imageAssetsFolder="assets"
+        app:lottie_loop="true" />
+
+
     <TextView
         android:id="@+id/textSinPago"
         android:layout_width="match_parent"

@@ -9,7 +9,7 @@
     <item
 
         android:id="@+id/inyectores"
-        android:icon="@drawable/baseline_add_24"
+        android:icon="@drawable/syringe_solid"
         android:iconTint="@color/azulito"
         android:title="Coches"
         />

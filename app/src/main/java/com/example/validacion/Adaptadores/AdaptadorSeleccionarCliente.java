@@ -151,13 +151,12 @@ public class AdaptadorSeleccionarCliente extends RecyclerView.Adapter<AdaptadorS
                 }
             }
         }
-/*
         if (filteredData.isEmpty()) {
-            actionListener.onFilterData(false); // Indica que no hay resultados
+            actionListener.onResultadosClientes(false);
         } else {
-            actionListener.onFilterData(true); // Indica que hay resultados
+            actionListener.onResultadosClientes(true);
         }
-  */
+
         notifyDataSetChanged();
     }
 
@@ -178,6 +177,10 @@ public class AdaptadorSeleccionarCliente extends RecyclerView.Adapter<AdaptadorS
 
     public interface OnActivityActionListener {
         void onTomarCliente(String nombreCliente, String id_ser_cliente);
+
+
+        void onResultadosClientes(boolean result);
+
     }
 
     private AdaptadorSeleccionarCliente.OnActivityActionListener actionListener;

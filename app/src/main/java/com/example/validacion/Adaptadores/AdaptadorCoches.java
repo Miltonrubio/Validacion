@@ -2756,7 +2756,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
         this.url = context.getString(R.string.ApiBack);
         this.builder = new AlertDialog.Builder(context);
         this.builder.setCancelable(false);
-        this.urlPagos = "http://tallergeorgio.hopto.org:5611/monge/tallerapp/Panel.php";
+        this.urlPagos = context.getString(R.string.urlPagos);
 
 
         Date currentDate = new Date();

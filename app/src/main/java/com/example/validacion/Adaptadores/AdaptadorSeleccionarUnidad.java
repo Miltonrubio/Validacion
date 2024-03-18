@@ -260,13 +260,15 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
                 String placas = item.optString("placas", "").toLowerCase();
                 String Modelo = item.optString("Modelo", "").toLowerCase();
                 String Marca = item.optString("Marca", "").toLowerCase();
+                String MarcaCoche = item.optString("MarcaCoche", "").toLowerCase();
+                String ModeloCoche = item.optString("ModeloCoche", "").toLowerCase();
                 String id_serv_unidad = item.optString("id_serv_unidad", "").toLowerCase();
 
 
                 boolean matchesAllKeywords = true;
 
                 for (String keyword : keywords) {
-                    if (!(placas.contains(keyword) || Modelo.contains(keyword) || Marca.contains(keyword) || id_serv_unidad.contains(keyword))) {
+                    if (!(placas.contains(keyword) || MarcaCoche.contains(keyword) || ModeloCoche.contains(keyword) || Modelo.contains(keyword) || Marca.contains(keyword) || id_serv_unidad.contains(keyword))) {
                         matchesAllKeywords = false;
                         break;
                     }
@@ -277,13 +279,13 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
                 }
             }
         }
-/*
+
         if (filteredData.isEmpty()) {
-            actionListener.onFilterData(false); // Indica que no hay resultados
+            actionListener.onResultadosUnidad(false);
         } else {
-            actionListener.onFilterData(true); // Indica que hay resultados
+            actionListener.onResultadosUnidad(true);
         }
-  */
+
         notifyDataSetChanged();
     }
 
@@ -304,6 +306,12 @@ public class AdaptadorSeleccionarUnidad extends RecyclerView.Adapter<AdaptadorSe
 
     public interface OnActivityActionListener {
         void onTomarUnidad(String id_serv_unidad, String marca, String modelo, String vin, String motor, String anio, String placas, String tipo, String foto);
+
+
+        void onResultadosUnidad(boolean result);
+
+
+
     }
 
     private AdaptadorSeleccionarUnidad.OnActivityActionListener actionListener;

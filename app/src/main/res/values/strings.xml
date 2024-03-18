@@ -16,8 +16,9 @@
 -->
 
 
-    <string name="ApiBack">http://192.168.16.180:8888/ApiTallerGeorgio-GeorgioMovil/Controllers/Apiback.php</string>
+    <string name="ApiBack">http://192.168.16.120:8888/ApiTallerGeorgio-GeorgioMovil/Controllers/Apiback.php</string>
     <string name="urlPDFActividades">http://tallergeorgio.hopto.org:5611/georgioapp/georgio/web/Controlador/ReportePDFActMec.php</string>
+    <string name="urlPagos">http://tallergeorgio.hopto.org:5611/monge/tallerapp/Panel.php</string>
 
 
     <!--

@@ -120,14 +120,13 @@ public class ChecksInyectoresFragment extends Fragment implements AdaptadorCheck
                 Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
                 EditText Motivo = customView.findViewById(R.id.Motivo);
 
-                /*
+
                 Motivo.setHint("Agrega una recomendación");
 
-                    textView4.setText("Antes de terminar la revisión, ¿deseas agregar alguna recomendacion de servicio?");
-                    Motivo.setVisibility(View.VISIBLE);
-*/
+                textView4.setText("Antes de terminar la revisión, ¿deseas agregar alguna recomendacion de servicio?");
+                Motivo.setVisibility(View.VISIBLE);
 
-                Motivo.setVisibility(View.GONE);
+
                 buttonCancelar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -140,19 +139,16 @@ public class ChecksInyectoresFragment extends Fragment implements AdaptadorCheck
                     public void onClick(View view) {
 
                         dialogConfirmacion.dismiss();
-                        //     String Observaciones = Motivo.getText().toString();
+                        String Observaciones = Motivo.getText().toString();
 
 
-                        FinalizarRevision();
+                     //   FinalizarRevision();
 
-                        /*
                         if (Motivo.getVisibility() == View.VISIBLE && (!Observaciones.equalsIgnoreCase("") || !Observaciones.equalsIgnoreCase("null") || !Observaciones.equalsIgnoreCase(null) || !Observaciones.isEmpty())) {
-                    //        FinalizarRevision(Observaciones);
+                                    FinalizarRevision(Observaciones);
                         } else {
-                      //      FinalizarRevision("Vacio");
-
+                                 FinalizarRevision("Vacio");
                         }
-*/
                     }
                 });
 
@@ -250,7 +246,7 @@ public class ChecksInyectoresFragment extends Fragment implements AdaptadorCheck
     }
 
 
-    private void FinalizarRevision() {
+    private void FinalizarRevision(String comentarios) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -268,6 +264,7 @@ public class ChecksInyectoresFragment extends Fragment implements AdaptadorCheck
 
                 params.put("opcion", "121");
                 params.put("ID_inyector", ID_inyector);
+                params.put("comentarios", comentarios);
                 return params;
             }
         };

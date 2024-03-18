@@ -388,7 +388,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                             } else {
                                 numeroInyectores = "NoAplica";
 
-                                AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad,numeroInyectores);
+                                AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad, numeroInyectores);
 
                                 dialogNuevoServicio.dismiss();
                             }
@@ -415,6 +415,8 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         dialogUnidades = builder.create();
                         dialogUnidades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         dialogUnidades.show();
+
+                        lottieNoResultados = customView.findViewById(R.id.lottieNoResultados);
                         MostrarUnidadesClientes(id_ser_cliente, view.getContext());
 
 
@@ -429,7 +431,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         LayoutSinContenidoUnidades = customView.findViewById(R.id.LayoutSinContenido);
 
 
-                        EditText searchEditText = customView.findViewById(R.id.searchEditText);
+                        searchEditText = customView.findViewById(R.id.searchEditText);
                         ImageView btnAgregarUnidad = customView.findViewById(R.id.btnAgregarUnidad);
                         ImageView AgregarNuevaUnidad = customView.findViewById(R.id.AgregarNuevaUnidad);
 
@@ -488,12 +490,13 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         dialogClientes.show();
                         ImageView btnAgregarUnidad = customView.findViewById(R.id.btnAgregarUnidad);
                         btnAgregarUnidad.setVisibility(View.GONE);
+                        lottieNoResultados = customView.findViewById(R.id.lottieNoResultados);
 
                         VerClientes(view.getContext());
 
                         TextView NombreclIENTE = customView.findViewById(R.id.NombreclIENTE);
                         NombreclIENTE.setText("LISTADO DE CLIENTES");
-                        EditText searchEditText = customView.findViewById(R.id.searchEditText);
+                        searchEditText = customView.findViewById(R.id.searchEditText);
 
                         searchEditText.addTextChangedListener(new TextWatcher() {
                             @Override
@@ -907,14 +910,21 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                             JSONArray jsonArray = new JSONArray(response);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                listaUnidades.add(jsonObject);
+                                String tipo_unidad = jsonObject.getString("tipo");
+
+                                if (!tipo_unidad.equalsIgnoreCase("Inyector") || !tipo_unidad.equalsIgnoreCase("Turbo") ) {
+
+                                    listaUnidades.add(jsonObject);
+                                }
+
                             }
 
                             adaptadorSeleccionarUnidad.notifyDataSetChanged();
                             adaptadorSeleccionarUnidad.setFilteredData(listaUnidades);
                             adaptadorSeleccionarUnidad.filter("");
 
-                            if (listaClientes.size() > 0) {
+
+                            if (listaUnidades.size() > 0) {
 
                                 OcultarLayoutsUnidades("ConContenido");
                             } else {
@@ -1035,6 +1045,55 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
     }
 
+
+    EditText searchEditText;
+
+
+    @Override
+    public void onResultadosClientes(boolean result) {
+        if (result) {
+            animacionSinResultadosClientes("Oculto");
+        } else {
+            if ((searchEditText.getText().toString().equals("") || searchEditText.getText().toString().isEmpty())) {
+                animacionSinResultadosClientes("Oculto");
+            } else {
+                animacionSinResultadosClientes("Visible");
+            }
+        }
+    }
+
+    private void animacionSinResultadosClientes(String estado) {
+        if (estado.equals("Oculto")) {
+            lottieNoResultados.setVisibility(View.GONE);
+        } else {
+            lottieNoResultados.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    @Override
+    public void onResultadosUnidad(boolean result) {
+        if (result) {
+            animacionSinResultadosUnidad("Oculto");
+        } else {
+            if ((searchEditText.getText().toString().equals("") || searchEditText.getText().toString().isEmpty())) {
+                animacionSinResultadosUnidad("Oculto");
+            } else {
+                animacionSinResultadosUnidad("Visible");
+            }
+        }
+    }
+
+    private void animacionSinResultadosUnidad(String estado) {
+        if (estado.equals("Oculto")) {
+            lottieNoResultados.setVisibility(View.GONE);
+        } else {
+            lottieNoResultados.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    LottieAnimationView lottieNoResultados;
     List<JSONObject> listitaTiposUnidades = new ArrayList<>();
     EditText editTextKilometraje;
     EditText editTextMotivoIngreso;
@@ -1214,7 +1273,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     }
 */
 
-    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio, String foto, String tipounidad,String numeroInyectores) {
+    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio, String foto, String tipounidad, String numeroInyectores) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1266,6 +1325,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
     AdaptadorMarcaDesdeInicio adaptadorMarcaDesdeInicio;
 
+    LottieAnimationView lottieNoContenido;
 
     private void MostrarModalAgregarNuevaUnidad(View view, Bundle bundleUsuario) {
         ConsultarTiposUnidades();
@@ -1276,7 +1336,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         AlertDialog dialogListaUnidades = builder.create();
         dialogListaUnidades.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogListaUnidades.show();
-
+        lottieNoContenido = customView.findViewById(R.id.lottieNoContenido);
         RecyclerView recyclerViewTiposUnidades = customView.findViewById(R.id.recyclerViewTiposUnidades);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
@@ -1302,9 +1362,19 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String nombreTipoUnidad = jsonObject.getString("nombre");
 
-                        listaTiposUnidades.add(jsonObject);
+                        if (!nombreTipoUnidad.equalsIgnoreCase("Inyector") && !nombreTipoUnidad.equalsIgnoreCase("Turbo")) {
+                            listaTiposUnidades.add(jsonObject);
+                        }
                     }
+                    if (listaTiposUnidades.size() > 0) {
+                        lottieNoContenido.setVisibility(View.GONE);
+                    } else {
+                        lottieNoContenido.setVisibility(View.VISIBLE);
+
+                    }
+
 
                     adaptadorTiposUnidadesDesdeInicio.setFilteredData(listaTiposUnidades);
                     adaptadorTiposUnidadesDesdeInicio.filter("");
@@ -1555,123 +1625,3 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
         Volley.newRequestQueue(context).add(postrequest);
     }
 }
-
-
-
-
-
-
-/* Codigo anterior para registrar servicios
-
-
-    private void VerNombresClientes() {
-        nombresClientes.clear(); // Limpia la lista antes de agregar los nuevos
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String id_ser_cliente = jsonObject.getString("id_ser_cliente");
-                        String nombre = jsonObject.getString("nombre");
-                        nombresClientes.add(id_ser_cliente + ": " + nombre); // Agrega el ID y nombre de la actividad a la lista
-
-                        //   VerNombresUnidades(id_ser_cliente);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Utiles.crearToastPersonalizado(context, "No se pudieron cargar los datos, revisa la conexión");
-
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "19");
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-    }
-
-    private String obtenerIDDesdeNombre(String nombreSeleccionado) {
-        for (String nombreCliente : nombresClientes) {
-            if (nombreCliente.equals(nombreSeleccionado)) {
-                // Dividir la cadena para obtener el ID (asumiendo que esté separado por ":")
-                String[] partes = nombreCliente.split(":");
-                if (partes.length > 0) {
-                    return partes[0].trim(); // Devuelve el ID (eliminando espacios en blanco)
-                }
-            }
-        }
-        return null; // Si no se encuentra el ID, puedes devolver null o un valor predeterminado
-    }
-
-    private void VerNombresUnidades(String id_ser_cliente) {
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    jsonArrayNombreUnidades = new JSONArray(response);
-                    unidadesVehiculos.clear(); // Limpia la lista antes de agregar los nuevos nombres
-                    for (int i = 0; i < jsonArrayNombreUnidades.length(); i++) {
-                        jsonObjectUnidades = jsonArrayNombreUnidades.getJSONObject(i);
-                        id_serv_unidad = jsonObjectUnidades.getString("id_serv_unidad");
-                        Marca = jsonObjectUnidades.getString("Marca");
-                        Modelo = jsonObjectUnidades.getString("Modelo");
-                        anio = jsonObjectUnidades.getString("anio");
-                        placas = jsonObjectUnidades.getString("placas");
-                        motor = jsonObjectUnidades.getString("motor");
-                        vin = jsonObjectUnidades.getString("vin");
-                        unidadesVehiculos.add(id_serv_unidad + ": " + Marca + " " + Modelo); // Agrega el ID y nombre de la unidad a la lista
-                    }
-
-                    // Notificar al adaptador que los datos han cambiado
-                    spinnerAdapterUnidades.notifyDataSetChanged();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Utiles.crearToastPersonalizado(context, "No se pudieron cargar los datos, revisa la conexión");
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "20");
-                params.put("id_ser_cliente", id_ser_cliente);
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-    }
-
-
-    private String obtenerIDDesdeNombreVehiculo(String nombreSeleccionado) {
-        for (String vehiculos : unidadesVehiculos) {
-            if (vehiculos.equals(nombreSeleccionado)) {
-                // Dividir la cadena para obtener el ID (asumiendo que esté separado por ":")
-                String[] partes2 = vehiculos.split(":");
-                if (partes2.length > 0) {
-                    return partes2[0].trim(); // Devuelve el ID (eliminando espacios en blanco)
-                }
-            }
-        }
-        return null; // Si no se encuentra el ID, puedes devolver null o un valor predeterminado
-    }
-
-
- */
-
