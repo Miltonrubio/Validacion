@@ -42,10 +42,10 @@ public class InventarioFragment extends Fragment {
 
         LinearLayout ListaActividades = view.findViewById(R.id.ListaActividades);
 
-
+/*
         verGavetas.setVisibility(View.GONE);
         VerMaquinas.setVisibility(View.GONE);
-
+*/
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 

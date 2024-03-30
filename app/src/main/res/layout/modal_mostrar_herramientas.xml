@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/redondeado_contorno_azul"
-    android:paddingBottom="25dp">
+    android:paddingVertical="12dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -116,8 +116,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reciclerViewHerramientas"
                 android:layout_width="match_parent"
+                android:layout_marginTop="3dp"
                 android:layout_height="450dp"
-                android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
