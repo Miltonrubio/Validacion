@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +36,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.validacion.ConsultaDeInventariosFragment;
 import com.example.validacion.DetallesArrastres;
 import com.example.validacion.R;
@@ -125,6 +127,27 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
             String nombre_mecanico = jsonObject2.optString("nombre_mecanico", "");
             String cajones = jsonObject2.optString("cajones", "");
             String idusuario = jsonObject2.optString("idusuario", "");
+            String foto_mecanico = jsonObject2.optString("foto_mecanico", "");
+            String descripcion = jsonObject2.optString("descripcion", "");
+
+
+            holder.textDescripcion.setText(descripcion);
+            if (nombre_mecanico.equalsIgnoreCase("null") || nombre_mecanico.equalsIgnoreCase("") || nombre_mecanico.isEmpty()) {
+
+                holder.DueñoGaveta.setTextColor(ContextCompat.getColor(context, R.color.rojo));
+            } else {
+
+                holder.DueñoGaveta.setTextColor(ContextCompat.getColor(context, R.color.black));
+            }
+
+
+            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto_mecanico;
+            Glide.with(context)
+                    .load(imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.usuarios)
+                    .error(R.drawable.usuarios)
+                    .into(holder.fotoMecanico);
 
 
             listaDeCajones.clear();
@@ -143,7 +166,7 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
             }
 
 
-            holder.reciclerViewCajonesInterno.setLayoutManager(new LinearLayoutManager(context));
+            holder.reciclerViewCajonesInterno.setLayoutManager(new GridLayoutManager(context, 2));
             adaptadorCajones = new AdaptadorCajones(listaDeCajones, context, id_gabeta, actionListener);
             holder.reciclerViewCajonesInterno.setAdapter(adaptadorCajones);
 
@@ -177,7 +200,7 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     LinearLayout LayoutAsignarMecanico = customView.findViewById(R.id.LayoutAsignarMecanico);
                     LinearLayout LayoutEliminarGaveta = customView.findViewById(R.id.LayoutEliminarGaveta);
                     LinearLayout LayoutLevantarInventario = customView.findViewById(R.id.LayoutLevantarInventario);
-                    LinearLayout LayoutConsultarInventarios= customView.findViewById(R.id.LayoutConsultarInventarios);
+                    LinearLayout LayoutConsultarInventarios = customView.findViewById(R.id.LayoutConsultarInventarios);
 
 
                     if (nombre_mecanico.isEmpty() || nombre_mecanico.equals("null") || nombre_mecanico.equals(null)) {
@@ -185,7 +208,6 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     } else {
                         LayoutAsignarMecanico.setVisibility(View.GONE);
                     }
-
 
 
                     LayoutConsultarInventarios.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +221,6 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
 
                         }
                     });
-
 
 
                     LayoutLevantarInventario.setOnClickListener(new View.OnClickListener() {
@@ -254,7 +275,6 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                             new DownloadFileTask(context, postData).execute(url);
                         }
                     });
-
 
 
                     LayoutEliminarGaveta.setOnClickListener(new View.OnClickListener() {
@@ -436,6 +456,9 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
         TextView txtId;
         RecyclerView reciclerViewCajonesInterno;
 
+        ImageView fotoMecanico;
+
+        TextView textDescripcion;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -444,6 +467,9 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
             reciclerViewCajonesInterno = itemView.findViewById(R.id.reciclerViewCajones);
             LayoutGaveta = itemView.findViewById(R.id.LayoutGaveta);
             txtId = itemView.findViewById(R.id.txtId);
+            fotoMecanico = itemView.findViewById(R.id.fotoMecanico);
+            textDescripcion = itemView.findViewById(R.id.textDescripcion);
+
         }
     }
 

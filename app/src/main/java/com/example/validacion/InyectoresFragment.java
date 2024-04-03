@@ -775,7 +775,7 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String nombreTipoUnidad = jsonObject.getString("nombre");
 
-                        if (nombreTipoUnidad.equalsIgnoreCase("Inyector") || nombreTipoUnidad.equalsIgnoreCase("Turbo")) {
+                        if (nombreTipoUnidad.equalsIgnoreCase("Inyector") /* || nombreTipoUnidad.equalsIgnoreCase("Turbo") */) {
                             listaTiposUnidades.add(jsonObject);
                         }
                     }
@@ -826,7 +826,7 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String tipo = jsonObject.getString("tipo");
-                        if (tipo.equalsIgnoreCase("Inyector") || tipo.equalsIgnoreCase("Turbo")) {
+                        if (tipo.equalsIgnoreCase("Inyector") /* || tipo.equalsIgnoreCase("Turbo") */) {
                             listaUnidades.add(jsonObject);
                         }
 

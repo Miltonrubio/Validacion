@@ -95,7 +95,7 @@
         android:id="@+id/ContenedorContenido"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/azulitoSuave"
+        android:background="@color/fondogrisesito"
         android:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -160,7 +160,6 @@
             android:id="@+id/reciclerViewGavetas"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="12dp"
             android:layout_marginTop="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -181,11 +180,11 @@
         android:layout_gravity="center"
         android:layout_marginEnd="17dp"
         android:layout_marginBottom="14dp"
-        android:backgroundTint="@color/gris"
+        android:backgroundTint="@color/azulito"
         android:src="@drawable/baseline_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/RoundedShape"
-        app:tint="@color/azulito" />
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

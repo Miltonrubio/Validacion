@@ -7,8 +7,12 @@
     <color name="gris">#A8B2BB</color>
     <color name="azulito">#114672</color>
     <color name="azulitoSuave">#B2CDE7</color>
-
+<!--
     <color name="rojo">#FF2222</color>
+-->
+    <color name="rojo">#C40909</color>
+
+
 
     <color name="amarillo">#FFC107</color>
 
@@ -32,6 +36,9 @@
     <color name="azulitoInyectores">#81D9FF</color>
     <color name="TitutloInyectores">#1D94C7</color>
     <color name="hueso">#f1f1e9</color>
+    <color name="fondogrisesito">#F4F4F4</color>
+
+
 
 
 

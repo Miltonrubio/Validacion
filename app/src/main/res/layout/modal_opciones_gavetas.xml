@@ -7,25 +7,24 @@
     android:paddingVertical="24dp">
 
 
-
-
     <LinearLayout
         android:id="@+id/LayoutConsultarInventarios"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/redondeado_verdesito"
-        android:paddingVertical="23dp"
+        android:paddingVertical="12dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LayoutDescargarPDF">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginStart="10dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
             android:src="@drawable/baseline_save_24"
             app:tint="@color/white" />
 
@@ -41,15 +40,14 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/LayoutLevantarInventario"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/redondeado_verde"
-        android:paddingVertical="23dp"
+        android:paddingVertical="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LayoutEliminarGaveta">
@@ -81,9 +79,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/redondeado_gris"
-        android:paddingVertical="23dp"
+        android:paddingVertical="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LayoutAsignarMecanico">
@@ -114,9 +112,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/redondeado_azul"
-        android:paddingVertical="23dp"
+        android:paddingVertical="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LayoutLevantarInventario">
@@ -148,7 +146,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:background="@drawable/redondeado_rojo"
-        android:paddingVertical="23dp"
+        android:paddingVertical="12dp"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="12dp">
 

@@ -306,13 +306,15 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 editTextKilometraje = customView.findViewById(R.id.editTextKilometraje);
                 editTextMotivoIngreso = customView.findViewById(R.id.editTextMotivoIngreso);
 
-
+/*
                 tvNumInyectores = customView.findViewById(R.id.tvNumInyectores);
                 EditTextNumInyectores = customView.findViewById(R.id.EditTextNumInyectores);
-
-
                 tvNumInyectores.setVisibility(View.GONE);
                 EditTextNumInyectores.setVisibility(View.GONE);
+
+
+                */
+
 
                 ArrayAdapter<String> adaptadorGas = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, opciones);
                 adaptadorGas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -365,7 +367,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                                 valorGas = "N/A";
                             }
 
-
+/*
                             if (EditTextNumInyectores.getVisibility() == View.VISIBLE) {
                                 numeroInyectores = EditTextNumInyectores.getText().toString().trim();
 
@@ -387,12 +389,13 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
 
                             } else {
                                 numeroInyectores = "NoAplica";
+                                */
 
-                                AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad, numeroInyectores);
+                                AgregarServicio(id_ser_cliente, id_serv_unidad, km, valorGas, motivoIngreso, marca, modelo, motor, vin, placas, anio, fotoUnidad, tipoUnidad /* , numeroInyectores */);
 
                                 dialogNuevoServicio.dismiss();
                             }
-                        }
+                      //  }
 
                     }
                 });
@@ -912,7 +915,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 String tipo_unidad = jsonObject.getString("tipo");
 
-                                if (!tipo_unidad.equalsIgnoreCase("Inyector") || !tipo_unidad.equalsIgnoreCase("Turbo") ) {
+                                if (!tipo_unidad.equalsIgnoreCase("Inyector") /* || !tipo_unidad.equalsIgnoreCase("Turbo") */ ) {
 
                                     listaUnidades.add(jsonObject);
                                 }
@@ -1101,9 +1104,10 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     TextView gasolinaTV;
     TextView KilometrajeTV;
 
+    /*
     EditText EditTextNumInyectores;
     TextView tvNumInyectores;
-
+*/
 
     private void mostrarFormularios(String tipoSeleccionado) {
 
@@ -1141,7 +1145,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                             KilometrajeTV.setVisibility(View.GONE);
                         }
 
-
+/*
                         if (tipoSeleccionado.equalsIgnoreCase("Inyector")) {
                             EditTextNumInyectores.setVisibility(View.VISIBLE);
                             tvNumInyectores.setVisibility(View.VISIBLE);
@@ -1150,7 +1154,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                             EditTextNumInyectores.setVisibility(View.GONE);
                             tvNumInyectores.setVisibility(View.GONE);
                         }
-
+*/
                         if (gasolina.equalsIgnoreCase("1")) {
                             SpinnerGasolina.setVisibility(View.VISIBLE);
                             gasolinaTV.setVisibility(View.VISIBLE);
@@ -1273,7 +1277,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
     }
 */
 
-    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio, String foto, String tipounidad, String numeroInyectores) {
+    private void AgregarServicio(String id_ser_cliente, String idunidad, String km, String gas, String motivo, String marca, String modelo, String motor, String vin, String placas, String anio, String foto, String tipounidad /*, String numeroInyectores */) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1307,7 +1311,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                 params.put("anio", anio);
                 params.put("tipounidad", tipounidad);
                 params.put("foto", foto);
-                params.put("numeroInyectores", numeroInyectores);
+              //  params.put("numeroInyectores", numeroInyectores);
                 return params;
             }
         };
@@ -1364,7 +1368,7 @@ public class HomeFragment extends Fragment implements AdaptadorCoches.OnActivity
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String nombreTipoUnidad = jsonObject.getString("nombre");
 
-                        if (!nombreTipoUnidad.equalsIgnoreCase("Inyector") && !nombreTipoUnidad.equalsIgnoreCase("Turbo")) {
+                        if (!nombreTipoUnidad.equalsIgnoreCase("Inyector") /* && !nombreTipoUnidad.equalsIgnoreCase("Turbo") */ ) {
                             listaTiposUnidades.add(jsonObject);
                         }
                     }

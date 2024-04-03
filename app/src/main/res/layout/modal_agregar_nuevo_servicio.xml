@@ -12,8 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-
+<!--
         <EditText
             android:id="@+id/EditTextNumInyectores"
             android:layout_width="match_parent"
@@ -22,7 +21,7 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/textview_outline"
             android:gravity="center"
-            android:visibility="gone"
+            android:visibility="visible"
             android:hint="Numero de inyectores"
             android:paddingHorizontal="12dp"
             android:paddingVertical="16dp"
@@ -38,14 +37,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:text="Escribe la cantidad de inyectores"
             android:textSize="17dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textSeleccionarUnidad" />
-
+-->
         <TextView
             android:id="@+id/textView24"
             android:layout_width="match_parent"
@@ -110,7 +109,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/EditTextNumInyectores" />
+            app:layout_constraintTop_toBottomOf="@+id/SpinnerGasolina" />
 
         <TextView
             android:id="@+id/gasolina"
