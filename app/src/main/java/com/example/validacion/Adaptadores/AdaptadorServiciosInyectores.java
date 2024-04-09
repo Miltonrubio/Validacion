@@ -40,6 +40,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.validacion.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.common.cache.RemovalCause;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -447,6 +448,14 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
                 LinearLayout btnRefaccionesExternas = customView.findViewById(R.id.btnRefaccionesExternas);
                 LinearLayout btnFerrum = customView.findViewById(R.id.btnFerrum);
+LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
+
+                AsignarTraspaso.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AbrirModalTraspasos(idServInyector, dialogBotonRefaccion);
+                    }
+                });
 
 
                 btnRefaccionesExternas.setOnClickListener(new View.OnClickListener() {
@@ -1713,6 +1722,277 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
         Volley.newRequestQueue(context).add(postrequest);
     }
+
+
+
+
+
+    private void AbrirModalTraspasos(String ID_ser_venta, AlertDialog dialogOpcionesCoches) {
+        {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            View customView = LayoutInflater.from(context).inflate(R.layout.modal_buscar_traspaso, null);
+            builder.setView(ModalRedondeado(context, customView));
+            AlertDialog dialogAsignarTraspaso = builder.create();
+            dialogAsignarTraspaso.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialogAsignarTraspaso.show();
+            recyclerTraspasos = customView.findViewById(R.id.recyclerTraspasos);
+
+            lottieNoFolios = customView.findViewById(R.id.lottieNoFolios);
+            textSinNotas = customView.findViewById(R.id.textSinNotas);
+
+            ImageView btnFiltrarPorFecha = customView.findViewById(R.id.btnFiltrarTraspasoPorFecha);
+            TextView searchEditText = customView.findViewById(R.id.searchTrapaso);
+
+
+            //  BuscarFolios(formattedDate);
+            BuscarTraspaso(formattedDate);
+
+
+            adaptadorSelectorTraspasos = new AdaptadorSelectorTraspasos(listaTraspasos, context);
+            recyclerTraspasos.setLayoutManager(new LinearLayoutManager(context));
+            recyclerTraspasos.setAdapter(adaptadorSelectorTraspasos);
+
+            searchEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    adaptadorSelectorTraspasos.filter(s.toString().toLowerCase());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+
+
+            adaptadorSelectorTraspasos.setOnItemClickListener(new AdaptadorSelectorTraspasos.OnItemClickListener() {
+                @Override
+                public void onItemClick(String DOCID, String NUMERO, String TOTAL, String NOTA, String FECHA, String FECCAN, String EMISOR, String NOMBRE, String ESTADO) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
+                    builder.setView(ModalRedondeado(context, customView));
+                    AlertDialog dialogConfirmacion = builder.create();
+                    dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogConfirmacion.show();
+
+
+                    TextView textView4 = customView.findViewById(R.id.textView4);
+                    Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                    Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                    textView4.setText("¿Deseas vincular el traspaso:  #" + NUMERO + " a este vehiculo?");
+
+
+                    buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            dialogConfirmacion.dismiss();
+                            dialogAsignarTraspaso.dismiss();
+                            dialogOpcionesCoches.dismiss();
+                            //  actionListener.AsignarFolio(idDocSeleccionado, id_ser_venta);
+
+                            //   Utiles.crearToastPersonalizado(context, "Logica para asignar");
+
+                            AsignarTraspaso(ID_ser_venta, DOCID, NUMERO, TOTAL, NOTA, FECHA, FECCAN, EMISOR, NOMBRE, ESTADO);
+
+                        }
+                    });
+
+
+                    buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialogConfirmacion.dismiss();
+                        }
+                    });
+
+
+                }
+            });
+
+
+            btnFiltrarPorFecha.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    View customView = LayoutInflater.from(context).inflate(R.layout.modal_seleccionar_fecha, null);
+                    builder.setView(ModalRedondeado(context, customView));
+                    AlertDialog dialogFecha = builder.create();
+                    dialogFecha.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogFecha.show();
+
+
+                    Button btnCancelar = customView.findViewById(R.id.btnCancelar);
+                    Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+                    DatePicker datePickerFecha = customView.findViewById(R.id.datePickerFecha);
+
+
+                    buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+//Falta agregar to do lo de los folios.
+                            int day = datePickerFecha.getDayOfMonth();
+                            int month = datePickerFecha.getMonth() + 1; // Se suma 1 ya que los meses en Android se cuentan desde 0 (enero) hasta 11 (diciembre)
+                            int year = datePickerFecha.getYear();
+
+                            //       String fechaSeleccionada = day + "/" + month + "/" + year;
+
+                            // Formatear la fecha en el formato deseado (YYYY-MM-DD)
+                            String fechaSeleccionada = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month, day);
+
+                            dialogFecha.dismiss();
+
+
+                            BuscarTraspaso(fechaSeleccionada);
+                        }
+                    });
+
+                    btnCancelar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialogFecha.dismiss();
+                        }
+                    });
+
+
+                }
+            });
+
+
+        }
+    }
+
+
+    RecyclerView recyclerTraspasos ;
+    AdaptadorSelectorTraspasos adaptadorSelectorTraspasos;
+    List<JSONObject> listaTraspasos = new ArrayList<>();
+
+
+
+    private void BuscarTraspaso(String fechaSeleccionada) {
+        modalCargando = Utiles.ModalCargando(context, builder);
+        listaTraspasos.clear();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, urlPagos, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                if (response.equalsIgnoreCase("fallo")) {
+                    lottieNoFolios.setVisibility(View.VISIBLE);
+                    textSinNotas.setVisibility(View.VISIBLE);
+                    recyclerTraspasos.setVisibility(View.GONE);
+
+                    modalCargando.dismiss();
+                } else {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            listaTraspasos.add(jsonObject);
+                        }
+
+
+                        lottieNoFolios.setVisibility(View.GONE);
+                        textSinNotas.setVisibility(View.GONE);
+                        recyclerTraspasos.setVisibility(View.VISIBLE);
+                        adaptadorSelectorTraspasos.setFilteredData(listaTraspasos);
+                        adaptadorSelectorTraspasos.filter("");
+                        modalCargando.dismiss();
+
+                    } catch (JSONException e) {
+
+                        lottieNoFolios.setVisibility(View.VISIBLE);
+                        textSinNotas.setVisibility(View.VISIBLE);
+                        recyclerTraspasos.setVisibility(View.GONE);
+
+                        modalCargando.dismiss();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                lottieNoFolios.setVisibility(View.VISIBLE);
+                textSinNotas.setVisibility(View.VISIBLE);
+                recyclerTraspasos.setVisibility(View.GONE);
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+                modalCargando.dismiss();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "72");
+                params.put("fecha", fechaSeleccionada);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+
+
+    public void AsignarTraspaso(String id_ser_venta, String DOCID, String NUMERO, String TOTAL, String NOTA, String FECHA, String FECCAN, String EMISOR, String NOMBRE, String ESTADO) {
+        modalCargando = Utiles.ModalCargando(context, builder);
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                modalCargando.dismiss();
+                ConsultarHerramientasDeUnidad(id_ser_venta);
+                Utiles.crearToastPersonalizado(context, "Se asignó el traspaso a este servicio");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                modalCargando.dismiss();
+                Utiles.crearToastPersonalizado(context, "Algo falló, revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "138");
+                params.put("ID_serv", id_ser_venta);
+                params.put("DOCID", DOCID);
+                params.put("NOMBRE", NOMBRE);
+                params.put("EMISOR", EMISOR);
+                params.put("NUMERO", NUMERO);
+                params.put("ESTADO", ESTADO);
+                params.put("FECHA", FECHA);
+                params.put("FECCAN", FECCAN);
+                params.put("TOTAL", TOTAL);
+                params.put("NOTA", NOTA);
+
+                return params;
+            }
+        };
+
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private void setStatusTextView(TextView textView, String status) {

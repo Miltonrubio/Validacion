@@ -2330,7 +2330,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                     recyclerTraspasosUnidad.setVisibility(View.VISIBLE);
                     adaptadorTraspasosUnidad.setFilteredData(listaTraspasosDeUnidad);
                     adaptadorTraspasosUnidad.filter("");
-                       modalCargando.dismiss();
+                    modalCargando.dismiss();
 
                 } catch (JSONException e) {
 
@@ -2338,7 +2338,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                     textSinTraspasosUnidad.setVisibility(View.VISIBLE);
                     recyclerTraspasosUnidad.setVisibility(View.GONE);
 
-                         modalCargando.dismiss();
+                    modalCargando.dismiss();
                 }
 
             }
@@ -2349,7 +2349,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
                 textSinTraspasosUnidad.setVisibility(View.VISIBLE);
                 recyclerTraspasosUnidad.setVisibility(View.GONE);
                 Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
-                   modalCargando.dismiss();
+                modalCargando.dismiss();
             }
         }) {
             protected Map<String, String> getParams() {
@@ -2364,16 +2364,14 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
     }
 
 
-
-
     private void DesvincularTraspasoUnidad(String ID_traspaso, String DOCID, String id_ser_venta) {
 
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                Utiles.crearToastPersonalizado(context, "Todo correcto");
-ConsultarHerramientasDeUnidad(id_ser_venta);
+                Utiles.crearToastPersonalizado(context, "Se desvinculo el traspaso");
+                ConsultarHerramientasDeUnidad(id_ser_venta);
 
             }
         }, new Response.ErrorListener() {
@@ -2393,7 +2391,6 @@ ConsultarHerramientasDeUnidad(id_ser_venta);
 
         Volley.newRequestQueue(context).add(postrequest);
     }
-
 
 
     private void BuscarTraspaso(String fechaSeleccionada) {
@@ -2948,19 +2945,19 @@ ConsultarHerramientasDeUnidad(id_ser_venta);
             @Override
             public void onItemClick(String ID_traspaso, String DOCID) {
 
-             //   Utiles.crearToastPersonalizado(context, "Selecci " +ID_traspaso);
+                //   Utiles.crearToastPersonalizado(context, "Selecci " +ID_traspaso);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
                 builder.setView(ModalRedondeado(context, customView));
-                AlertDialog dialogConfirmacion= builder.create();
+                AlertDialog dialogConfirmacion = builder.create();
                 dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialogConfirmacion.show();
 
 
-                TextView textView4= customView.findViewById(R.id.textView4);
-                Button buttonCancelar= customView.findViewById(R.id.buttonCancelar);
-                Button buttonAceptar= customView.findViewById(R.id.buttonAceptar);
+                TextView textView4 = customView.findViewById(R.id.textView4);
+                Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
 
                 textView4.setText("¿ Deseas desvincular la asignación de este traspaso ?");
                 buttonAceptar.setOnClickListener(new View.OnClickListener() {
@@ -2970,11 +2967,10 @@ ConsultarHerramientasDeUnidad(id_ser_venta);
                         dialogConfirmacion.dismiss();
                         dialogTraspasosUnidad.dismiss();
 
-                        DesvincularTraspasoUnidad( ID_traspaso,  DOCID, id_ser_venta);
-                       // Utiles.crearToastPersonalizado(context, "Jeje " + ID_traspaso + " " + DOCID);
+                        DesvincularTraspasoUnidad(ID_traspaso, DOCID, id_ser_venta);
+                        // Utiles.crearToastPersonalizado(context, "Jeje " + ID_traspaso + " " + DOCID);
                     }
                 });
-
 
 
                 buttonCancelar.setOnClickListener(new View.OnClickListener() {
@@ -2983,7 +2979,6 @@ ConsultarHerramientasDeUnidad(id_ser_venta);
                         dialogConfirmacion.dismiss();
                     }
                 });
-
 
 
             }
@@ -3143,8 +3138,8 @@ ConsultarHerramientasDeUnidad(id_ser_venta);
             public void onResponse(String response) {
 
                 modalCargando.dismiss();
-                Utiles.crearToastPersonalizado(context, "Se asignó el traspaso a este servicio");
                 ConsultarHerramientasDeUnidad(id_ser_venta);
+                Utiles.crearToastPersonalizado(context, "Se asignó el traspaso a este servicio");
             }
         }, new Response.ErrorListener() {
             @Override

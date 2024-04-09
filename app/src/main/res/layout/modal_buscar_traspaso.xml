@@ -62,10 +62,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerTraspasos"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="wrap_content"
         android:paddingHorizontal="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
