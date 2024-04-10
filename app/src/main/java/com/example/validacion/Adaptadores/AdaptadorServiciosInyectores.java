@@ -224,7 +224,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
                         public void onClick(View view) {
 
 
-                            ModalAgregarInsumos(status_servicio, ID_serv_inyector, dialogOpcionesInyectores);
+                            ModalAgregarInsumos(status_servicio, ID_serv_inyector, dialogOpcionesInyectores, MarcaCoche, ModeloCoche);
                         }
 
 
@@ -262,7 +262,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
     AdaptadorRefaccionesFerrum adaptadorRefaccionesferrum;
 
 
-    private void ModalAgregarInsumos(String estatus, String idServInyector, AlertDialog dialogOpcionesInyectores) {
+    private void ModalAgregarInsumos(String estatus, String idServInyector, AlertDialog dialogOpcionesInyectores, String marca, String modelo) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View customView = LayoutInflater.from(context).inflate(R.layout.modal_refacciones_coches, null);
@@ -278,6 +278,17 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
         } else {
             botonAgregar.setVisibility(View.VISIBLE);
         }
+        Button buttonTraspasosDeUnidad = customView.findViewById(R.id.buttonTraspasosDeUnidad);
+
+
+        buttonTraspasosDeUnidad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AbrirModalConsultaTraspasos(idServInyector, marca, modelo);
+            }
+        });
+
 
         TextView sinContenidoInsumos = customView.findViewById(R.id.sinContenidoInsumos);
         sinContenidoInsumos.setText("No hay insumos para este servicio");
@@ -445,10 +456,9 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
                 AlertDialog dialogBotonRefaccion = builder.create();
                 dialogBotonRefaccion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialogBotonRefaccion.show();
-
                 LinearLayout btnRefaccionesExternas = customView.findViewById(R.id.btnRefaccionesExternas);
                 LinearLayout btnFerrum = customView.findViewById(R.id.btnFerrum);
-LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
+                LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
 
                 AsignarTraspaso.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -987,6 +997,168 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
     AdaptadorFolios adaptadorFolios;
 
 
+    RecyclerView recyclerTraspasosUnidad;
+
+    LottieAnimationView lottieNoTraspasosUnidad;
+    TextView textSinTraspasosUnidad;
+
+    AdaptadorTraspasosUnidad adaptadorTraspasosUnidad;
+
+    List<JSONObject> listaTraspasosDeUnidad = new ArrayList<>();
+
+
+    private void AbrirModalConsultaTraspasos(String id_serv_inyector, String marca, String modelo) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View customView = LayoutInflater.from(context).inflate(R.layout.modal_consultar_traspasos_unidad, null);
+        builder.setView(ModalRedondeado(context, customView));
+        AlertDialog dialogTraspasosUnidad = builder.create();
+        dialogTraspasosUnidad.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogTraspasosUnidad.show();
+        recyclerTraspasosUnidad = customView.findViewById(R.id.recyclerTraspasosUnidad);
+        TextView tituloTraspasoUnidad = customView.findViewById(R.id.tituloTraspasoUnidad);
+
+        lottieNoTraspasosUnidad = customView.findViewById(R.id.lottieNoTraspasosUnidad);
+        textSinTraspasosUnidad = customView.findViewById(R.id.textSinTraspasosUnidad);
+
+
+        TraspasosDeServicio(id_serv_inyector);
+
+        adaptadorTraspasosUnidad = new AdaptadorTraspasosUnidad(listaTraspasosDeUnidad, context);
+        recyclerTraspasosUnidad.setLayoutManager(new LinearLayoutManager(context));
+        recyclerTraspasosUnidad.setAdapter(adaptadorTraspasosUnidad);
+        tituloTraspasoUnidad.setText("TRASPASOS PARA " + marca.toUpperCase() + " " + modelo.toUpperCase());
+
+
+        adaptadorTraspasosUnidad.setOnItemClickListener(new AdaptadorTraspasosUnidad.OnItemClickListener() {
+            @Override
+            public void onItemClick(String ID_traspaso, String DOCID) {
+
+                //   Utiles.crearToastPersonalizado(context, "Selecci " +ID_traspaso);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
+                builder.setView(ModalRedondeado(context, customView));
+                AlertDialog dialogConfirmacion = builder.create();
+                dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogConfirmacion.show();
+
+
+                TextView textView4 = customView.findViewById(R.id.textView4);
+                Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                textView4.setText("¿ Deseas desvincular la asignación de este traspaso ?");
+                buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        dialogConfirmacion.dismiss();
+                        dialogTraspasosUnidad.dismiss();
+
+                        DesvincularTraspasoUnidad(ID_traspaso, DOCID, id_serv_inyector);
+                        // Utiles.crearToastPersonalizado(context, "Jeje " + ID_traspaso + " " + DOCID);
+                    }
+                });
+
+
+                buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogConfirmacion.dismiss();
+                    }
+                });
+
+
+            }
+        });
+
+    }
+
+
+    private void TraspasosDeServicio(String id) {
+        modalCargando = Utiles.ModalCargando(context, builder);
+
+        listaTraspasosDeUnidad.clear();
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        listaTraspasosDeUnidad.add(jsonObject);
+                    }
+
+
+                    lottieNoTraspasosUnidad.setVisibility(View.GONE);
+                    textSinTraspasosUnidad.setVisibility(View.GONE);
+                    recyclerTraspasosUnidad.setVisibility(View.VISIBLE);
+                    adaptadorTraspasosUnidad.setFilteredData(listaTraspasosDeUnidad);
+                    adaptadorTraspasosUnidad.filter("");
+                    modalCargando.dismiss();
+
+                } catch (JSONException e) {
+
+                    lottieNoTraspasosUnidad.setVisibility(View.VISIBLE);
+                    textSinTraspasosUnidad.setVisibility(View.VISIBLE);
+                    recyclerTraspasosUnidad.setVisibility(View.GONE);
+
+                    modalCargando.dismiss();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                lottieNoTraspasosUnidad.setVisibility(View.VISIBLE);
+                textSinTraspasosUnidad.setVisibility(View.VISIBLE);
+                recyclerTraspasosUnidad.setVisibility(View.GONE);
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+                modalCargando.dismiss();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "142");
+                params.put("id_serv_inyector", id);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private void DesvincularTraspasoUnidad(String ID_traspaso, String DOCID, String id_serv_inyector) {
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Utiles.crearToastPersonalizado(context, "Se desvinculo el traspaso");
+                ConsultarHerramientasDeUnidad(id_serv_inyector);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "140");
+                params.put("ID_traspaso", ID_traspaso);
+                params.put("DOCID", DOCID);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
     private void ModalReportes(String ID_serv_inyector) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -996,12 +1168,14 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
         dialogConBotones.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogConBotones.show();
 
-
+        LinearLayout linearLayout5 = customView.findViewById(R.id.linearLayout5);
         LinearLayout LayoutPDFServicio = customView.findViewById(R.id.LayoutPDFServicio);
         LinearLayout LayoutPDFSalida = customView.findViewById(R.id.LayoutPDFSalida);
         LinearLayout LayoutPDFTecnico = customView.findViewById(R.id.LayoutPDFTecnico);
         LinearLayout PDFRefacciones = customView.findViewById(R.id.PDFRefacciones);
         LinearLayout LayoutPDFMecanicos = customView.findViewById(R.id.LayoutPDFMecanicos);
+
+        linearLayout5.setVisibility(View.GONE);
 
         PDFRefacciones.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1009,7 +1183,7 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
 
 
                 Map<String, String> postData = new HashMap<>();
-                postData.put("opcion", "82");
+                postData.put("opcion", "147");
                 postData.put("ID_serv_inyector", ID_serv_inyector);
 
                 new NuevoDownloadFileTask(context, postData).execute(url);
@@ -1022,7 +1196,7 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
             public void onClick(View view) {
 
                 Map<String, String> postData = new HashMap<>();
-                postData.put("opcion", "81");
+                postData.put("opcion", "148");
                 postData.put("ID_serv_inyector", ID_serv_inyector);
 
                 new NuevoDownloadFileTask(context, postData).execute(url);
@@ -1035,7 +1209,7 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
             public void onClick(View view) {
 
                 Map<String, String> postData = new HashMap<>();
-                postData.put("opcion", "83");
+                postData.put("opcion", "145");
                 postData.put("ID_serv_inyector", ID_serv_inyector);
 
                 new NuevoDownloadFileTask(context, postData).execute(url);
@@ -1048,14 +1222,14 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
             public void onClick(View view) {
 
                 Map<String, String> postData = new HashMap<>();
-                postData.put("opcion", "79");
+                postData.put("opcion", "146");
                 postData.put("ID_serv_inyector", ID_serv_inyector);
 
                 new NuevoDownloadFileTask(context, postData).execute(url);
 
             }
         });
-
+/*
         LayoutPDFTecnico.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1068,6 +1242,7 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
 
             }
         });
+*/
     }
 
     private void ModalPagos(String formattedDate, String ID_serv_inyector, AlertDialog ModalOpcionesInyectores, String iddoc) {
@@ -1674,7 +1849,7 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
     }
 
 
-    private void ValidarListos(String ID_serv_inyector, AlertDialog dialogEstadoUnidad, AlertDialog dialogOpcionesCoches ) {
+    private void ValidarListos(String ID_serv_inyector, AlertDialog dialogEstadoUnidad, AlertDialog dialogOpcionesCoches) {
         modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -1690,7 +1865,7 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
 
 
                     if (finalizados < totalRegistros) {
-                        Utiles.crearToastPersonalizado(context, "Te falta revisar "+ faltan + " inyector");
+                        Utiles.crearToastPersonalizado(context, "Te falta revisar " + faltan + " inyector");
                     } else {
                         dialogEstadoUnidad.dismiss();
                         dialogOpcionesCoches.dismiss();
@@ -1722,9 +1897,6 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
 
         Volley.newRequestQueue(context).add(postrequest);
     }
-
-
-
 
 
     private void AbrirModalTraspasos(String ID_ser_venta, AlertDialog dialogOpcionesCoches) {
@@ -1871,10 +2043,9 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
     }
 
 
-    RecyclerView recyclerTraspasos ;
+    RecyclerView recyclerTraspasos;
     AdaptadorSelectorTraspasos adaptadorSelectorTraspasos;
     List<JSONObject> listaTraspasos = new ArrayList<>();
-
 
 
     private void BuscarTraspaso(String fechaSeleccionada) {
@@ -1938,16 +2109,14 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
     }
 
 
-
-
-    public void AsignarTraspaso(String id_ser_venta, String DOCID, String NUMERO, String TOTAL, String NOTA, String FECHA, String FECCAN, String EMISOR, String NOMBRE, String ESTADO) {
+    public void AsignarTraspaso(String ID_serv_inyector, String DOCID, String NUMERO, String TOTAL, String NOTA, String FECHA, String FECCAN, String EMISOR, String NOMBRE, String ESTADO) {
         modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 modalCargando.dismiss();
-                ConsultarHerramientasDeUnidad(id_ser_venta);
+                ConsultarHerramientasDeUnidad(ID_serv_inyector);
                 Utiles.crearToastPersonalizado(context, "Se asignó el traspaso a este servicio");
             }
         }, new Response.ErrorListener() {
@@ -1960,8 +2129,8 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("opcion", "138");
-                params.put("ID_serv", id_ser_venta);
+                params.put("opcion", "141");
+                params.put("ID_serv_inyector", ID_serv_inyector);
                 params.put("DOCID", DOCID);
                 params.put("NOMBRE", NOMBRE);
                 params.put("EMISOR", EMISOR);
@@ -1979,20 +2148,6 @@ LinearLayout AsignarTraspaso = customView.findViewById(R.id.AsignarTraspaso);
 
         Volley.newRequestQueue(context).add(postrequest);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private void setStatusTextView(TextView textView, String status) {

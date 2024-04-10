@@ -74,7 +74,7 @@
         android:layout_marginTop="6dp"
 
         android:paddingHorizontal="2dp"
-        android:paddingBottom="59dp"
+        android:paddingBottom="72dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

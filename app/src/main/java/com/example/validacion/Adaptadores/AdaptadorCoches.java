@@ -2919,7 +2919,6 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
 
     private void AbrirModalConsultaTraspasos(String id_ser_venta, String marca, String modelo) {
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View customView = LayoutInflater.from(context).inflate(R.layout.modal_consultar_traspasos_unidad, null);
         builder.setView(ModalRedondeado(context, customView));
