@@ -1355,7 +1355,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
 
                     adaptadorMecanicos.setOnItemClickListener(new AdaptadorNuevoMecanicos.OnItemClickListener() {
                         @Override
-                        public void onMecanicoClick(String idusuario, String nombre, String observaciones, String idbitacora) {
+                        public void onMecanicoClick(String idusuario, String nombre, String observaciones, String idbitacora, String costo) {
 
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -1367,6 +1367,8 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
 
 
                             TextView textView4 = customView.findViewById(R.id.textView4);
+                            textView4.setText("EDITANDO LA ACTIVIDAD DE " + nombre.toUpperCase());
+
                             Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
                             Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
                             EditText Motivo = customView.findViewById(R.id.Motivo);

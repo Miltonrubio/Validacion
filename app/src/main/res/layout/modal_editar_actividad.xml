@@ -9,38 +9,36 @@
 
 
     <TextView
-        android:id="@+id/textViewgasqwr"
+        android:id="@+id/TituloActiv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:visibility="gone"
+        android:layout_marginTop="28dp"
         android:text="Escribe el costo de la actividad:"
         android:textColor="@color/black"
         android:textSize="19dp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextCosto"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcion" />
 
     <EditText
         android:id="@+id/editTextCosto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_gravity="center"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/textview_outlinegris"
         android:hint="Agrega el costo $"
-        android:phoneNumber="true"
         android:paddingHorizontal="12dp"
         android:paddingVertical="12dp"
+        android:phoneNumber="true"
         android:textColor="@color/azulito"
         android:textSize="18dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcion" />
+        app:layout_constraintTop_toBottomOf="@+id/TituloActiv" />
 
     <Button
         android:id="@+id/btnCancelar"
@@ -71,12 +69,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextCosto" />
 
+
     <EditText
         android:id="@+id/editTextDescripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/textview_outlinegris"
         android:hint="Agrega la descripción"
         android:paddingHorizontal="12dp"
@@ -85,76 +84,35 @@
         android:textSize="18dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView33" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="156dp"
-        android:text="Selecciona un mecanico:"
-        android:textColor="@color/black"
-        android:textSize="19dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView33"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView42" />
 
     <TextView
         android:id="@+id/textView34"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="ACTIVIDADES DE MECANICOS"
         android:textColor="@color/azulito"
         android:textSize="23dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <TextView
+        android:id="@+id/textView42"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="Selecciona un mecanico:"
-        android:textColor="@color/black"
-        android:textSize="19dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView33"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="28dp"
         android:text="Describe la mano de obra a realizar:"
         android:textColor="@color/black"
         android:textSize="19dp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextDescripcion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView33"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/textview_outlinegris"
-        android:gravity="center"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="12dp"
-        android:text="Asignar Un Mecanico"
-        android:textColor="@color/azulito"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView34" />
 

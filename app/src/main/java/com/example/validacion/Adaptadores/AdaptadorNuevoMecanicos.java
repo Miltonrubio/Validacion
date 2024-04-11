@@ -70,7 +70,7 @@ public class AdaptadorNuevoMecanicos extends RecyclerView.Adapter<AdaptadorNuevo
 
 
     public interface OnItemClickListener {
-        void onMecanicoClick(String idusuario, String nombre, String observaciones, String idbitacora);
+        void onMecanicoClick(String idusuario, String nombre, String observaciones, String idbitacora, String costo);
     }
 
 
@@ -107,8 +107,9 @@ public class AdaptadorNuevoMecanicos extends RecyclerView.Adapter<AdaptadorNuevo
                     String nombre = filteredData.get(position).optString("nombre", "");
                     String observaciones = filteredData.get(position).optString("observaciones", "");
                     String idbitacora = filteredData.get(position).optString("idbitacora", "");
+                    String costo = filteredData.get(position).optString("costo", "");
 
-                    onMecanico.onMecanicoClick(idusuario, nombre, observaciones, idbitacora);
+                    onMecanico.onMecanicoClick(idusuario, nombre, observaciones, idbitacora, costo);
                 }
             }
         });
@@ -122,10 +123,21 @@ public class AdaptadorNuevoMecanicos extends RecyclerView.Adapter<AdaptadorNuevo
             String idusuario = jsonObject2.optString("idusuario", "");
             String fecha = jsonObject2.optString("fecha", "");
             String observaciones = jsonObject2.optString("observaciones", "");
+            String costo = jsonObject2.optString("costo", "");
+
+            if(costo.isEmpty() || costo.equalsIgnoreCase("") || costo ==null  || costo.equalsIgnoreCase("null")){
+
+
+                holder.costoActiv.setVisibility(View.GONE);
+
+            }else{
+
+                holder.costoActiv.setVisibility(View.VISIBLE);
+                holder.costoActiv.setText(costo + " $" );
+            }
 
 
             setTextViewText(holder.nombreMecanico, nombre.toUpperCase(), "No se encontro el mecanico");
-
 
             String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto;
 
@@ -161,6 +173,8 @@ public class AdaptadorNuevoMecanicos extends RecyclerView.Adapter<AdaptadorNuevo
         TextView fechaMecanico;
         FrameLayout contedorMecanicos;
 
+        TextView costoActiv;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nombreMecanico = itemView.findViewById(R.id.nombreMecanico);
@@ -168,6 +182,7 @@ public class AdaptadorNuevoMecanicos extends RecyclerView.Adapter<AdaptadorNuevo
             actividadMec = itemView.findViewById(R.id.actividadMec);
             contedorMecanicos = itemView.findViewById(R.id.contedorMecanicos);
             fechaMecanico = itemView.findViewById(R.id.fechaMecanico);
+            costoActiv= itemView.findViewById(R.id.costoActiv);
         }
 
     }

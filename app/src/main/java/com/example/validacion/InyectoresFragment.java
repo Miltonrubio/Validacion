@@ -1141,7 +1141,7 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
 
 
     @Override
-    public void onAsignarManoDeObraInyector(String ID_inyector, String ID_mecanico, String observaciones) {
+    public void onAsignarManoDeObraInyector(String ID_inyector, String ID_mecanico, String observaciones, String costoActiv) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1161,13 +1161,15 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("opcion", "125");
                 params.put("ID_inyector", ID_inyector);
+                params.put("ID_mecanico", ID_mecanico);
                 params.put("observaciones", observaciones);
-                params.put("observaciones", observaciones);
+                params.put("costo", costoActiv);
                 return params;
             }
         };
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
+
     }
 
     @Override

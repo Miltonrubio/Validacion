@@ -331,7 +331,6 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                     LayoutAsigMec.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            CargarMecanicos(ID_inyector);
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             View customView = LayoutInflater.from(context).inflate(R.layout.modal_marca_modelo, null);
@@ -339,6 +338,9 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                             AlertDialog dialogMostrarMecanicosAsignados = builder.create();
                             dialogMostrarMecanicosAsignados.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                             dialogMostrarMecanicosAsignados.show();
+
+                            CargarMecanicos(ID_inyector, view);
+
 
                             TextView textView32 = customView.findViewById(R.id.textView32);
                             textView32.setText("Actividades De Mecanicos");
@@ -371,44 +373,49 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
 
                                 adaptadorMecanicos.setOnItemClickListener(new AdaptadorNuevoMecanicos.OnItemClickListener() {
                                     @Override
-                                    public void onMecanicoClick(String idusuario, String nombre, String observaciones, String idbitacora) {
+                                    public void onMecanicoClick(String idusuario, String nombre, String observaciones, String idbitacora, String costo) {
 
 
                                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
+                                        View customView = LayoutInflater.from(context).inflate(R.layout.modal_editar_actividad, null);
                                         builder.setView(ModalRedondeado(context, customView));
                                         AlertDialog dialogEditarActividad = builder.create();
                                         dialogEditarActividad.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                         dialogEditarActividad.show();
 
-
-                                        TextView textView4 = customView.findViewById(R.id.textView4);
-                                        Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
-                                        Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
-                                        EditText Motivo = customView.findViewById(R.id.Motivo);
-                                        Motivo.setVisibility(View.VISIBLE);
-                                        Motivo.setText(observaciones);
+                                        TextView textView34 = customView.findViewById(R.id.textView34);
+                                        textView34.setText("EDITANDO ACTIVIDAD DE " + nombre.toUpperCase());
 
 
-                                        buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                        Button btnCancelar = customView.findViewById(R.id.btnCancelar);
+                                        Button btnAceptar = customView.findViewById(R.id.btnAceptar);
+
+                                        EditText editTextDescripcion = customView.findViewById(R.id.editTextDescripcion);
+                                        EditText editTextCosto = customView.findViewById(R.id.editTextCosto);
+
+                                        editTextDescripcion.setText(observaciones);
+                                        editTextCosto.setText(costo);
+
+                                        btnAceptar.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
 
-                                                String actividadCorregida = Motivo.getText().toString();
+                                                String actividadCorregida = editTextDescripcion.getText().toString();
+                                                String costoEditado = editTextCosto.getText().toString();
 
-                                                if (actividadCorregida.isEmpty()) {
+                                                if (actividadCorregida.isEmpty() || costoEditado.isEmpty()) {
                                                     Utiles.crearToastPersonalizado(context, "Debes ingresar la descripcion de la actividad");
                                                 } else {
 
 
                                                     dialogEditarActividad.dismiss();
-                                                    //         CorregirActividad(idbitacora, id_ser_venta, actividadCorregida);
+                                                            CorregirActividad(idbitacora, ID_inyector, actividadCorregida, costoEditado, view);
                                                 }
 
                                             }
                                         });
 
-                                        buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                        btnCancelar.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 dialogEditarActividad.dismiss();
@@ -432,6 +439,15 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                                     dialogAgregarMecanico.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                     dialogAgregarMecanico.show();
 
+                                    EditText editTextCosto = customView.findViewById(R.id.editTextCosto);
+                                    TextView textViewgasqwr = customView.findViewById(R.id.textViewgasqwr);
+
+
+                                    editTextCosto.setVisibility(View.VISIBLE);
+                                    editTextCosto.setText("0");
+                                    textViewgasqwr.setVisibility(View.VISIBLE);
+
+
                                     Button btnCancelar = customView.findViewById(R.id.btnCancelar);
                                     TextView textView33 = customView.findViewById(R.id.textView33);
                                     EditText editTextDescripcion = customView.findViewById(R.id.editTextDescripcion);
@@ -440,24 +456,29 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                                     Button btnAceptar = customView.findViewById(R.id.btnAceptar);
                                     btnAceptar.setEnabled(false);
 
+
                                     btnAceptar.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
 
                                             String descripcionActividad = editTextDescripcion.getText().toString();
-
+                                            String costoActiv = editTextCosto.getText().toString();
 
                                             if (descripcionActividad.equalsIgnoreCase("") || descripcionActividad.equalsIgnoreCase("null") ||
-                                                    descripcionActividad.equalsIgnoreCase(null) || descripcionActividad.isEmpty()) {
-                                                Utiles.crearToastPersonalizado(context, "Debes ingresar una descripcion de la actividad");
+                                                    descripcionActividad.equalsIgnoreCase(null) || descripcionActividad.isEmpty() ||
+                                                    costoActiv.equalsIgnoreCase("") || costoActiv.equalsIgnoreCase("null") ||
+                                                    costoActiv.equalsIgnoreCase(null) || costoActiv.isEmpty() || ID_mecSelec.isEmpty()
+
+                                            ) {
+                                                Utiles.crearToastPersonalizado(context, "Debes llenar todos los campos");
                                             } else {
 
                                                 dialogAgregarMecanico.dismiss();
                                                 dialogMostrarMecanicosAsignados.dismiss();
                                                 //   dialogOpcionesCoches.dismiss();
                                                 dialogOpcionesInyectores.dismiss();
-                                                actionListener.onAsignarManoDeObraInyector(ID_inyector, ID_mecSelec, descripcionActividad);
-                                                //  Utiles.crearToastPersonalizado(context, ID_inyector + " " + ID_mecSelec + " " + descripcionActividad);
+                                                actionListener.onAsignarManoDeObraInyector(ID_inyector, ID_mecSelec, descripcionActividad, costoActiv);
+                                                // Utiles.crearToastPersonalizado(context, ID_inyector + " " + ID_mecSelec + " " + descripcionActividad + " " +costoActiv  );
                                             }
                                         }
                                     });
@@ -499,7 +520,6 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                                                 public void onMecanicoSeleccionado(String idusuario, String nombre) {
                                                     ID_mecSelec = idusuario;
                                                     nombreMecSelec = nombre;
-
 
                                                     btnAceptar.setEnabled(true);
                                                     dialogMecanicos.dismiss();
@@ -617,7 +637,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
             @Override
             public void onClick(View view) {
 
-                AbrirModalConsultaTraspasos( id_inyector, nombre_inyector);
+                AbrirModalConsultaTraspasos(id_inyector, nombre_inyector);
             }
         });
 
@@ -1165,17 +1185,14 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
     }
 
 
-
-
-    RecyclerView recyclerTraspasosUnidad ;
+    RecyclerView recyclerTraspasosUnidad;
 
     LottieAnimationView lottieNoTraspasosUnidad;
     TextView textSinTraspasosUnidad;
 
     AdaptadorTraspasosUnidad adaptadorTraspasosUnidad;
 
-    List <JSONObject> listaTraspasosDeUnidad = new ArrayList<>();
-
+    List<JSONObject> listaTraspasosDeUnidad = new ArrayList<>();
 
 
     private void AbrirModalConsultaTraspasos(String id_inyector, String nombre_inyector) {
@@ -1244,7 +1261,6 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
         });
 
     }
-
 
 
     private void TraspasosDeServicio(String id) {
@@ -1355,6 +1371,37 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                 Map<String, String> params = new HashMap<>();
                 params.put("opcion", "128");
                 params.put("id_inyector", id_inyector);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    private void CorregirActividad( String  idbitacora,String ID_inyector,String actividadCorregida,String costoEditado, View view){
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Utiles.crearToastPersonalizado(context, "Se corrigió la actividad");
+                CargarMecanicos(ID_inyector, view);
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "Algo fallo, revisa la conexión");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "149");
+                params.put("idbitacora", idbitacora);
+                params.put("nuevoCosto", costoEditado);
+                params.put("actividadCorregida", actividadCorregida);
                 return params;
             }
         };
@@ -1556,9 +1603,6 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
     }
 
 
-
-
-
     private void DesvincularTraspasoUnidad(String ID_traspaso, String DOCID, String id_inyector) {
 
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -1715,7 +1759,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
     public interface OnActivityActionListener {
         void onActualizarFoto(String ID_inyector, AlertDialog dialogFotoInyector, AlertDialog dialogOpcionesInyectores);
 
-        void onAsignarManoDeObraInyector(String ID_inyector, String ID_mecanico, String observaciones);
+        void onAsignarManoDeObraInyector(String ID_inyector, String ID_mecanico, String observaciones, String costoActiv);
 
         void FinalizarRevisionInyector(String ID_inyector);
     }
@@ -1732,7 +1776,9 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
     AdaptadorNuevoMecanicos adaptadorMecanicos;
 
 
-    private void CargarMecanicos(String id_inyector) {
+    private void CargarMecanicos(String id_inyector, View view) {
+
+        modalCargando = Utiles.ModalCargando(view.getContext(), builder);
         listaMecanicos.clear();
         StringRequest stringRequest2 = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1751,11 +1797,13 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                                 if (listaMecanicos.size() > 0) {
                                     SinContenidoModalMecanicos.setVisibility(View.GONE);
                                     recyclerViewMarcasUnidades.setVisibility(View.VISIBLE);
-
+                                    modalCargando.dismiss();
 
                                 } else {
                                     SinContenidoModalMecanicos.setVisibility(View.VISIBLE);
                                     recyclerViewMarcasUnidades.setVisibility(View.GONE);
+                                    modalCargando.dismiss();
+
                                 }
 
                                 adaptadorMecanicos.notifyDataSetChanged();
@@ -1765,6 +1813,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
 
                             } catch (JSONException e) {
                                 SinContenidoModalMecanicos.setVisibility(View.VISIBLE);
+                                modalCargando.dismiss();
                                 recyclerViewMarcasUnidades.setVisibility(View.GONE);
                             }
                         } else {
@@ -1772,12 +1821,15 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                             SinContenidoModalMecanicos.setVisibility(View.VISIBLE);
                             recyclerViewMarcasUnidades.setVisibility(View.GONE);
                             Utiles.crearToastPersonalizado(context, "Algo fallo");
+                            modalCargando.dismiss();
+
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        modalCargando.dismiss();
                         Utiles.crearToastPersonalizado(context, "Algo fallo");
                     }
                 }
@@ -1801,6 +1853,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
 
     private void CargarTodosLosMecanicos() {
         listaSeleccionMecanicos.clear();
+        modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest stringRequest2 = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -1817,11 +1870,12 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                             adaptadorAsignarMecanico.notifyDataSetChanged();
                             adaptadorAsignarMecanico.setFilteredData(listaSeleccionMecanicos);
                             adaptadorAsignarMecanico.filter("");
-
+                            modalCargando.dismiss();
 
                         } catch (JSONException e) {
 
                             Utiles.crearToastPersonalizado(context, "Revisa la conexion");
+                            modalCargando.dismiss();
 
                         }
 
@@ -1830,6 +1884,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        modalCargando.dismiss();
                         Utiles.crearToastPersonalizado(context, "Algo fallo");
                     }
                 }
