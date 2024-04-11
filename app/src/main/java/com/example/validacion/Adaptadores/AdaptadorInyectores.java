@@ -116,7 +116,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
 
             String image = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto_inyector;
 
-
+/*
             Glide.with(context)
                     .load(image)
                     .skipMemoryCache(false)
@@ -124,7 +124,13 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                     .placeholder(R.drawable.inyectorpng)
                     .error(R.drawable.inyectorpng)
                     .into(holder.imageView2);
+*/
 
+
+            Glide.with(context)
+                    .load(image)
+                    .error(R.drawable.inyectorpng)
+                    .into(holder.imageView2);
 
             holder.contenedorInyector.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -265,7 +271,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
 
                             dialogOpcionesInyectores.dismiss();
                             //   dialogInyectoresPorServicio.dismiss();
-                            ChecksInyectoresFragment checksFragment = new ChecksInyectoresFragment();
+                              ChecksInyectoresFragment checksFragment = new ChecksInyectoresFragment();
                             checksFragment.setArguments(bundle);
 
                             FragmentManager fragmentManagerCheck = ((AppCompatActivity) context).getSupportFragmentManager();
@@ -273,7 +279,6 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                                     .replace(R.id.frame_layoutCoches, checksFragment)
                                     .addToBackStack(null)
                                     .commit();
-
                         }
                     });
 
@@ -296,6 +301,13 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                             //      ViewPagerImagenes = customView.findViewById(R.id.ViewPagerImagenes);
 
                             Button buttonCamara = customView.findViewById(R.id.buttonCamara);
+                            if (status_inyector.equalsIgnoreCase("ENTREGADO") || status_inyector.equalsIgnoreCase("Finalizado") ) {
+                                buttonCamara.setVisibility(View.GONE);
+
+                            }else{
+                                buttonCamara.setVisibility(View.VISIBLE);
+
+                            }
 
 
                             String image = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/unidades/" + foto_inyector;
@@ -353,7 +365,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                             FloatingActionButton botonAgregar = customView.findViewById(R.id.botonAgregar);
 
 
-                            if (status_inyector.equalsIgnoreCase("ENTREGADO")) {
+                            if (status_inyector.equalsIgnoreCase("ENTREGADO") || status_inyector.equalsIgnoreCase("Finalizado") ) {
                                 botonAgregar.setVisibility(View.GONE);
 
                             } else {
@@ -367,14 +379,13 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                             LinearLayoutManager layoutManager2 = new LinearLayoutManager(context);
                             recyclerViewMarcasUnidades.setLayoutManager(layoutManager2);
 
-                            if (status_inyector.equalsIgnoreCase("ENTREGADO")) {
+                            if (status_inyector.equalsIgnoreCase("ENTREGADO") || status_inyector.equalsIgnoreCase("Finalizado") ) {
 
                             } else {
 
                                 adaptadorMecanicos.setOnItemClickListener(new AdaptadorNuevoMecanicos.OnItemClickListener() {
                                     @Override
                                     public void onMecanicoClick(String idusuario, String nombre, String observaciones, String idbitacora, String costo) {
-
 
                                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                         View customView = LayoutInflater.from(context).inflate(R.layout.modal_editar_actividad, null);
