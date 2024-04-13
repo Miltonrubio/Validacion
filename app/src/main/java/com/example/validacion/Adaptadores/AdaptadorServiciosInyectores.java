@@ -67,7 +67,6 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
     String url;
 
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -273,7 +272,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
         FloatingActionButton botonAgregar = customView.findViewById(R.id.botonAgregar);
 
-        if (estatus.equalsIgnoreCase("ENTREGADO")) {
+        if (estatus.equalsIgnoreCase("ENTREGADO") || estatus.equalsIgnoreCase("Finalizado") ) {
             botonAgregar.setVisibility(View.GONE);
         } else {
             botonAgregar.setVisibility(View.VISIBLE);
@@ -285,7 +284,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
             @Override
             public void onClick(View view) {
 
-                AbrirModalConsultaTraspasos(idServInyector, marca, modelo);
+                AbrirModalConsultaTraspasos(idServInyector, marca, modelo, estatus);
             }
         });
 
@@ -1007,7 +1006,9 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
     List<JSONObject> listaTraspasosDeUnidad = new ArrayList<>();
 
 
-    private void AbrirModalConsultaTraspasos(String id_serv_inyector, String marca, String modelo) {
+    private void AbrirModalConsultaTraspasos(String id_serv_inyector, String marca, String modelo, String estatus) {
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View customView = LayoutInflater.from(context).inflate(R.layout.modal_consultar_traspasos_unidad, null);
         builder.setView(ModalRedondeado(context, customView));
@@ -1028,8 +1029,9 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
         recyclerTraspasosUnidad.setAdapter(adaptadorTraspasosUnidad);
         tituloTraspasoUnidad.setText("TRASPASOS PARA " + marca.toUpperCase() + " " + modelo.toUpperCase());
 
-
-        adaptadorTraspasosUnidad.setOnItemClickListener(new AdaptadorTraspasosUnidad.OnItemClickListener() {
+        if (estatus.equalsIgnoreCase("ENTREGADO") || estatus.equalsIgnoreCase("Finalizado") ) {
+        }else {
+            adaptadorTraspasosUnidad.setOnItemClickListener(new AdaptadorTraspasosUnidad.OnItemClickListener() {
             @Override
             public void onItemClick(String ID_traspaso, String DOCID) {
 
@@ -1060,7 +1062,6 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
                     }
                 });
 
-
                 buttonCancelar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -1071,6 +1072,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
             }
         });
+        }
 
     }
 
@@ -1645,7 +1647,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
     private void ModalCambiarStatus(String estatus, String ID_serv_inyector, AlertDialog dialogOpcionesCoches, String iddoc) {
 
-        if (estatus.equalsIgnoreCase("ENTREGADO")) {
+        if (estatus.equalsIgnoreCase("ENTREGADO") || estatus.equalsIgnoreCase("Finalizado")   ) {
 
             Utiles.crearToastPersonalizado(context, "No puedes cambiar el estado de una unidad entregada");
 
@@ -2267,6 +2269,12 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
                 }
             }
         }
+
+        if (filteredData.isEmpty()) {
+            actionListener.onFilterData(false); // Indica que no hay resultados
+        } else {
+            actionListener.onFilterData(true); // Indica que hay resultados
+        }
         notifyDataSetChanged();
     }
 
@@ -2282,6 +2290,9 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
         void cambiarEstado(String ID_serv_inyector, String nuevoStatus);
 
         void AsignarFolio(String iddocSelec, String ID_serv_inyector);
+
+        void onFilterData(boolean result);
+
     }
 
     AdaptadorServiciosInyectores.OnActivityActionListener actionListener;

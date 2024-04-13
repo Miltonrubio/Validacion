@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,6 +45,7 @@ import com.example.validacion.DetallesArrastres;
 import com.example.validacion.R;
 import com.itextpdf.text.pdf.parser.Line;
 
+import org.checkerframework.checker.units.qual.A;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,13 +54,16 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.ViewHolder> {
 
@@ -80,6 +87,9 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
     AdaptadorHerramientas.OnActivityActionListener actionListener;
     AdaptadorMecanicosNuevo.OnActivityActionListener actionListenerMecanicos;
 
+    String permisosUsuario, nombresesioniniciada, IDSesionIniciada;
+
+
     public AdaptadorGavetas(List<JSONObject> data, Context context, AdaptadorHerramientas.OnActivityActionListener actionListener, AdaptadorGavetas.OnActivityActionListener actionListenerGaveta, AdaptadorMecanicosNuevo.OnActivityActionListener actionListenerMecanicos) {
         this.data = data;
         this.context = context;
@@ -87,14 +97,34 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
         this.actionListener = actionListener;
         this.actionListenerGaveta = actionListenerGaveta;
         this.actionListenerMecanicos = actionListenerMecanicos;
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+        permisosUsuario = sharedPreferences.getString("permisos", "");
+        nombresesioniniciada = sharedPreferences.getString("nombre", "");
+        IDSesionIniciada = sharedPreferences.getString("idusuario", "");
+
+
+        Calendar calendarHoy = Calendar.getInstance();
+        fechaHoy = calendarHoy.getTime();
+
     }
+
+    Date fechaHoy;
 
     AdaptadorMecanicosNuevo adaptadorMecanicosNuevo;
 
     private AdaptadorGavetas.OnActivityActionListener actionListenerGaveta;
 
     public interface OnActivityActionListener {
-        void onEliminarGaveta(String id_gabeta, String nombre);
+
+
+        void onEliminarGaveta(String id_gabeta, String nombre, AlertDialog dialogOpcionesGaveta, AlertDialog dialogConfirmacion);
+
+        void AsignarAlarma(String id_gabeta, String frecuenciaDias);
+
+
+        void EditarGaveta(String idgabeta, String EditdescripcionGaveta, String EditnombreGaveta);
+
     }
 
 
@@ -115,10 +145,6 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
         List<JSONObject> listaDeCajones = new ArrayList<>();
         url = context.getResources().getString(R.string.ApiBack);
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
-        String permisosUsuario = sharedPreferences.getString("permisos", "");
-        String nombresesioniniciada = sharedPreferences.getString("nombre", "");
-        String IDSesionIniciada = sharedPreferences.getString("idusuario", "");
 
         try {
             JSONObject jsonObject2 = filteredData.get(position);
@@ -129,6 +155,65 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
             String idusuario = jsonObject2.optString("idusuario", "");
             String foto_mecanico = jsonObject2.optString("foto_mecanico", "");
             String descripcion = jsonObject2.optString("descripcion", "");
+
+            String fecha_ultimo_inv = jsonObject2.optString("fecha_ultimo_inv", "");
+            int frecuencia_dias = jsonObject2.optInt("frecuencia_dias", 0);
+
+
+            if (fecha_ultimo_inv.isEmpty() || fecha_ultimo_inv.equalsIgnoreCase("null") || fecha_ultimo_inv.equalsIgnoreCase("")) {
+                holder.textView43.setText("No se ha realizado ninguna revisión de inventario");
+                holder.progressBar.setProgress(100);
+                holder.progressBar.getProgressDrawable().setColorFilter(ContextCompat.getColor(context, R.color.rojo), PorterDuff.Mode.SRC_IN);
+            } else {
+                Calendar cal = Calendar.getInstance();
+                Date fechaActual = cal.getTime();
+
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Date fechaUltimoInvDate = null;
+                try {
+                    fechaUltimoInvDate = format.parse(fecha_ultimo_inv);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                cal.setTime(fechaUltimoInvDate);
+                cal.add(Calendar.DAY_OF_MONTH, frecuencia_dias);
+                Date fechaSiguienteInv = cal.getTime();
+
+                long diferenciaMillis = fechaSiguienteInv.getTime() - fechaActual.getTime();
+                long diferenciaDias = diferenciaMillis / (1000 * 60 * 60 * 24);
+
+                int porcentajeProgreso = 0;
+                if (diferenciaDias <= 0) {
+                    porcentajeProgreso = 100;
+                } else {
+                    porcentajeProgreso = (int) (diferenciaDias * 100 / frecuencia_dias);
+                }
+
+                if (diferenciaDias == 0) {
+                    holder.textView43.setText("El inventario se debe realizar hoy");
+                    holder.progressBar.setProgress(10);
+                    holder.progressBar.getProgressDrawable().setColorFilter(ContextCompat.getColor(context, R.color.rojo), PorterDuff.Mode.SRC_IN);
+
+                } else if (diferenciaDias == 1) {
+                    holder.textView43.setText("El inventario se debe realizar mañana");
+                    holder.progressBar.setProgress(10);
+                    holder.progressBar.getProgressDrawable().setColorFilter(ContextCompat.getColor(context, R.color.amarillo), PorterDuff.Mode.SRC_IN);
+
+                } else if (diferenciaDias < 0) {
+                    holder.textView43.setText("No se ha levantando el inventario para la gaveta");
+                    holder.progressBar.setProgress(100);
+                    holder.progressBar.getProgressDrawable().setColorFilter(ContextCompat.getColor(context, R.color.rojo), PorterDuff.Mode.SRC_IN);
+
+                } else {
+                    holder.progressBar.setProgress(porcentajeProgreso);
+                    holder.textView43.setText("Faltan: " + String.valueOf(diferenciaDias) + " Dias hasta la proxima revisión");
+                    holder.progressBar.getProgressDrawable().setColorFilter(ContextCompat.getColor(context, R.color.verde), PorterDuff.Mode.SRC_IN);
+
+                }
+
+
+            }
 
 
             holder.textDescripcion.setText(descripcion);
@@ -178,19 +263,19 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
             Bundle bundle = new Bundle();
             bundle.putString("id_gabeta", id_gabeta);
             bundle.putString("nombre", nombre_gaveta);
+            bundle.putString("idusuario", idusuario);
 
 
             setTextViewText(holder.tituloGaveta, nombre_gaveta, "No se encontro el nombre de gaveta");
             setTextViewText(holder.DueñoGaveta, nombre_mecanico, "Aun no se asigna un mecanico");
             holder.txtId.setText("id " + id_gabeta);
 
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
-
+                public void onClick(View view) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_gavetas, null);
+                    View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_gavetas_nuevo, null);
                     builder.setView(ModalRedondeado(view.getContext(), customView));
                     AlertDialog dialogOpcionesGaveta = builder.create();
                     dialogOpcionesGaveta.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -201,6 +286,8 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     LinearLayout LayoutEliminarGaveta = customView.findViewById(R.id.LayoutEliminarGaveta);
                     LinearLayout LayoutLevantarInventario = customView.findViewById(R.id.LayoutLevantarInventario);
                     LinearLayout LayoutConsultarInventarios = customView.findViewById(R.id.LayoutConsultarInventarios);
+                    LinearLayout layoutAsignarAlarma = customView.findViewById(R.id.layoutAsignarAlarma);
+                    LinearLayout EditarGaveta = customView.findViewById(R.id.EditarGaveta);
 
 
                     if (nombre_mecanico.isEmpty() || nombre_mecanico.equals("null") || nombre_mecanico.equals(null)) {
@@ -208,6 +295,119 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     } else {
                         LayoutAsignarMecanico.setVisibility(View.GONE);
                     }
+
+
+                    EditarGaveta.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_editar_gaveta, null);
+                            builder.setView(ModalRedondeado(view.getContext(), customView));
+                            AlertDialog dialogEditarGaveta = builder.create();
+                            dialogEditarGaveta.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogEditarGaveta.show();
+
+                            TextView DueñoGaveta = customView.findViewById(R.id.DueñoGaveta);
+                            ImageView fotoEditMecanico = customView.findViewById(R.id.fotoEditMecanico);
+
+                            EditText editTextNombreGaveta = customView.findViewById(R.id.editTextNombreGaveta);
+                            EditText editTextDescripcionGaveta = customView.findViewById(R.id.editTextDescripcionGaveta);
+                            Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                            Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                            DueñoGaveta.setText(nombre_mecanico);
+                            editTextNombreGaveta.setText(nombre_gaveta);
+                            editTextDescripcionGaveta.setText(descripcion);
+
+                            String imageUrl = "http://tallergeorgio.hopto.org:5613/tallergeorgio/imagenes/usuarios/" + foto_mecanico;
+                            Glide.with(context)
+                                    .load(imageUrl)
+                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                    .placeholder(R.drawable.usuarios)
+                                    .error(R.drawable.usuarios)
+                                    .into(fotoEditMecanico);
+
+                            buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    String nuevoNombre = editTextNombreGaveta.getText().toString();
+                                    String descripGaveta = editTextDescripcionGaveta.getText().toString();
+
+                                    if (nuevoNombre.isEmpty() || descripGaveta.isEmpty()) {
+                                        Utiles.crearToastPersonalizado(context, "Debes llenar todos los campos");
+                                    } else {
+                                        dialogEditarGaveta.dismiss();
+                                        dialogOpcionesGaveta.dismiss();
+                                        actionListenerGaveta.EditarGaveta(id_gabeta, descripGaveta, nuevoNombre);
+                                    }
+
+
+                                }
+                            });
+
+
+                            buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogEditarGaveta.dismiss();
+                                }
+                            });
+
+
+                        }
+                    });
+
+
+                    layoutAsignarAlarma.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_asignar_alarma, null);
+                            builder.setView(ModalRedondeado(view.getContext(), customView));
+                            AlertDialog dialogAsignarAlarma = builder.create();
+                            dialogAsignarAlarma.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogAsignarAlarma.show();
+
+
+                            EditText editTextFrecuencia = customView.findViewById(R.id.editTextFrecuencia);
+                            Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                            Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+
+                            buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    String frecuenciaDias = editTextFrecuencia.getText().toString();
+
+                                    if (frecuenciaDias.isEmpty() || frecuenciaDias.equalsIgnoreCase("0")) {
+                                        Utiles.crearToastPersonalizado(context, "Debes ingresar una frecuencia de revisión valida");
+                                    } else {
+
+                                        dialogAsignarAlarma.dismiss();
+
+                                        actionListenerGaveta.AsignarAlarma(id_gabeta, frecuenciaDias);
+
+                                    }
+
+
+                                }
+                            });
+
+                            buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialogAsignarAlarma.dismiss();
+                                }
+                            });
+
+
+                        }
+                    });
 
 
                     LayoutConsultarInventarios.setOnClickListener(new View.OnClickListener() {
@@ -268,11 +468,48 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     LayoutDescargarPDF.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                            View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_opciones_pdf_gavetas, null);
+                            builder.setView(ModalRedondeado(view.getContext(), customView));
+                            AlertDialog dialogConfirmacion = builder.create();
+                            dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialogConfirmacion.show();
 
+                            LinearLayout LayoutPDFContenidoGaveta = customView.findViewById(R.id.LayoutPDFContenidoGaveta);
+                            LinearLayout LayoutPDFInventarios = customView.findViewById(R.id.LayoutPDFInventarios);
+
+                            LayoutPDFContenidoGaveta.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    Map<String, String> postData = new HashMap<>();
+                                    postData.put("opcion", "153");
+                                    postData.put("id_gabeta", id_gabeta);
+
+                                    new NuevoDownloadFileTask(context, postData).execute(url);
+                                }
+                            });
+
+                            LayoutPDFInventarios.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    Map<String, String> postData = new HashMap<>();
+                                    postData.put("opcion", "154");
+                                    postData.put("id_gabeta", id_gabeta);
+
+                                    new NuevoDownloadFileTask(context, postData).execute(url);
+                                }
+                            });
+
+                            /*
                             Map<String, String> postData = new HashMap<>();
                             postData.put("opcion", "50");
 
                             new DownloadFileTask(context, postData).execute(url);
+
+                            */
+
                         }
                     });
 
@@ -307,9 +544,7 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                             buttonAceptar.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    dialogOpcionesGaveta.dismiss();
-                                    dialogConfirmacion.dismiss();
-                                    actionListenerGaveta.onEliminarGaveta(id_gabeta, nombre_gaveta);
+                                    actionListenerGaveta.onEliminarGaveta(id_gabeta, nombre_gaveta, dialogOpcionesGaveta, dialogConfirmacion);
                                 }
                             });
 
@@ -350,7 +585,6 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
                     });
 
 
-                    return false;
                 }
             });
 
@@ -408,6 +642,12 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
         Volley.newRequestQueue(context).add(postrequest);
     }
 
+
+
+
+
+
+
 /*
     private void mostrarLayout(String estado) {
 
@@ -459,6 +699,9 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
         ImageView fotoMecanico;
 
         TextView textDescripcion;
+        ProgressBar progressBar;
+
+        TextView textView43;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -469,7 +712,8 @@ public class AdaptadorGavetas extends RecyclerView.Adapter<AdaptadorGavetas.View
             txtId = itemView.findViewById(R.id.txtId);
             fotoMecanico = itemView.findViewById(R.id.fotoMecanico);
             textDescripcion = itemView.findViewById(R.id.textDescripcion);
-
+            progressBar = itemView.findViewById(R.id.progressBar);
+            textView43 = itemView.findViewById(R.id.textView43);
         }
     }
 

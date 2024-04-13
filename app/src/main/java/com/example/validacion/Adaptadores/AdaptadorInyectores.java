@@ -637,7 +637,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
         FloatingActionButton botonAgregar = customView.findViewById(R.id.botonAgregar);
         Button buttonTraspasosDeUnidad = customView.findViewById(R.id.buttonTraspasosDeUnidad);
 
-        if (estatus.equalsIgnoreCase("ENTREGADO")) {
+        if (estatus.equalsIgnoreCase("ENTREGADO"  )||estatus.equalsIgnoreCase("Finalizado"  ) ) {
             botonAgregar.setVisibility(View.GONE);
         } else {
             botonAgregar.setVisibility(View.VISIBLE);
@@ -648,7 +648,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
             @Override
             public void onClick(View view) {
 
-                AbrirModalConsultaTraspasos(id_inyector, nombre_inyector);
+                AbrirModalConsultaTraspasos(id_inyector, nombre_inyector, estatus);
             }
         });
 
@@ -717,7 +717,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
                         Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
 
 
-                        if (estatus.equalsIgnoreCase("ENTREGADO")) {
+                        if (estatus.equalsIgnoreCase("ENTREGADO"  )||estatus.equalsIgnoreCase("Finalizado"  ) ) {
                             buttonAceptar.setEnabled(false);
                             Motivo.setEnabled(false);
                         } else {
@@ -1206,7 +1206,10 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
     List<JSONObject> listaTraspasosDeUnidad = new ArrayList<>();
 
 
-    private void AbrirModalConsultaTraspasos(String id_inyector, String nombre_inyector) {
+    private void AbrirModalConsultaTraspasos(String id_inyector, String nombre_inyector, String estatus) {
+
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View customView = LayoutInflater.from(context).inflate(R.layout.modal_consultar_traspasos_unidad, null);
         builder.setView(ModalRedondeado(context, customView));
@@ -1227,49 +1230,54 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
         recyclerTraspasosUnidad.setAdapter(adaptadorTraspasosUnidad);
         tituloTraspasoUnidad.setText("TRASPASOS PARA " + nombre_inyector.toUpperCase());
 
+        if (estatus.equalsIgnoreCase("ENTREGADO"  )||estatus.equalsIgnoreCase("Finalizado"  ) ) {
 
-        adaptadorTraspasosUnidad.setOnItemClickListener(new AdaptadorTraspasosUnidad.OnItemClickListener() {
-            @Override
-            public void onItemClick(String ID_traspaso, String DOCID) {
+        }else{
 
-                //   Utiles.crearToastPersonalizado(context, "Selecci " +ID_traspaso);
+            adaptadorTraspasosUnidad.setOnItemClickListener(new AdaptadorTraspasosUnidad.OnItemClickListener() {
+                @Override
+                public void onItemClick(String ID_traspaso, String DOCID) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
-                builder.setView(ModalRedondeado(context, customView));
-                AlertDialog dialogConfirmacion = builder.create();
-                dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialogConfirmacion.show();
+                    //   Utiles.crearToastPersonalizado(context, "Selecci " +ID_traspaso);
 
-
-                TextView textView4 = customView.findViewById(R.id.textView4);
-                Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
-                Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
-
-                textView4.setText("¿ Deseas desvincular la asignación de este traspaso ?");
-                buttonAceptar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        dialogConfirmacion.dismiss();
-                        dialogTraspasosUnidad.dismiss();
-
-                        DesvincularTraspasoUnidad(ID_traspaso, DOCID, id_inyector);
-                        // Utiles.crearToastPersonalizado(context, "Jeje " + ID_traspaso + " " + DOCID);
-                    }
-                });
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    View customView = LayoutInflater.from(context).inflate(R.layout.modal_confirmacion, null);
+                    builder.setView(ModalRedondeado(context, customView));
+                    AlertDialog dialogConfirmacion = builder.create();
+                    dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogConfirmacion.show();
 
 
-                buttonCancelar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialogConfirmacion.dismiss();
-                    }
-                });
+                    TextView textView4 = customView.findViewById(R.id.textView4);
+                    Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                    Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                    textView4.setText("¿ Deseas desvincular la asignación de este traspaso ?");
+                    buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            dialogConfirmacion.dismiss();
+                            dialogTraspasosUnidad.dismiss();
+
+                            DesvincularTraspasoUnidad(ID_traspaso, DOCID, id_inyector);
+                            // Utiles.crearToastPersonalizado(context, "Jeje " + ID_traspaso + " " + DOCID);
+                        }
+                    });
 
 
-            }
-        });
+                    buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialogConfirmacion.dismiss();
+                        }
+                    });
+
+
+                }
+            });
+        }
+
 
     }
 

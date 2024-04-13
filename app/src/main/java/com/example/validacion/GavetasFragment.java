@@ -113,6 +113,9 @@ public class GavetasFragment extends Fragment implements AdaptadorHerramientas.O
         context = requireContext();
         url = context.getResources().getString(R.string.ApiBack);
 
+
+
+
         RecyclerView reciclerViewGavetas = view.findViewById(R.id.reciclerViewGavetas);
 
         builder = new AlertDialog.Builder(context);
@@ -363,6 +366,10 @@ public class GavetasFragment extends Fragment implements AdaptadorHerramientas.O
 
 
     private void MostrarGavetas() {
+
+        modalCargando = Utiles.ModalCargando(context, builder);
+
+
         listaGavetas.clear();
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -381,13 +388,18 @@ public class GavetasFragment extends Fragment implements AdaptadorHerramientas.O
                     if (listaGavetas.size() > 0) {
 
                         mostrarLayout("conContenido");
+                        modalCargando.dismiss();
                     } else {
 
                         mostrarLayout("SinInternet");
+                        modalCargando.dismiss();
+
                     }
 
                 } catch (JSONException e) {
                     mostrarLayout("SinInternet");
+                    modalCargando.dismiss();
+
                 }
 
             }
@@ -395,6 +407,8 @@ public class GavetasFragment extends Fragment implements AdaptadorHerramientas.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 mostrarLayout("SinInternet");
+                modalCargando.dismiss();
+
             }
         }) {
             protected Map<String, String> getParams() {
@@ -483,13 +497,80 @@ public class GavetasFragment extends Fragment implements AdaptadorHerramientas.O
     }
 
 
-    public void onEliminarGaveta(String id_gabeta, String nombre) {
+    public void onEliminarGaveta(String id_gabeta, String nombre, AlertDialog dialogOpcionesGaveta, AlertDialog dialogConfirmacion) {
+
+        modalCargando = Utiles.ModalCargando(context, builder);
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Utiles.crearToastPersonalizado(context, response);
+                if (response.equals("\"exitoso\"") || response.equals("exitoso")  ){
+                dialogOpcionesGaveta.dismiss();
+                MostrarGavetas();
+                }
+                dialogConfirmacion.dismiss();
+                modalCargando.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "No se puedo eliminar la gaveta, revisa la conexión");
+                dialogConfirmacion.dismiss();
+                modalCargando.dismiss();
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "46");
+                params.put("id_gabeta", id_gabeta);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
+    public void EditarGaveta(String idgabeta, String EditdescripcionGaveta, String EditnombreGaveta) {
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                MostrarGavetas();
+                Utiles.crearToastPersonalizado(context, "Se actualizó el nombre para" + EditnombreGaveta);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "152");
+                params.put("idgabeta", idgabeta);
+                params.put("EditdescripcionGaveta", EditdescripcionGaveta);
+                params.put("EditnombreGaveta", EditnombreGaveta);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+    @Override
+    public void AsignarAlarma(String id_gabeta, String frecuencia) {
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                Utiles.crearToastPersonalizado(context, "Se asignó la alarma a esta gaveta");
                 MostrarGavetas();
-                Utiles.crearToastPersonalizado(context, "Se elimino la gaveta " + nombre);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -501,8 +582,9 @@ public class GavetasFragment extends Fragment implements AdaptadorHerramientas.O
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("opcion", "46");
+                params.put("opcion", "150");
                 params.put("id_gabeta", id_gabeta);
+                params.put("frecuencia", frecuencia);
                 return params;
             }
         };

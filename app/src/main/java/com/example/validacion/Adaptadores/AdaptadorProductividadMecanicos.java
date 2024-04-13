@@ -286,6 +286,7 @@ public class AdaptadorProductividadMecanicos extends RecyclerView.Adapter<Adapta
                             @Override
                             public void onClick(View view) {
                                 AbrirModalEditar(idusuario, nombre, email, telefono, password, dialogOpcionesUsuarios);
+
                             }
                         });
 

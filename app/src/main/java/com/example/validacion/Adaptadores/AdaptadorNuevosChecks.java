@@ -119,6 +119,7 @@ public class AdaptadorNuevosChecks extends RecyclerView.Adapter<AdaptadorNuevosC
                     holder.regularRadioButton.setChecked(false);
                     actionListener.onActualizarCheck(ID_valor_check, "Bueno");
 
+                 //   return false;
                 }
             });
 
@@ -132,6 +133,7 @@ public class AdaptadorNuevosChecks extends RecyclerView.Adapter<AdaptadorNuevosC
 
                     actionListener.onActualizarCheck(ID_valor_check, "Malo");
 
+                 //   return false;
                 }
             });
 
@@ -147,6 +149,7 @@ public class AdaptadorNuevosChecks extends RecyclerView.Adapter<AdaptadorNuevosC
 
                     actionListener.onActualizarCheck(ID_valor_check, "Regular");
 
+              //      return false;
                 }
             });
 

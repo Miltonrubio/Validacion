@@ -186,7 +186,6 @@ public class PruebaSpinnre extends AppCompatActivity {
 
                                         if (km.isEmpty() || motivoIngreso.isEmpty()) {
                                             Toast.makeText(PruebaSpinnre.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
-                                            return;
                                         } else {
 
                                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(PruebaSpinnre.this);

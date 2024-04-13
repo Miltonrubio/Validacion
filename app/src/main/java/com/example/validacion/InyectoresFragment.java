@@ -77,11 +77,14 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
     AlertDialog modalCargando;
     AdaptadorTiposUnidadesDesdeInicio.OnActivityActionListener tiposUnidadesActionListener;
     AdaptadorSeleccionarUnidad.OnActivityActionListener unidadActionListener;
+    TextView textSinContenido;
 
     ConstraintLayout contenedorNoInternet;
     ConstraintLayout contenedorContenido;
     ConstraintLayout contenedorNoContenido;
     AdaptadorServiciosInyectores.OnActivityActionListener actionListenerServiciosInyectores;
+
+    EditText searchEditTextInicio;
 
     private void MostrarContenido(String estado) {
 
@@ -126,12 +129,14 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
         tiposUnidadesActionListener = this;
         actionListenerInyectores = this;
         actionListenerServiciosInyectores = this;
+
         RecyclerView reciclerViewInyectores = view.findViewById(R.id.reciclerViewInyectores);
         FloatingActionButton botonAgregarInyector = view.findViewById(R.id.botonAgregarInyector);
         contenedorNoContenido = view.findViewById(R.id.contenedorNoContenido);
+        textSinContenido= view.findViewById(R.id.textSinContenido);
         contenedorNoInternet = view.findViewById(R.id.contenedorNoInternet);
         contenedorContenido = view.findViewById(R.id.contenedorContenido);
-        EditText searchEditText = view.findViewById(R.id.searchEditText);
+        searchEditTextInicio = view.findViewById(R.id.searchEditTextInicio);
 
         adaptadorServiciosInyectores = new AdaptadorServiciosInyectores(listaServicios, context, actionListenerInyectores, actionListenerServiciosInyectores);
         reciclerViewInyectores.setLayoutManager(new LinearLayoutManager(context));
@@ -310,10 +315,10 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
         });
 
 
-        searchEditText.setHint("Buscar inyector por ID");
+        searchEditTextInicio.setHint("Buscar inyector por ID");
 
 
-        searchEditText.addTextChangedListener(new TextWatcher() {
+        searchEditTextInicio.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -365,6 +370,8 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
 
         Volley.newRequestQueue(context).add(postrequest);
     }
+
+
 
     private void AbrirModalClientes() {
 
@@ -1203,6 +1210,37 @@ public class InyectoresFragment extends Fragment implements AdaptadorSeleccionar
         RequestQueue requestQueue2 = Volley.newRequestQueue(context);
         requestQueue2.add(stringRequest2);
     }
+
+
+
+
+
+    @Override
+    public void onFilterData(boolean result) {
+        if (result) {
+            animacionLupe("Oculto");
+        } else {
+            if ((searchEditTextInicio.getText().toString().equals("") || searchEditTextInicio.getText().toString().isEmpty())) {
+                animacionLupe("Oculto");
+            } else {
+                animacionLupe("Visible");
+            }
+        }
+    }
+
+    private void animacionLupe(String estado) {
+        if (estado.equals("Oculto")) {
+            contenedorNoContenido.setVisibility(View.GONE);
+            textSinContenido.setVisibility(View.GONE);
+            textSinContenido.setText("No hay servicios activos en este momento");
+
+        } else {
+            contenedorNoContenido.setVisibility(View.VISIBLE);
+            textSinContenido.setVisibility(View.VISIBLE);
+            textSinContenido.setText("No hay resultados que coincidan con la busqueda");
+        }
+    }
+
 
 
 }

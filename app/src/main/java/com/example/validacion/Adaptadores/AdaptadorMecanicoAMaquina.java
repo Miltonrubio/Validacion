@@ -147,6 +147,7 @@ public class AdaptadorMecanicoAMaquina extends RecyclerView.Adapter<AdaptadorMec
                             dialogConfirmacion.dismiss();
                             dialogMaquinas.dismiss();
                             actionListener.onAsignarMecanicoAMaquina(idusuario, idmaquina);
+
                         }
                     });
 

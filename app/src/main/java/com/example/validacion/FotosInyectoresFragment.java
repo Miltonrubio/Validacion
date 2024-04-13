@@ -95,9 +95,6 @@ public class FotosInyectoresFragment extends Fragment {
             public void onClick(View view) {
 
 
-
-
-
             }
         });
 

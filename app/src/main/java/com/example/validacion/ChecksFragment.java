@@ -134,6 +134,7 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
                     @Override
                     public void onClick(View view) {
                         dialogConfirmacion.dismiss();
+                    //    return false;
                     }
                 });
 
@@ -150,10 +151,12 @@ public class ChecksFragment extends Fragment implements AdaptadorNuevosChecks.On
                             FinalizarRevision("Vacio");
                         }
 
+                      //  return false;
                     }
                 });
 
 
+              //  return false;
             }
         });
 

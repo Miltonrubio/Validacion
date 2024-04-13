@@ -20,7 +20,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -108,17 +110,11 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
             String foto = jsonObject2.optString("foto", "");
             String cantidad = jsonObject2.optString("cantidad", "");
 
+            String NombreCajon = jsonObject2.optString("NombreCajon", "");
+
+            holder.NumCajon.setText("En el " + NombreCajon);
 
 
-
-/*
-            if (estadoHerr.isEmpty() || estadoHerr.equalsIgnoreCase("NA")|| estadoHerr.equalsIgnoreCase("0")) {
-                sumaVacios=sumaVacios+1;
-                Log.d("Entro a la validacion ", "Si si entro");
-            }
-
-            Log.d("vacios", "total de vacios: " + sumaVacios);
-*/
             Bundle bundle = new Bundle();
             bundle.putString("idinv", idinv);
             bundle.putString("estadoHerr", estadoHerr);
@@ -136,7 +132,7 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
                     .into(holder.imageViewherramientas);
 
 
-            holder.nombreHerramienta.setText(herramienta);
+            holder.nombreHerramienta.setText(herramienta.toUpperCase());
 
             holder.piezas.setText(cantidad);
 
@@ -169,7 +165,7 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
             }
 
 
-            if (estadoHerr.equalsIgnoreCase("B")) {
+            if (estadoHerr.equalsIgnoreCase("B") || estadoHerr.equalsIgnoreCase("Bueno") || estadoHerr.equalsIgnoreCase("bueno")) {
 
                 holder.radioButtonBueno.setChecked(true);
                 holder.radioButtonMalo.setChecked(false);
@@ -177,21 +173,24 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
                 holder.radioButtonNA.setChecked(false);
 
 
-            } else if (estadoHerr.equalsIgnoreCase("M")) {
+            } else if (estadoHerr.equalsIgnoreCase("M") || estadoHerr.equalsIgnoreCase("malo") || estadoHerr.equalsIgnoreCase("Malo")) {
 
                 holder.radioButtonBueno.setChecked(false);
                 holder.radioButtonMalo.setChecked(true);
                 holder.radioButtonRegular.setChecked(false);
                 holder.radioButtonNA.setChecked(false);
 
-            } else if (estadoHerr.equalsIgnoreCase("R")) {
+
+            } else if (estadoHerr.equalsIgnoreCase("R") || estadoHerr.equalsIgnoreCase("Regular") || estadoHerr.equalsIgnoreCase("regular")) {
 
 
                 holder.radioButtonBueno.setChecked(false);
                 holder.radioButtonMalo.setChecked(false);
                 holder.radioButtonRegular.setChecked(true);
                 holder.radioButtonNA.setChecked(false);
-            } else if (estadoHerr.equalsIgnoreCase("NA")) {
+
+
+            } else if (estadoHerr.equalsIgnoreCase("NA") || estadoHerr.equalsIgnoreCase("No aplica")) {
 
                 holder.radioButtonBueno.setChecked(false);
                 holder.radioButtonMalo.setChecked(false);
@@ -214,11 +213,8 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
                     holder.radioButtonRegular.setChecked(false);
                     holder.radioButtonNA.setChecked(true);
 
-                    ActualizarCheck("NA", idinv, herramienta);
+                    actionListener.ActualizarCheck("NA", idinv, herramienta);
 
-                    if (estadoHerr.equalsIgnoreCase("0") || estadoHerr.isEmpty()) {
-                        contador--;
-                    }
                 }
             });
 
@@ -233,10 +229,8 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
                     holder.radioButtonNA.setChecked(false);
 
 
-                    ActualizarCheck("R", idinv, herramienta);
-                    if (estadoHerr.equalsIgnoreCase("0") || estadoHerr.isEmpty()) {
-                        contador--;
-                    }
+                    actionListener.ActualizarCheck("Regular", idinv, herramienta);
+
                 }
             });
 
@@ -250,10 +244,8 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
                     holder.radioButtonRegular.setChecked(false);
                     holder.radioButtonNA.setChecked(false);
 
-                    ActualizarCheck("M", idinv, herramienta);
-                    if (estadoHerr.equalsIgnoreCase("0") || estadoHerr.isEmpty()) {
-                        contador--;
-                    }
+                    actionListener.ActualizarCheck("Malo", idinv, herramienta);
+
 
                 }
             });
@@ -266,87 +258,41 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
                     holder.radioButtonMalo.setChecked(false);
                     holder.radioButtonRegular.setChecked(false);
                     holder.radioButtonNA.setChecked(false);
-                    ActualizarCheck("B", idinv, herramienta);
-                    if (estadoHerr.equalsIgnoreCase("0") || estadoHerr.isEmpty()) {
-                        contador--;
-                    }
+                    actionListener.ActualizarCheck("Bueno", idinv, herramienta);
+
                 }
             });
 
 
-            holder.piezas.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            holder.piezas.addTextChangedListener(new TextWatcher() {
                 @Override
-                public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE || (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
-                        String cantidadHerr = holder.piezas.getText().toString();
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                        ActualizarPiezas(cantidadHerr, idinv, herramienta);
-                        return true; // Se maneja el evento
+                    String texto = holder.piezas.getText().toString();
+
+                    if (!texto.isEmpty()) {
+                        actionListener.ActualizarPiezas(texto, idinv, herramienta);
+                        holder.tituloNoVacio.setVisibility(View.GONE);
+                    } else {
+                        holder.tituloNoVacio.setVisibility(View.VISIBLE);
+                        holder.tituloNoVacio.setText("No puedes dejar este campo vacio");
+
                     }
-                    return false; // No se maneja el evento
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
                 }
             });
-
 
         } finally {
 
         }
     }
-
-    private void ActualizarPiezas(String cantidadHerr, String idinv, String nombreherramienta) {
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Utiles.crearToastPersonalizado(context, "Se actualizó la cantidad de " + nombreherramienta);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Utiles.crearToastPersonalizado(context, "No se pudo actualizar, revisa la conexion por favor");
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "69");
-                params.put("idinv", idinv);
-                params.put("cantidadHerr", cantidadHerr);
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-    }
-
-
-    private void ActualizarCheck(String estadoHerramienta, String idinv, String nombreherramienta) {
-        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Utiles.crearToastPersonalizado(context, "Se actualizó el estado de " + nombreherramienta);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Utiles.crearToastPersonalizado(context, "No se pudo actualizar, revisa la conexion por favor");
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("opcion", "58");
-                params.put("idinv", idinv);
-                params.put("estadoHerramienta", estadoHerramienta);
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(postrequest);
-    }
-
 
     @Override
     public int getItemCount() {
@@ -373,6 +319,7 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
 
         EditText piezas;
         TextView NumCajon;
+        TextView tituloNoVacio;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -392,7 +339,7 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
             piezas = itemView.findViewById(R.id.piezas);
 
             descripcion = itemView.findViewById(R.id.descripcion);
-
+            tituloNoVacio = itemView.findViewById(R.id.tituloNoVacio);
         }
     }
 
@@ -443,33 +390,24 @@ public class AdaptadorHerramientasDelInventario extends RecyclerView.Adapter<Ada
     String estadoinv;
 
 
-    public AdaptadorHerramientasDelInventario(List<JSONObject> data, Context context, String estadoinv) {
+    public interface OnActivityActionListener {
+        void ActualizarPiezas(String cantidadHerr, String idinv, String nombreherramienta);
+
+        void ActualizarCheck(String estadoHerramienta, String idinv, String nombreherramienta);
+    }
+
+    private AdaptadorHerramientasDelInventario.OnActivityActionListener actionListener;
+
+
+    public AdaptadorHerramientasDelInventario(List<JSONObject> data, Context context, String estadoinv, AdaptadorHerramientasDelInventario.OnActivityActionListener actionListener) {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
         this.estadoinv = estadoinv;
-        contador = obtenerSuma();
+        //  contador = obtenerSuma();
+
+
+        this.actionListener = actionListener;
     }
-
-
-    int contador = 0;
-
-    public int obtenerSuma() {
-        contador = 0;
-        for (JSONObject jsonObject : filteredData) {
-            String valorCheck = jsonObject.optString("estadoHerr", "");
-
-            if (TextUtils.isEmpty(valorCheck) || valorCheck.equalsIgnoreCase("0")) {
-                contador++;
-            }
-        }
-
-        return contador;
-    }
-
-    public int obtenerContador() {
-        return contador;
-    }
-
 
 }

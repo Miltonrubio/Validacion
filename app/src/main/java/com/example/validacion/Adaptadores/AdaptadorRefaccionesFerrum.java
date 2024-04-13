@@ -74,7 +74,7 @@ public class AdaptadorRefaccionesFerrum extends RecyclerView.Adapter<AdaptadorRe
                     String DESCRIPCIO = filteredData.get(position).optString("DESCRIPCIO", "");
                     String precio = filteredData.get(position).optString("precio", "");
                     onItemClickListener.onItemClick(precio, DESCRIPCIO, existencia, CLAVE);
-                }
+                }// return false;
             }
         });
 

@@ -224,6 +224,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                 @Override
                                 public void onClick(View view) {
                                     dialogConfirmacion.dismiss();
+                                //    return false;
                                 }
                             });
 
@@ -234,10 +235,11 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                     dialogConfirmacion.dismiss();
                                     dialogConBotones.dismiss();
                                     actionListener.onMandarEvidencia(idbitacora, nuevoEstado, "Fin", "", "NO");
+                                 //   return false;
                                 }
                             });
 
-
+// return false;
                         }
                     });
 
@@ -270,6 +272,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                             @Override
                                             public void onClick(View view) {
                                                 dialogConfirmacion.dismiss();
+                                            //    return false;
                                             }
                                         });
 
@@ -280,7 +283,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                                 dialogConfirmacion.dismiss();
                                                 dialogConBotones.dismiss();
                                                 actionListener.onActualizarEstadoActividadesActivity(idbitacora, "activo", "");
-
+// return false;
                                             }
                                         });
 
@@ -296,7 +299,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                 }
                             });
 
-
+// return false;
                         }
                     });
 
@@ -322,7 +325,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                 @Override
                                 public void onClick(View view) {
 
-                                    dialogConfirmacion.dismiss();
+                                    dialogConfirmacion.dismiss();// return false;
                                 }
                             });
 
@@ -334,8 +337,10 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                     actionListener.onActualizarEstadoActividadesActivity(idbitacora, nuevoEstado, "");
                                     dialogConBotones.dismiss();
                                     dialogConfirmacion.dismiss();
+                                 //   return false;
                                 }
                             });
+                         //   return false;
                         }
                     });
 
@@ -369,6 +374,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                             @Override
                                             public void onClick(View view) {
                                                 dialogConfirmacion.dismiss();
+                                           //     return false;
                                             }
                                         });
 
@@ -383,6 +389,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                                 dialogConBotones.dismiss();
 
 
+                                            //    return false;
                                             }
                                         });
 
@@ -398,6 +405,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                             });
 
 
+                           // return false;
                         }
                     });
 
@@ -456,6 +464,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                 Utiles.crearToastPersonalizado(context, respuestaImagenes+ " No se pudieron cargar las evidencias");
                             }
 */
+                        //    return false;
                         }
                     });
 
@@ -483,6 +492,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                 public void onClick(View view) {
 
                                     dialogConfirmacion.dismiss();
+                                 //   return false;
                                 }
                             });
 
@@ -504,12 +514,15 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                     }
 
 
+                               //     return false;
                                 }
                             });
 
+                         //   return false;
                         }
                     });
 
+                 //   return false;
                 }
             });
 
@@ -558,6 +571,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                             @Override
                             public void onClick(View view) {
                                 dialogConfirmacion.dismiss();
+                                // return false;
                             }
                         });
 
@@ -568,7 +582,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                 dialogConfirmacion.dismiss();
                                 dialogConBotones.dismiss();
                                 actionListener.onActualizarEstadoActividadesActivity(id_bitacora, "finalizada", "");
-
+// return false;
                             }
                         });
 
@@ -592,7 +606,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                         LayoutCancelar.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                dialogConfirmacion.dismiss();
+                                dialogConfirmacion.dismiss();// return false;
                             }
                         });
 
@@ -610,7 +624,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                     nuevoEstado = "finalizada";
                                     actionListener.onMandarEvidencia(id_bitacora, nuevoEstado, "Fin", observacionesFinales, "SI");
                                     dialogConBotones.dismiss();
-                                }
+                                }// return false;
                             }
                         });
 
@@ -639,7 +653,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                     LayoutCancelar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            dialogConfirmacion.dismiss();
+                            dialogConfirmacion.dismiss();// return false;
                         }
                     });
 
@@ -657,7 +671,7 @@ public class AdaptadorActividades extends RecyclerView.Adapter<AdaptadorActivida
                                 nuevoEstado = "finalizada";
                                 actionListener.onMandarEvidencia(id_bitacora, nuevoEstado, "Fin", observacionesFinales, "SI");
                                 dialogConBotones.dismiss();
-                            }
+                            }// return false;
                         }
                     });
 

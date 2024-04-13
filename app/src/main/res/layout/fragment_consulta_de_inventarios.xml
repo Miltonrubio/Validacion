@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="22dp"
-            android:layout_marginVertical="42dp"
+            android:layout_marginVertical="22dp"
             android:background="@drawable/rounded_background">
 
 
@@ -67,7 +67,7 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/ContenedorContenido"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:visibility="visible"
         tools:ignore="MissingConstraints">
 
@@ -82,11 +82,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/rounded_background"
                 android:paddingHorizontal="6dp"
-                android:paddingVertical="15dp"
+                android:paddingVertical="7dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -112,7 +113,7 @@
                 android:id="@+id/recyclerViewInventariosPorGaveta"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginVertical="8dp"
+                android:layout_marginTop="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -120,6 +121,24 @@
                 app:layout_constraintTop_toBottomOf="@+id/contenedortvTitulo" />
 
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/botonLevantarInventario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/baseline_add_24"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:visibility="visible"
+        app:backgroundTint="@color/azulito"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedShape"
+        app:tint="@color/white" />
 </androidx.constraintlayout.widget.ConstraintLayout>

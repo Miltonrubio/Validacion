@@ -65,12 +65,16 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
     private List<JSONObject> data;
     String url;
 
+    AdaptadorHerramientasDelInventario.OnActivityActionListener actionListenerChecks;
 
-    public AdaptadorInventarioPorGaveta(List<JSONObject> data, Context context, AdaptadorInventarioPorGaveta.OnActivityActionListener actionListener) {
+    public AdaptadorInventarioPorGaveta(List<JSONObject> data, Context context, AdaptadorInventarioPorGaveta.OnActivityActionListener actionListener, AdaptadorHerramientasDelInventario.OnActivityActionListener actionListenerChecks)
+
+    {
         this.data = data;
         this.context = context;
         this.filteredData = new ArrayList<>(data);
         this.actionListener = actionListener;
+        this.actionListenerChecks = actionListenerChecks;
     }
 
     public interface OnActivityActionListener {
@@ -111,6 +115,8 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
             String NombreMecanico = jsonObject.optString("NombreMecanico", "");
             String fecha = jsonObject.optString("fecha", "");
             String listaHerramientas = jsonObject.optString("listaHerramientas", "");
+            int totalHerramientas = jsonObject.optInt("totalHerramientas", 0);
+            int totalPendientes = jsonObject.optInt("totalPendientes", 0);
             String estadoInv = jsonObject.optString("estadoInv", "");
 
 
@@ -130,7 +136,7 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
 
             AdaptadorHerramientasDelInventario adaptadorHerramientasDelInventario;
             holder.reciclerViewInventarios.setLayoutManager(new LinearLayoutManager(context));
-            adaptadorHerramientasDelInventario = new AdaptadorHerramientasDelInventario(listaDeHerramientas, context, estadoInv);
+            adaptadorHerramientasDelInventario = new AdaptadorHerramientasDelInventario(listaDeHerramientas, context, estadoInv, actionListenerChecks);
             holder.reciclerViewInventarios.setAdapter(adaptadorHerramientasDelInventario);
 
             adaptadorHerramientasDelInventario.notifyDataSetChanged();
@@ -155,19 +161,30 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
             holder.tvFechaInventario.setText(horaFormateada);
 
 
-            if(estadoInv.equalsIgnoreCase("pendiente")){
+            if (!estadoInv.equalsIgnoreCase("Revisado")) {
                 holder.bttonFinalizar.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 holder.bttonFinalizar.setVisibility(View.GONE);
+            }
+
+
+            if( totalPendientes == 0){
+
+                holder.textViewFaltantesTotal.setVisibility(View.GONE);
+            }else{
+
+                holder.textViewFaltantesTotal.setText("Revisiones faltantes: " + totalPendientes);
+                holder.textViewFaltantesTotal.setVisibility(View.VISIBLE);
             }
 
             holder.bttonFinalizar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    int totalVacios = adaptadorHerramientasDelInventario.obtenerContador();
+                    // int totalVacios = adaptadorHerramientasDelInventario.obtenerContador();
 
-                    if (totalVacios > 0) {
+
+                    if (totalPendientes > 0) {
 
                         crearToastPersonalizado(context, "Debes realizar todos los checks para finalizar");
                     } else {
@@ -253,6 +270,7 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
         Button bttonFinalizar;
 
         TextView tvEstadoInventario;
+        TextView textViewFaltantesTotal;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -263,6 +281,7 @@ public class AdaptadorInventarioPorGaveta extends RecyclerView.Adapter<Adaptador
             bttonFinalizar = itemView.findViewById(R.id.bttonFinalizar);
 
             tvEstadoInventario = itemView.findViewById(R.id.tvEstadoInventario);
+            textViewFaltantesTotal = itemView.findViewById(R.id.textViewFaltantesTotal);
         }
     }
 

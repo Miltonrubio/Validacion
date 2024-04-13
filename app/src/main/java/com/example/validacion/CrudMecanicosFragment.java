@@ -351,6 +351,7 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                             public void onClick(View view) {
                                 dialogTipoUsuario.dismiss();
                                 textView37.setText("CORTES");
+
                             }
                         });
                         LayoutMecanico.setOnClickListener(new View.OnClickListener() {
@@ -464,7 +465,6 @@ public class CrudMecanicosFragment extends Fragment implements AdaptadorProducti
                             dialogNuevoEmpleado.dismiss();
                             AgregarUsuario(nombreUsuario, correoUsuario, telefonoUsuario, password, tipoEmpleado, empresa, area);
                         }
-                        //
                     }
                 });
 

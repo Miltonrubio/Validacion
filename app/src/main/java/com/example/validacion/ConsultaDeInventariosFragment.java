@@ -1,6 +1,11 @@
 package com.example.validacion;
 
+import static com.example.validacion.Adaptadores.Utiles.ModalRedondeado;
+
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -13,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -21,8 +27,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.validacion.Adaptadores.AdaptadorBuscarHerramientas;
+import com.example.validacion.Adaptadores.AdaptadorHerramientasDelInventario;
 import com.example.validacion.Adaptadores.AdaptadorInventarioPorGaveta;
 import com.example.validacion.Adaptadores.Utiles;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConsultaDeInventariosFragment extends Fragment implements AdaptadorInventarioPorGaveta.OnActivityActionListener {
+public class ConsultaDeInventariosFragment extends Fragment implements AdaptadorInventarioPorGaveta.OnActivityActionListener, AdaptadorHerramientasDelInventario.OnActivityActionListener {
     Context context;
     String url;
 
@@ -41,14 +49,18 @@ public class ConsultaDeInventariosFragment extends Fragment implements Adaptador
     String id_gabeta;
 
     NestedScrollView ContenedorContenido;
+
+    AdaptadorHerramientasDelInventario.OnActivityActionListener actionListenerChecks;
+
     ConstraintLayout ContenedorSinContenido;
 
     AlertDialog modalCargando;
     AlertDialog.Builder builder;
 
+    String idusuario;
+
 
     public ConsultaDeInventariosFragment() {
-        // Required empty public constructor
     }
 
 
@@ -67,41 +79,127 @@ public class ConsultaDeInventariosFragment extends Fragment implements Adaptador
 
         context = requireContext();
         url = context.getResources().getString(R.string.ApiBack);
-        builder= new AlertDialog.Builder(context);
+        builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
 
-
-        ContenedorSinContenido=view.findViewById(R.id.ContenedorSinContenido);
-        ContenedorContenido=view.findViewById(R.id.ContenedorContenido);
+        actionListenerChecks= this;
+        ContenedorSinContenido = view.findViewById(R.id.ContenedorSinContenido);
+        ContenedorContenido = view.findViewById(R.id.ContenedorContenido);
 
 
         TextView tvTitulo = view.findViewById(R.id.tvTitulo);
         RecyclerView recyclerViewInventariosPorGaveta = view.findViewById(R.id.recyclerViewInventariosPorGaveta);
 
+        FloatingActionButton botonLevantarInventario = view.findViewById(R.id.botonLevantarInventario);
+
+
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Credenciales", Context.MODE_PRIVATE);
+
+        String IDSesionIniciada = sharedPreferences.getString("idusuario", "");
+
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             id_gabeta = bundle.getString("id_gabeta", "");
             String nombre = bundle.getString("nombre", "");
+             idusuario = bundle.getString("idusuario", "");
             tvTitulo.setText("INVENTARIOS REALIZADOS PARA LA GAVETA  " + nombre.toUpperCase());
 
             MostrarInventariosPorGaveta(id_gabeta);
 
             recyclerViewInventariosPorGaveta.setLayoutManager(new LinearLayoutManager(context));
-            adaptadorInventarioPorGaveta = new AdaptadorInventarioPorGaveta(listaInventarios, context, this);
+            adaptadorInventarioPorGaveta = new AdaptadorInventarioPorGaveta(listaInventarios, context, this, actionListenerChecks);
             recyclerViewInventariosPorGaveta.setAdapter(adaptadorInventarioPorGaveta);
-
-
         }
+
+
+        botonLevantarInventario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                View customView = LayoutInflater.from(view.getContext()).inflate(R.layout.modal_confirmacion, null);
+                builder.setView(ModalRedondeado(view.getContext(), customView));
+                AlertDialog dialogConfirmacion = builder.create();
+                dialogConfirmacion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogConfirmacion.show();
+
+                TextView textView4 = customView.findViewById(R.id.textView4);
+                Button buttonCancelar = customView.findViewById(R.id.buttonCancelar);
+                Button buttonAceptar = customView.findViewById(R.id.buttonAceptar);
+
+                textView4.setText("¿Deseas levantar el inventario?");
+
+
+                buttonCancelar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogConfirmacion.dismiss();
+
+                    }
+                });
+
+
+                buttonAceptar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogConfirmacion.dismiss();
+                       // dialogOpcionesGaveta.dismiss();
+
+                       onLevantarInventario(id_gabeta, idusuario, IDSesionIniciada);
+
+                    }
+                });
+
+            }
+        });
+
 
         return view;
     }
+
+
+
+    public void onLevantarInventario(String idGabeta, String idusuario, String idSesionIniciada){
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                MostrarInventariosPorGaveta(idGabeta);
+                Utiles.crearToastPersonalizado(context, "El inventario se levantó correctamente");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "No se pudó levantar el inventario, revisa la conexión");
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "56");
+                params.put("idgabeta", idGabeta);
+                params.put("idencargado", idusuario);
+                params.put("idmecanico", idSesionIniciada);
+
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+
 
 
     List<JSONObject> listaInventarios = new ArrayList<>();
 
     private void MostrarInventariosPorGaveta(String idgabeta) {
         listaInventarios.clear();
-        modalCargando =   Utiles.ModalCargando(context, builder);
+        modalCargando = Utiles.ModalCargando(context, builder);
         StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -126,7 +224,6 @@ public class ConsultaDeInventariosFragment extends Fragment implements Adaptador
                     }
 
 
-
                 } catch (JSONException e) {
                     mostrarLayout("SinInternet");
                 }
@@ -135,7 +232,7 @@ public class ConsultaDeInventariosFragment extends Fragment implements Adaptador
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                 mostrarLayout("SinInternet");
+                mostrarLayout("SinInternet");
             }
         }) {
             protected Map<String, String> getParams() {
@@ -150,14 +247,14 @@ public class ConsultaDeInventariosFragment extends Fragment implements Adaptador
     }
 
 
-    private  void mostrarLayout(String estado){
+    private void mostrarLayout(String estado) {
 
-        if (estado.equalsIgnoreCase("ConContenido")){
+        if (estado.equalsIgnoreCase("ConContenido")) {
 
             ContenedorContenido.setVisibility(View.VISIBLE);
             ContenedorSinContenido.setVisibility(View.GONE);
 
-        }else {
+        } else {
 
             ContenedorContenido.setVisibility(View.GONE);
             ContenedorSinContenido.setVisibility(View.VISIBLE);
@@ -172,6 +269,7 @@ public class ConsultaDeInventariosFragment extends Fragment implements Adaptador
             modalCargando.dismiss();
         }
     }
+
     @Override
     public void onFinalizarInventario(String iddocga) {
 
@@ -190,8 +288,69 @@ public class ConsultaDeInventariosFragment extends Fragment implements Adaptador
         }) {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("opcion", "59");
+                params.put("opcion", "151");
                 params.put("iddocga", iddocga);
+                params.put("id_gabeta", id_gabeta);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+    @Override
+    public void ActualizarPiezas(String cantidadHerr, String idinv, String nombreherramienta) {
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+             //   Utiles.crearToastPersonalizado(context, "Se actualizó la cantidad de " + nombreherramienta);
+                //MostrarInventariosPorGaveta(id_gabeta);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "No se pudo actualizar, revisa la conexion por favor");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "69");
+                params.put("idinv", idinv);
+                params.put("cantidadHerr", cantidadHerr);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(postrequest);
+    }
+
+    @Override
+    public void ActualizarCheck(String estadoHerramienta, String idinv, String nombreherramienta) {
+
+        StringRequest postrequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Utiles.crearToastPersonalizado(context, "Se actualizó el estado de " + nombreherramienta);
+                MostrarInventariosPorGaveta(id_gabeta);
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Utiles.crearToastPersonalizado(context, "No se pudo actualizar, revisa la conexion por favor");
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("opcion", "58");
+                params.put("idinv", idinv);
+                params.put("estadoHerramienta", estadoHerramienta);
                 return params;
             }
         };
