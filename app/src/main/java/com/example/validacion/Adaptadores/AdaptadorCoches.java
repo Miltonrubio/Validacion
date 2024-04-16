@@ -3140,7 +3140,7 @@ public class AdaptadorCoches extends RecyclerView.Adapter<AdaptadorCoches.ViewHo
 
                 modalCargando.dismiss();
                 ConsultarHerramientasDeUnidad(id_ser_venta);
-                Utiles.crearToastPersonalizado(context, "Se asignó el traspaso a este servicio");
+                Utiles.crearToastPersonalizado(context, response);
             }
         }, new Response.ErrorListener() {
             @Override

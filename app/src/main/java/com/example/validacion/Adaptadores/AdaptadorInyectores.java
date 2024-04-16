@@ -1589,7 +1589,7 @@ public class AdaptadorInyectores extends RecyclerView.Adapter<AdaptadorInyectore
 
                 modalCargando.dismiss();
                 ConsultarHerramientasDeUnidad(ID_inyector);
-                Utiles.crearToastPersonalizado(context, "Se asignó el traspaso a este servicio");
+                Utiles.crearToastPersonalizado(context, response);
             }
         }, new Response.ErrorListener() {
             @Override

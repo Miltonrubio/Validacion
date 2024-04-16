@@ -2119,7 +2119,7 @@ public class AdaptadorServiciosInyectores extends RecyclerView.Adapter<Adaptador
 
                 modalCargando.dismiss();
                 ConsultarHerramientasDeUnidad(ID_serv_inyector);
-                Utiles.crearToastPersonalizado(context, "Se asignó el traspaso a este servicio");
+                Utiles.crearToastPersonalizado(context, response);
             }
         }, new Response.ErrorListener() {
             @Override
