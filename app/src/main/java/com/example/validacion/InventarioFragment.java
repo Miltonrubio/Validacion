@@ -46,7 +46,7 @@ public class InventarioFragment extends Fragment {
         verGavetas.setVisibility(View.GONE);
         VerMaquinas.setVisibility(View.GONE);
 */
-
+        VerMaquinas.setVisibility(View.GONE);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
 

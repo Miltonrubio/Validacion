@@ -108,7 +108,7 @@ public class AdaptadorHerramientas extends RecyclerView.Adapter<AdaptadorHerrami
             bundle.putString("piezas", piezas);
             bundle.putString("idHerramienta", idHerramienta);
 
-            holder.nombreHerramienta.setText(nombre);
+            holder.nombreHerramienta.setText(nombre.toUpperCase());
             holder.piezas.setText(piezas + " Pzs");
             holder.descripcion.setText(descripcion);
 

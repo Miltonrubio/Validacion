@@ -57,45 +57,48 @@ android:layout_marginHorizontal="12dp"
 
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout11"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:background="@color/fondogrisesito"
         android:gravity="center"
-        android:orientation="horizontal"
         android:paddingVertical="6dp"
-        android:weightSum="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/fotoMecanico"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_weight="4"
-            android:src="@drawable/baseline_person_24" />
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+
+            android:layout_marginStart="7dp"
+            android:src="@drawable/baseline_person_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:riv_corner_radius="80dp" />
 
         <TextView
             android:id="@+id/DueñoGaveta"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center"
             android:paddingHorizontal="12dp"
             android:text="dueño de gaveta"
             android:textColor="@color/black"
             android:textSize="15dp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="-4dp" />
+            app:layout_constraintStart_toEndOf="@+id/fotoMecanico"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:layout_width="match_parent"
@@ -113,7 +116,7 @@ android:layout_marginHorizontal="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +130,7 @@ android:layout_marginHorizontal="12dp"
         android:layout_marginTop="14dp"
         android:layout_marginHorizontal="12dp"
         android:gravity="center"
-        android:text="Dias hasta la sigueinte revision"
+        android:text="Dias hasta la siguiente revision"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reciclerViewCajones" />
